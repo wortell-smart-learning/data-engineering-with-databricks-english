@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "true",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "4",
-				"spark.autotune.trackingId": "4d6a8007-c915-40e0-b3f6-9b23de782fd1"
+				"spark.autotune.trackingId": "d1282752-1358-4166-b5f0-7b72e8b201e7"
 			}
 		},
 		"metadata": {
@@ -43,10 +43,10 @@
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.2",
-				"nodeCount": 10,
+				"nodeCount": 3,
 				"cores": 4,
 				"memory": 28,
-				"automaticScaleJobs": true
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -130,7 +130,7 @@
 				"source": [
 					"print(\"I'm running Python!\")"
 				],
-				"execution_count": null
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
