@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "da1e9f2c-9964-4d8b-a3ee-c281aab00256"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "76564c94-bb5b-48ba-9688-ae763d9e83b4"
 			}
 		},
 		"metadata": {
@@ -28,6 +32,21 @@
 			},
 			"language_info": {
 				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -42,7 +61,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -58,7 +77,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"# Getting Started with the Databricks Platform\n",
@@ -84,7 +103,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"# Renaming a Notebook\n",
@@ -102,7 +121,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"# Attaching a cluster\n",
@@ -124,7 +143,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"# Using %run\n",
@@ -171,7 +190,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"The folder that contains this notebook contains a subfolder named **`ExampleSetupFolder`**, which in turn contains a notebook called **`example-setup`**. \n",
@@ -208,7 +227,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"## Run a Python cell\n",
@@ -233,7 +252,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"# Change Language\n",
@@ -253,7 +272,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"# Create a Markdown Cell\n",
@@ -274,7 +293,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"## Run a SQL cell\n",
@@ -305,7 +324,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"Execute the following cell to view the underlying files backing this table."
@@ -329,7 +348,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"# Clearing notebook state\n",
 					"\n",
@@ -357,7 +376,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"# Review Changes\n",
@@ -380,7 +399,7 @@
 					}
 				},
 				"source": [
- 					"\n",
+					"\n",
 					"\n",
 					"\n",
 					"## Wrapping Up\n",
@@ -398,7 +417,7 @@
 					}
 				},
 				"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
