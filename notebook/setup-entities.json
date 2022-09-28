@@ -1,0 +1,50 @@
+{
+	"name": "setup-entities",
+	"properties": {
+		"folder": {
+			"name": "includes"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "623cef3e-7974-47c9-bf9d-4c5beffb559a"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"import sys, subprocess, os\n",
+					"subprocess.check_call([sys.executable, \"-m\", \"pip\", \"install\", \"git+https://github.com/databricks-academy/user-setup\"])\n",
+					"\n",
+					"from dbacademy import LessonConfig\n",
+					"LessonConfig.configure(course_name=\"Databases Tables and Views on Databricks\", use_db=False)\n",
+					"LessonConfig.install_datasets(silent=True)\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

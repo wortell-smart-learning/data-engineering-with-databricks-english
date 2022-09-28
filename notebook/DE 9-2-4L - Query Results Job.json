@@ -1,0 +1,156 @@
+{
+	"name": "DE 9-2-4L - Query Results Job",
+	"properties": {
+		"folder": {
+			"name": "09 - Task Orchestration with Jobs/DE 9.2L - Jobs Lab"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "437e758b-733c-4abd-adf5-75e5febb2478"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../../Includes/Classroom-Setup-09.2.4L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"1372d675-796a-4bbb-9d83-356d3b1b297e\"/>\n",
+					"\n",
+					"\n",
+					"# Exploring the Results of a DLT Pipeline\n",
+					"\n",
+					"Run the following cell to enumerate the output of your storage location:"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.working_dir}/storage\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"9a19b4f8-479b-4dfb-80a8-05e08cfd9eb0\"/>\n",
+					"\n",
+					"\n",
+					"The **system** directory captures events associated with the pipeline."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.working_dir}/storage/system/events\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"da333edd-ee6d-4892-9da0-29f38d96e14f\"/>\n",
+					"\n",
+					"\n",
+					"These event logs are stored as a Delta table. \n",
+					"\n",
+					"Let's query the table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM delta.`${da.paths.working_dir}/storage/system/events`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"303e482b-e3cd-48eb-b9be-5357e07803aa\"/>\n",
+					"\n",
+					"\n",
+					"Let's view the contents of the *tables* directory."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.working_dir}/storage/tables\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"6c5ffd14-74db-4ec2-8764-526da08840ab\"/>\n",
+					"\n",
+					"\n",
+					"Let's query the gold table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM ${da.db_name}.daily_patient_avg"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.cleanup()\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

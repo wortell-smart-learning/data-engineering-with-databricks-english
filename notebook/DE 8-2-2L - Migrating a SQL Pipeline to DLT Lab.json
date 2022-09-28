@@ -1,0 +1,201 @@
+{
+	"name": "DE 8-2-2L - Migrating a SQL Pipeline to DLT Lab",
+	"properties": {
+		"folder": {
+			"name": "08 - Delta Live Tables/DE 8.2 - DLT Lab"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "2ab317b8-6967-4e68-a647-98a4925827d0"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"cffedc4f-a6a4-4412-8193-46a7a8a6a213\"/>\n",
+					"\n",
+					"\n",
+					"# Lab: Migrating a SQL Pipeline to Delta Live Tables\n",
+					"\n",
+					"This notebook will be completed by you to implement a DLT pipeline using SQL. \n",
+					"\n",
+					"It is **not intended** to be executed interactively, but rather to be deployed as a pipeline once you have completed your changes.\n",
+					"\n",
+					"To aid in completion of this Notebook, please refer to the <a href=\"https://docs.databricks.com/data-engineering/delta-live-tables/delta-live-tables-language-ref.html#sql\" target=\"_blank\">DLT syntax documentation</a>."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"01e06565-56e7-4581-8833-14bc0db8c281\"/>\n",
+					"\n",
+					"\n",
+					"## Declare Bronze Table\n",
+					"\n",
+					"Declare a bronze table, **`recordings_bronze`**, that ingests JSON data incrementally (using Auto Loader) from the simulated cloud source. The source location is already supplied as an argument; using this value is illustrated in the cell below.\n",
+					"\n",
+					"As we did previously, include two additional columns:\n",
+					"* **`receipt_time`** that records a timestamp as returned by **`current_timestamp()`** \n",
+					"* **`source_file`** that is obtained by **`input_file_name()`**"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE <FILL-IN>\n",
+					"AS SELECT <FILL-IN>\n",
+					"  FROM cloud_files(\"${source}\", \"json\", map(\"cloudFiles.schemaHints\", \"time DOUBLE, mrn INTEGER\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"57422f74-b830-4abb-b4a9-969d0ab90be6\"/>\n",
+					"\n",
+					"\n",
+					"### PII File\n",
+					"\n",
+					"Using a similar CTAS syntax, create a live **table** into the CSV data found in the *healthcare/patient* dataset.\n",
+					"\n",
+					"To properly configure Auto Loader for this source, you will need to specify the following additional parameters:\n",
+					"\n",
+					"| option | value |\n",
+					"| --- | --- |\n",
+					"| **`header`** | **`true`** |\n",
+					"| **`cloudFiles.inferColumnTypes`** | **`true`** |\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"/> Auto Loader configurations for CSV can be found <a href=\"https://docs.databricks.com/spark/latest/structured-streaming/auto-loader-csv.html\" target=\"_blank\">here</a>."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE <FILL-IN> pii\n",
+					"AS SELECT *\n",
+					"  FROM cloud_files(\"${datasets_path}/healthcare/patient\", \"csv\", map(<FILL-IN>))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3573b6a4-233a-4f23-a002-aab072eb5096\"/>\n",
+					"\n",
+					"\n",
+					"## Declare Silver Tables\n",
+					"\n",
+					"Our silver table, **`recordings_enriched`**, will consist of the following fields:\n",
+					"\n",
+					"| Field | Type |\n",
+					"| --- | --- |\n",
+					"| **`device_id`** | **`INTEGER`** |\n",
+					"| **`mrn`** | **`LONG`** |\n",
+					"| **`heartrate`** | **`DOUBLE`** |\n",
+					"| **`time`** | **`TIMESTAMP`** (example provided below) |\n",
+					"| **`name`** | **`STRING`** |\n",
+					"\n",
+					"This query should also enrich the data through an inner join with the **`pii`** table on the common **`mrn`** field to obtain the name.\n",
+					"\n",
+					"Implement quality control by applying a constraint to drop records with an invalid **`heartrate`** (that is, not greater than zero)."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE OR REFRESH STREAMING LIVE TABLE recordings_enriched\n",
+					"  (<FILL-IN add a constraint to drop records when heartrate ! > 0>)\n",
+					"AS SELECT \n",
+					"  CAST(<FILL-IN>) device_id, \n",
+					"  <FILL-IN mrn>, \n",
+					"  <FILL-IN heartrate>, \n",
+					"  CAST(FROM_UNIXTIME(DOUBLE(time), 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time \n",
+					"  FROM STREAM(live.recordings_bronze)\n",
+					"  <FILL-IN specify an inner join with the pii table on the mrn field>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3b9309a8-9e1d-46a2-a0eb-e95fe698d23b\"/>\n",
+					"\n",
+					"\n",
+					"## Gold Table\n",
+					"\n",
+					"Create a gold table, **`daily_patient_avg`**, that aggregates **`recordings_enriched`** by **`mrn`**, **`name`**, and **`date`** and delivers the following columns:\n",
+					"\n",
+					"| Column name | Value |\n",
+					"| --- | --- |\n",
+					"| **`mrn`** | **`mrn`** from source |\n",
+					"| **`name`** | **`name`** from source |\n",
+					"| **`avg_heartrate`** | Average **`heartrate`** from the grouping |\n",
+					"| **`date`** | Date extracted from **`time`** |"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE <FILL-IN> daily_patient_avg\n",
+					"  COMMENT <FILL-IN insert comment here>\n",
+					"AS SELECT <FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

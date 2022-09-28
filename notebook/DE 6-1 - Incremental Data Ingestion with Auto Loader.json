@@ -1,0 +1,435 @@
+{
+	"name": "DE 6-1 - Incremental Data Ingestion with Auto Loader",
+	"properties": {
+		"folder": {
+			"name": "06 - Incremental Data Processing"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "d25ee043-44c3-41b7-875b-5f8d9d40cf7d"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"82f45276-7911-4045-b57d-c2891df6f785\"/>\n",
+					"\n",
+					"\n",
+					"# Incremental Data Ingestion with Auto Loader\n",
+					"\n",
+					"Incremental ETL is important since it allows us to deal solely with new data that has been encountered since the last ingestion. Reliably processing only the new data reduces redundant processing and helps enterprises reliably scale data pipelines.\n",
+					"\n",
+					"The first step for any successful data lakehouse implementation is ingesting into a Delta Lake table from cloud storage. \n",
+					"\n",
+					"Historically, ingesting files from a data lake into a database has been a complicated process.\n",
+					"\n",
+					"Databricks Auto Loader provides an easy-to-use mechanism for incrementally and efficiently processing new data files as they arrive in cloud file storage. In this notebook, you'll see Auto Loader in action.\n",
+					"\n",
+					"![](https://files.training.databricks.com/images/autoloader-detection-modes.png)\n",
+					"\n",
+					"Due to the benefits and scalability that Auto Loader delivers, Databricks recommends its use as general **best practice** when ingesting data from cloud object storage.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"* Execute Auto Loader code to incrementally ingest data from cloud storage to Delta Lake\n",
+					"* Describe what happens when a new file arrives in a directory configured for Auto Loader\n",
+					"* Query a table fed by a streaming Auto Loader query\n",
+					"\n",
+					"## Dataset Used\n",
+					"This demo uses simplified artificially generated medical data representing heart rate recordings delivered in the JSON format. \n",
+					"\n",
+					"| Field | Type |\n",
+					"| --- | --- |\n",
+					"| device_id | int |\n",
+					"| mrn | long |\n",
+					"| time | double |\n",
+					"| heartrate | double |"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3b8b82a4-9dd3-4b4d-a591-dca88bd064c6\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Getting Started\n",
+					"\n",
+					"Run the following cell to reset the demo and configure required variables and help functions."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-06.1"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"188f9a32-fc72-40da-844a-b87cd14e358e\"/>\n",
+					"\n",
+					"\n",
+					"## Using Auto Loader\n",
+					"\n",
+					"In the cell below, a function is defined to demonstrate using Databricks Auto Loader with the PySpark API. This code includes both a Structured Streaming read and write.\n",
+					"\n",
+					"The following notebook will provide a more robust overview of Structured Streaming. If you wish to learn more about Auto Loader options, refer to the <a href=\"https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html\" target=\"_blank\">documentation</a>.\n",
+					"\n",
+					"Note that when using Auto Loader with automatic <a href=\"https://docs.databricks.com/spark/latest/structured-streaming/auto-loader-schema.html\" target=\"_blank\">schema inference and evolution</a>, the 4 arguments shown here should allow ingestion of most datasets. These arguments are explained below.\n",
+					"\n",
+					"| argument | what it is | how it's used |\n",
+					"| --- | --- | --- |\n",
+					"| **`data_source`** | The directory of the source data | Auto Loader will detect new files as they arrive in this location and queue them for ingestion; passed to the **`.load()`** method |\n",
+					"| **`source_format`** | The format of the source data |  While the format for all Auto Loader queries will be **`cloudFiles`**, the format of the source data should always be specified for the **`cloudFiles.format`** option |\n",
+					"| **`table_name`** | The name of the target table | Spark Structured Streaming supports writing directly to Delta Lake tables by passing a table name as a string to the **`.table()`** method. Note that you can either append to an existing table or create a new table |\n",
+					"| **`checkpoint_directory`** | The location for storing metadata about the stream | This argument is passed to the **`checkpointLocation`** and **`cloudFiles.schemaLocation`** options. Checkpoints keep track of streaming progress, while the schema location tracks updates to the fields in the source dataset |\n",
+					"\n",
+					"**NOTE**: The code below has been streamlined to demonstrate Auto Loader functionality. We'll see in later lessons that additional transformations can be applied to source data before saving them to Delta Lake."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def autoload_to_table(data_source, source_format, table_name, checkpoint_directory):\n",
+					"    query = (spark.readStream\n",
+					"                  .format(\"cloudFiles\")\n",
+					"                  .option(\"cloudFiles.format\", source_format)\n",
+					"                  .option(\"cloudFiles.schemaLocation\", checkpoint_directory)\n",
+					"                  .load(data_source)\n",
+					"                  .writeStream\n",
+					"                  .option(\"checkpointLocation\", checkpoint_directory)\n",
+					"                  .option(\"mergeSchema\", \"true\")\n",
+					"                  .table(table_name))\n",
+					"    return query"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"cf70df0f-f945-4efb-b8d0-e90d86d0bf9b\"/>\n",
+					"\n",
+					"\n",
+					"In the following cell, we use the previously defined function and some path variables defined in the setup script to begin an Auto Loader stream.\n",
+					"\n",
+					"Here, we're reading from a source directory of JSON files."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"query = autoload_to_table(data_source = f\"{DA.paths.working_dir}/tracker\",\n",
+					"                          source_format = \"json\",\n",
+					"                          table_name = \"target_table\",\n",
+					"                          checkpoint_directory = f\"{DA.paths.checkpoints}/target_table\")\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"6d136721-85f1-474f-aaa1-3de8c2981e21\"/>\n",
+					"\n",
+					"\n",
+					"Because Auto Loader uses Spark Structured Streaming to load data incrementally, the code above doesn't appear to finish executing.\n",
+					"\n",
+					"We can think of this as a **continuously active query**. This means that as soon as new data arrives in our data source, it will be processed through our logic and loaded into our target table. We'll explore this in just a second."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"96a80d56-2fea-4865-8d80-73aea7a0169a\"/>\n",
+					"\n",
+					"\n",
+					"## Helper Function for Streaming Lessons\n",
+					"\n",
+					"Our notebook-based lessons combine streaming functions with batch and streaming queries against the results of those operations. These notebooks are for instructional purposes and intended for interactive, cell-by-cell execution. This pattern is not intended for production.\n",
+					"\n",
+					"Below, we define a helper function that prevents our notebook from executing the next cell just long enough to ensure data has been written out by a given streaming query. This code should not be necessary in a production job."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def block_until_stream_is_ready(query, min_batches=2):\n",
+					"    import time\n",
+					"    while len(query.recentProgress) < min_batches:\n",
+					"        time.sleep(5) # Give it a couple of seconds\n",
+					"\n",
+					"    print(f\"The stream has processed {len(query.recentProgress)} batchs\")\n",
+					"\n",
+					"block_until_stream_is_ready(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"56f6dfa2-c638-4812-8d7b-d4d480f97364\"/>\n",
+					"\n",
+					"\n",
+					"## Query Target Table\n",
+					"\n",
+					"Once data has been ingested to Delta Lake with Auto Loader, users can interact with it the same way they would any table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM target_table"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"2bcece5b-7175-4b55-ab2c-40a67115a764\"/>\n",
+					"\n",
+					"\n",
+					"Note that the **`_rescued_data`** column is added by Auto Loader automatically to capture any data that might be malformed and not fit into the table otherwise.\n",
+					"\n",
+					"While Auto Loader captured the field names for our data correctly, note that it encoded all fields as **`STRING`** type. Because JSON is a text-based format, this is the safest and most permissive type, ensuring that the least amount of data is dropped or ignored at ingestion due to type mismatch."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"DESCRIBE TABLE target_table"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"96d695c6-45f5-4d3e-b822-2fec12d72664\"/>\n",
+					"\n",
+					"\n",
+					"Use the cell below to define a temporary view that summarizes the recordings in our target table.\n",
+					"\n",
+					"We'll use this view below to demonstrate how new data is automatically ingested with Auto Loader."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"CREATE OR REPLACE TEMP VIEW device_counts AS\n",
+					"  SELECT device_id, count(*) total_recordings\n",
+					"  FROM target_table\n",
+					"  GROUP BY device_id;\n",
+					"  \n",
+					"SELECT * FROM device_counts"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"8048e413-c4c9-406c-be74-c541f976c8e3\"/>\n",
+					"\n",
+					"\n",
+					"## Land New Data\n",
+					"\n",
+					"As mentioned previously, Auto Loader is configured to incrementally process files from a directory in cloud object storage into a Delta Lake table.\n",
+					"\n",
+					"We have configured and are currently executing a query to process JSON files from the location specified by **`source_path`** into a table named **`target_table`**. Let's review the contents of the **`source_path`** directory."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.working_dir}/tracker\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"f7573e55-b6ab-46ad-9eae-cd037b4f554f\"/>\n",
+					"\n",
+					"\n",
+					"At present, you should see a single JSON file listed in this location.\n",
+					"\n",
+					"The method in the cell below was configured in our setup script to allow us to model an external system writing data to this directory. Each time you execute the cell below, a new file will land in the **`source_path`** directory."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.data_factory.load()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"a8eeb778-e14e-42fc-90d1-86ed69ad06fb\"/>\n",
+					"\n",
+					"\n",
+					"List the contents of the **`source_path`** again using the cell below. You should see an additional JSON file for each time you ran the previous cell."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.working_dir}/tracker\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"d8323fbe-942c-405a-b3f1-5f4a3785ad95\"/>\n",
+					"\n",
+					"\n",
+					"## Tracking Ingestion Progress\n",
+					"\n",
+					"Historically, many systems have been configured to either reprocess all records in a source directory to calculate current results or require data engineers to implement custom logic to identify new data that's arrived since the last time a table was updated.\n",
+					"\n",
+					"With Auto Loader, your table has already been updated.\n",
+					"\n",
+					"Run the query below to confirm that new data has been ingested."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM device_counts"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"b630929e-6d09-46d8-9cd0-2d5418b5840c\"/>\n",
+					"\n",
+					"\n",
+					"The Auto Loader query we configured earlier automatically detects and processes records from the source directory into the target table. There is a slight delay as records are ingested, but an Auto Loader query executing with default streaming configuration should update results in near real time.\n",
+					"\n",
+					"The query below shows the table history. A new table version should be indicated for each **`STREAMING UPDATE`**. These update events coincide with new batches of data arriving at the source."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"DESCRIBE HISTORY target_table"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"a01651f5-70c8-45a4-859e-f9976eacf7a1\"/>\n",
+					"\n",
+					"\n",
+					"## Clean Up\n",
+					"Feel free to continue landing new data and exploring the table results with the cells above.\n",
+					"\n",
+					"When you're finished, run the following cell to stop all active streams and remove created resources before continuing."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
