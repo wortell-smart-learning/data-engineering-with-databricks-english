@@ -16,7 +16,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "4a0758e7-1c7e-4c30-8b8d-4d67a6f572e8"
+				"spark.autotune.trackingId": "da1e9f2c-9964-4d8b-a3ee-c281aab00256"
 			}
 		},
 		"metadata": {
@@ -33,18 +33,31 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md-sandbox\n",
 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"5f2cfc0b-1998-4182-966d-8efed6020eb2\"/>\n",
 					"\n",
@@ -61,11 +74,17 @@
 					"- Use the **`%run`** magic command\n",
 					"- Run Python and SQL cells\n",
 					"- Create a Markdown cell"
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"05dca5e4-6c50-4b39-a497-a35cd6d99434\"/>\n",
 					"\n",
@@ -74,11 +93,17 @@
 					"# Renaming a Notebook\n",
 					"\n",
 					"Changing the name of a notebook is easy. Click on the name at the top of this page, then make changes to the name. To make it easier to navigate back to this notebook later in case you need to, append a short test string to the end of the existing name."
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"f07b8dd7-436d-4719-9c17-18cd47f493fe\"/>\n",
 					"\n",
@@ -91,11 +116,17 @@
 					"Attach a cluster to this notebook now by clicking the dropdown near the top-left corner of this page. Select the cluster you created previously. This will clear the execution state of the notebook and connect the notebook to the selected cluster.\n",
 					"\n",
 					"Note that the dropdown menu provides the option of starting or restarting the cluster as needed. You can also detach and re-attach to a cluster in a single movement. This is useful for clearing the execution state when needed."
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"68805a5e-3b2c-4f79-819f-273d4ca95137\"/>\n",
 					"\n",
@@ -133,11 +164,17 @@
 					"And thus providing the expected behavior:\n",
 					"* **`Hello John`**\n",
 					"* **`Welcome back John Doe`**"
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"260e99b3-4126-41b7-8210-b6ff01b98790\"/>\n",
 					"\n",
@@ -150,8 +187,7 @@
 					"Open the example-setup notebook and modify it so that name is not **`None`** but rather your name (or anyone's name) enclosed in quotes, and so that the following two cells execute without throwing an **`AssertionError`**.\n",
 					"\n",
 					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> You will see additional references **`_utility-methods`** and **`DBAcademyHelper`** which are used to this configure  courseware and should be ignored for this exercise."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -169,7 +205,14 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"ece094f7-d013-4b24-aa54-e934f4ab7dbd\"/>\n",
 					"\n",
@@ -178,8 +221,7 @@
 					"## Run a Python cell\n",
 					"\n",
 					"Run the following cell to verify that the **`example-setup`** notebook was executed by displaying the **`example_df`** Dataframe. This table consists of 16 rows of increasing values."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -189,7 +231,14 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"ce392afd-2e73-4a51-adc4-7d654dad6215\"/>\n",
 					"\n",
@@ -200,11 +249,17 @@
 					"Notice that the default language for this notebook is set to Python. Change this by clicking the **Python** button to the right of the notebook name. Change the default language to SQL.\n",
 					"\n",
 					"Notice that the Python cells are automatically prepended with a <strong><code>&#37;python</code></strong> magic command to maintain validity of those cells. Notice that this operation also clears the execution state."
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"dfce7fd1-08e8-4cc3-92ac-a2eb74f804ef\"/>\n",
 					"\n",
@@ -216,11 +271,17 @@
 					"* A header\n",
 					"* Bullet points\n",
 					"* A link (using your choice of HTML or Markdown conventions)"
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"a54470bc-2a69-4a34-acbb-fe28c4dee284\"/>\n",
 					"\n",
@@ -229,11 +290,15 @@
 					"## Run a SQL cell\n",
 					"\n",
 					"Run the following cell to query a Delta table using SQL. This executes a simple query against a table is backed by a Databricks-provided example dataset included in all DBFS installations."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
 				"source": [
 					"%%sql\n",
 					"SELECT * FROM delta.`${DA.paths.datasets}/nyctaxi-with-zipcodes/data`"
@@ -241,15 +306,21 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"7499c6b6-b3f3-4641-88d9-5a260d3c11f8\"/>\n",
 					"\n",
 					"\n",
 					"\n",
 					"Execute the following cell to view the underlying files backing this table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -260,7 +331,14 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"a17b5667-53bc-4f8a-8601-5599f4ebb819\"/>\n",
 					"\n",
@@ -272,8 +350,7 @@
 					"Visit the **Clear** menu and select the **Clear State & Cell Outputs**.\n",
 					"\n",
 					"Now try running the cell below and notice the variables defined earlier are no longer defined, until you rerun the earlier cells above."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -283,7 +360,14 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"8bff18c2-3ecf-484a-9a8c-dadab7eaf0a1\"/>\n",
 					"\n",
@@ -297,11 +381,17 @@
 					"1. **Modified** for creating a markdown cell above\n",
 					"\n",
 					"Use the dialog to revert the changes and restore this notebook to its original state."
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md <i18n value=\"cb3c335a-dd4c-4620-9f10-6946250f2e02\"/>\n",
 					"\n",
@@ -310,19 +400,24 @@
 					"## Wrapping Up\n",
 					"\n",
 					"By completing this lab, you should now feel comfortable manipulating notebooks, creating new cells, and running notebooks within notebooks."
-				],
-				"execution_count": null
+				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"%md-sandbox\n",
 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}
