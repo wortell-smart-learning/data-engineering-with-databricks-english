@@ -159,7 +159,7 @@
 					"**`Notebook_A`** has four commands:\n",
 					"  1. **`name = \"John\"`**\n",
 					"  2. **`print(f\"Hello {name}\")`**\n",
-					"  3. **`%run ./Notebook_B`**\n",
+					"  3. **`%run /Notebook_B`**\n",
 					"  4. **`print(f\"Welcome back {full_name}`**\n",
 					"\n",
 					"**`Notebook_B`** has only one commands:\n",
@@ -205,7 +205,7 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"%run ./ExampleSetupFolder/example-setup"
+					"%run /01 - Synapse Workspace and Services/ExampleSetupFolder/example-setup"
 				],
 				"execution_count": null
 			},

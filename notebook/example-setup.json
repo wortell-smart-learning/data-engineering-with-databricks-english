@@ -54,7 +54,7 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"%run ../../Includes/_utility-methods"
+					"%run /Includes/_utility-methods"
 				],
 				"execution_count": null
 			},

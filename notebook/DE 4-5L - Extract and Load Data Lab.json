@@ -76,7 +76,7 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"%run ../Includes/Classroom-Setup-04.5L"
+					"%run /Includes/Classroom-Setup-04.5L"
 				],
 				"execution_count": null
 			},
