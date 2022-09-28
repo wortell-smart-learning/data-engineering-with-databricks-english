@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "true",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "12ba7a01-d718-499a-8dcc-83eaef3a1279"
+				"spark.autotune.trackingId": "fc596c79-e23a-4d13-a5bf-9b1a42d31f37"
 			}
 		},
 		"metadata": {
@@ -420,7 +420,7 @@
 				"source": [
 					"%run /Includes/Classroom-Setup-01-2"
 				],
-				"execution_count": 8
+				"execution_count": 9
 			},
 			{
 				"cell_type": "markdown",

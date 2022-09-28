@@ -6,6 +6,10 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
@@ -16,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f062a8b8-b666-4b31-a9ed-cfdf487f7ed0"
+				"spark.autotune.trackingId": "bf7688b8-d651-4a01-8e42-0543b03ffc3b"
 			}
 		},
 		"metadata": {
@@ -24,10 +28,25 @@
 			"enableDebugMode": false,
 			"kernelspec": {
 				"name": "synapse_pyspark",
-				"display_name": "python"
+				"display_name": "Synapse PySpark"
 			},
 			"language_info": {
 				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -35,9 +54,9 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"%run ./_utility-methods"
+					"%run /Includes/_utility-methods"
 				],
-				"execution_count": null
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
