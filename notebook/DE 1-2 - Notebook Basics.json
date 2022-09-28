@@ -19,8 +19,8 @@
 			"conf": {
 				"spark.dynamicAllocation.enabled": "true",
 				"spark.dynamicAllocation.minExecutors": "1",
-				"spark.dynamicAllocation.maxExecutors": "4",
-				"spark.autotune.trackingId": "d1282752-1358-4166-b5f0-7b72e8b201e7"
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "bad4f309-165b-477a-98f1-d56db9c019db"
 			}
 		},
 		"metadata": {
@@ -130,7 +130,7 @@
 				"source": [
 					"print(\"I'm running Python!\")"
 				],
-				"execution_count": 2
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
