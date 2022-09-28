@@ -1,0 +1,154 @@
+{
+	"name": "DE 8-1-3 - Pipeline Results",
+	"properties": {
+		"folder": {
+			"name": "08 - Delta Live Tables/DE 8.1 - DLT"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "abd5d13b-72be-4421-9b8f-fdd4b39cbd7a"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"46a8383a-807d-42a9-9bdc-09a34e0b7bd0\"/>\n",
+					"\n",
+					"\n",
+					"# Exploring the Results of a DLT Pipeline\n",
+					"\n",
+					"This notebook explores the execution results of a DLT pipeline."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../../Includes/Classroom-Setup-08.1.3"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(DA.paths.storage_location)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4b109d6f-b0d4-4ded-ac54-a12f722599a9\"/>\n",
+					"\n",
+					"\n",
+					"The **`system`** directory captures events associated with the pipeline."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.storage_location}/system/events\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"fd83d9bb-db62-456a-8a51-33e8680c0d47\"/>\n",
+					"\n",
+					"\n",
+					"These event logs are stored as a Delta table. Let's query the table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM delta.`${da.paths.storage_location}/system/events`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"b0c12205-fc10-4a63-a73e-d5cded65ef51\"/>\n",
+					"\n",
+					"\n",
+					"Let's view the contents of the *tables* directory."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.storage_location}/tables\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e5072a3f-3a1f-4e4d-89fa-bda3926cb6ba\"/>\n",
+					"\n",
+					"\n",
+					"Let's query the gold table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM ${da.db_name}.sales_order_in_la"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"69333106-f421-45f0-a846-1c3d4fc8ddcb\"/>\n",
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.cleanup()\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
