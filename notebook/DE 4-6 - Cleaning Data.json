@@ -1,0 +1,484 @@
+{
+	"name": "DE 4-6 - Cleaning Data",
+	"properties": {
+		"folder": {
+			"name": "04 - ETL with Spark SQL"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "5839b34b-4bb6-418e-be60-c037d012e9ec"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"84dff2fc-1e27-46ea-8120-0a501795da47\"/>\n",
+					"\n",
+					" \n",
+					"# Cleaning Data\n",
+					"\n",
+					"Most transformations completed with Spark SQL will be familiar to SQL-savvy developers.\n",
+					"\n",
+					"As we inspect and clean our data, we'll need to construct various column expressions and queries to express transformations to apply on our dataset.  \n",
+					"\n",
+					"Column expressions are constructed from existing columns, operators, and built-in Spark SQL functions. They can be used in **`SELECT`** statements to express transformations that create new columns from datasets. \n",
+					"\n",
+					"Along with **`SELECT`**, many additional query commands can be used to express transformations in Spark SQL, including **`WHERE`**, **`DISTINCT`**, **`ORDER BY`**, **`GROUP BY`**, etc.\n",
+					"\n",
+					"In this notebook, we'll review a few concepts that might differ from other systems you're used to, as well as calling out a few useful functions for common operations.\n",
+					"\n",
+					"We'll pay special attention to behaviors around **`NULL`** values, as well as formatting strings and datetime fields.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"- Summarize datasets and describe null behaviors\n",
+					"- Retrieve and removing duplicates\n",
+					"- Validate datasets for expected counts, missing values, and duplicate records\n",
+					"- Apply common transformations to clean and transform data"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"763d80d3-b7ed-4baf-98f1-ec6e0fb03d67\"/>\n",
+					"\n",
+					"\n",
+					"## Run Setup\n",
+					"\n",
+					"The setup script will create the data and declare necessary values for the rest of this notebook to execute."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-04.6"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"fe2033f4-7752-408a-9175-1dc28d63b445\"/>\n",
+					"\n",
+					"\n",
+					"We'll work with new users records in **`users_dirty`** table for this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM users_dirty"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"9b9352ce-28ed-420c-814d-dbf773067e32\"/>\n",
+					"\n",
+					" \n",
+					"## Inspect Data\n",
+					"\n",
+					"Let's start by counting values in each field of our data."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT count(user_id), count(user_first_touch_timestamp), count(email), count(updated), count(*)\n",
+					"FROM users_dirty"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"1770892b-4fc9-40a8-a03a-c72353507b01\"/>\n",
+					"\n",
+					" \n",
+					"Note that **`count(col)`** skips **`NULL`** values when counting specific columns or expressions.\n",
+					"\n",
+					"However, **`count(*)`** is a special case that counts the total number of rows (including rows that are only **`NULL`** values).\n",
+					"\n",
+					"To count null values, use the **`count_if`** function or **`WHERE`** clause to provide a condition that filters for records where the value **`IS NULL`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT\n",
+					"  count_if(user_id IS NULL) AS missing_user_ids, \n",
+					"  count_if(user_first_touch_timestamp IS NULL) AS missing_timestamps, \n",
+					"  count_if(email IS NULL) AS missing_emails,\n",
+					"  count_if(updated IS NULL) AS missing_updates\n",
+					"FROM users_dirty"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"7e48564f-85a8-4c9c-8b0a-2f1c1606109b\"/>\n",
+					"\n",
+					"\n",
+					"Clearly there are at least a handful of null values in all of our fields. Let's try to discover what is causing this."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"f6662ed5-cb5e-44a9-ad9e-d036cbc9df26\"/>\n",
+					"\n",
+					"\n",
+					"## Distinct Records\n",
+					"\n",
+					"Start by looking for distinct rows."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT count(DISTINCT(*))\n",
+					"FROM users_dirty"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT count(DISTINCT(user_id))\n",
+					"FROM users_dirty"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"df59b9d2-9931-472c-9149-1d1bd33a2995\"/>\n",
+					"\n",
+					"\n",
+					"Because **`user_id`** is generated alongside the **`user_first_touch_timestamp`**, these fields should always be in parity for counts."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT count(DISTINCT(user_first_touch_timestamp))\n",
+					"FROM users_dirty"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4814a464-6333-445f-b178-1bf65c62a7d5\"/>\n",
+					"\n",
+					"\n",
+					"Here we note that while there are some duplicate records relative to our total row count, we have a much higher number of distinct values.\n",
+					"\n",
+					"Let's go ahead and combine our distinct counts with columnar counts to see these values side-by-side."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT \n",
+					"  count(user_id) AS total_ids,\n",
+					"  count(DISTINCT user_id) AS unique_ids,\n",
+					"  count(email) AS total_emails,\n",
+					"  count(DISTINCT email) AS unique_emails,\n",
+					"  count(updated) AS total_updates,\n",
+					"  count(DISTINCT(updated)) AS unique_updates,\n",
+					"  count(*) AS total_rows, \n",
+					"  count(DISTINCT(*)) AS unique_non_null_rows\n",
+					"FROM users_dirty"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e83d57db-b194-444a-bcd7-7ff748da4983\"/>\n",
+					"\n",
+					"\n",
+					"Based on the above summary, we know:\n",
+					"* All of our emails are unique\n",
+					"* Our emails contain the largest number of null values\n",
+					"* The **`updated`** column contains only 1 distinct value, but most are non-null"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"240c6103-ced1-4b14-a772-4172e01f39bd\"/>\n",
+					"\n",
+					" \n",
+					"## Deduplicate Rows\n",
+					"Based on the above behavior, what do you expect will happen if we use **`DISTINCT *`** to try to remove duplicate records?"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REPLACE TEMP VIEW users_deduped AS\n",
+					"  SELECT DISTINCT(*) FROM users_dirty;\n",
+					"\n",
+					"SELECT * FROM users_deduped"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"363ae50a-0345-4b86-9dee-8a0c277872f9\"/>\n",
+					"\n",
+					"\n",
+					"Note in the preview above that there appears to be null values, even though our **`COUNT(DISTINCT(*))`** ignored these nulls.\n",
+					"\n",
+					"How many rows do you expect passed through this **`DISTINCT`** command?"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT COUNT(*) FROM users_deduped"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"61822099-55ff-4c28-8f34-51bf22e46e73\"/>\n",
+					"\n",
+					"\n",
+					"Note that we now have a completely new number.\n",
+					"\n",
+					"Spark skips null values while counting values in a column or counting distinct values for a field, but does not omit rows with nulls from a **`DISTINCT`** query.\n",
+					"\n",
+					"Indeed, the reason we're seeing a new number that is 1 higher than previous counts is because we have 3 rows that are all nulls (here included as a single distinct row)."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM users_dirty\n",
+					"WHERE\n",
+					"  user_id IS NULL AND\n",
+					"  user_first_touch_timestamp IS NULL AND\n",
+					"  email IS NULL AND\n",
+					"  updated IS NULL"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"ef1c4bde-aa99-4cde-bd49-f976a770e071\"/>\n",
+					"\n",
+					"  \n",
+					"## Deduplicate Based on Specific Columns\n",
+					"\n",
+					"Recall that **`user_id`** and **`user_first_touch_timestamp`** should form unique tuples, as they are both generated when a given user is first encountered.\n",
+					"\n",
+					"We can see that we have some null values in each of these fields; exclude nulls counting the distinct number of pairs for these fields will get us the correct count for distinct values in our table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT COUNT(DISTINCT(user_id, user_first_touch_timestamp))\n",
+					"FROM users_dirty\n",
+					"WHERE user_id IS NOT NULL"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"08631519-40fe-45f5-bdf7-3267ec3229c3\"/>\n",
+					"\n",
+					"\n",
+					"Here, we'll use these distinct pairs to remove unwanted rows from our data.\n",
+					"\n",
+					"The code below uses **`GROUP BY`** to remove duplicate records based on **`user_id`** and **`user_first_touch_timestamp`**.\n",
+					"\n",
+					"The **`max()`** aggregate function is used on the **`email`** column as a hack to capture non-null emails when multiple records are present; in this batch, all **`updated`** values were equivalent, but we need to use an aggregate function to keep this value in the result of our group by."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REPLACE TEMP VIEW deduped_users AS\n",
+					"SELECT user_id, user_first_touch_timestamp, max(email) AS email, max(updated) AS updated\n",
+					"FROM users_dirty\n",
+					"WHERE user_id IS NOT NULL\n",
+					"GROUP BY user_id, user_first_touch_timestamp;\n",
+					"\n",
+					"SELECT count(*) FROM deduped_users"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"09a6b88a-e02c-4835-ab62-0e82a1162c22\"/>\n",
+					"\n",
+					" \n",
+					"## Validate Datasets\n",
+					"We've visually confirmed that our counts are as expected, based our manual review.\n",
+					" \n",
+					"Below, we programmatically do some validation using simple filters and **`WHERE`** clauses.\n",
+					"\n",
+					"Validate that the **`user_id`** for each row is unique."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT max(row_count) <= 1 no_duplicate_ids FROM (\n",
+					"  SELECT user_id, count(*) AS row_count\n",
+					"  FROM deduped_users\n",
+					"  GROUP BY user_id)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"39a69a24-b1e1-42cc-83f1-115b69a2b891\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"Confirm that each email is associated with at most one **`user_id`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT max(user_id_count) <= 1 at_most_one_id FROM (\n",
+					"  SELECT email, count(user_id) AS user_id_count\n",
+					"  FROM deduped_users\n",
+					"  WHERE email IS NOT NULL\n",
+					"  GROUP BY email)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"17288207-e22e-43cc-8785-4d993cf71a1c\"/>\n",
+					"\n",
+					" \n",
+					"## Date Format and Regex\n",
+					"Now that we've removed null fields and eliminated duplicates, we may wish to extract further value out of the data.\n",
+					"\n",
+					"The code below:\n",
+					"- Correctly scales and casts the **`user_first_touch_timestamp`** to a valid timestamp\n",
+					"- Extracts the calendar data and clock time for this timestamp in human readable format\n",
+					"- Uses **`regexp_extract`** to extract the domains from the email column using regex"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT *,\n",
+					"  date_format(first_touch, \"MMM d, yyyy\") AS first_touch_date,\n",
+					"  date_format(first_touch, \"HH:mm:ss\") AS first_touch_time,\n",
+					"  regexp_extract(email, \"(?<=@).+\", 0) AS email_domain\n",
+					"FROM (\n",
+					"  SELECT *,\n",
+					"    CAST(user_first_touch_timestamp / 1e6 AS timestamp) AS first_touch \n",
+					"  FROM deduped_users\n",
+					")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"8678a7d8-2d31-4022-84b6-785a6ae260e9\"/>\n",
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

@@ -1,0 +1,552 @@
+{
+	"name": "DE 3-1 - Databases and Tables on Databricks",
+	"properties": {
+		"folder": {
+			"name": "03 - Relational Entities on Databricks"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "9326e85a-00cd-4d8d-9870-f87c003eeccf"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"731b610a-2018-40a2-8eae-f6f01ae7a788\"/>\n",
+					"\n",
+					"\n",
+					"# Schemas and Tables on Databricks\n",
+					"In this demonstration, you will create and explore schemas and tables.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"* Use Spark SQL DDL to define schemas and tables\n",
+					"* Describe how the **`LOCATION`** keyword impacts the default storage directory\n",
+					"\n",
+					"\n",
+					"\n",
+					"**Resources**\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html\" target=\"_blank\">Schemas and Tables - Databricks Docs</a>\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#managed-and-unmanaged-tables\" target=\"_blank\">Managed and Unmanaged Tables</a>\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-table-using-the-ui\" target=\"_blank\">Creating a Table with the UI</a>\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-local-table\" target=\"_blank\">Create a Local Table</a>\n",
+					"* <a href=\"https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#saving-to-persistent-tables\" target=\"_blank\">Saving to Persistent Tables</a>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"10b2fb72-8534-4903-98a1-26716350dd20\"/>\n",
+					"\n",
+					"\n",
+					"## Lesson Setup\n",
+					"The following script clears out previous runs of this demo and configures some Hive variables that will be used in our SQL queries."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-03.1"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"1cbf441b-a62f-4202-af2a-677d37a598b2\"/>\n",
+					"\n",
+					"\n",
+					"## Using Hive Variables\n",
+					"\n",
+					"While not a pattern that is generally recommended in Spark SQL, this notebook will use some Hive variables to substitute in string values derived from the account email of the current user.\n",
+					"\n",
+					"The following cell demonstrates this pattern."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT \"${da.db_name}\" AS db_name,\n",
+					"       \"${da.paths.working_dir}\" AS working_dir"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"014c9f3d-ffd0-48b8-989e-b80b2568d642\"/>\n",
+					"\n",
+					"\n",
+					"Because you may be working in a shared workspace, this course uses variables derived from your username so the schemas don't conflict with other users. Again, consider this use of Hive variables a hack for our lesson environment rather than a good practice for development."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"ff022f79-7f38-47ea-809e-537cf00526d0\"/>\n",
+					"\n",
+					" \n",
+					"## Schemas\n",
+					"Let's start by creating two schemas:\n",
+					"- One with no **`LOCATION`** specified\n",
+					"- One with **`LOCATION`** specified"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE SCHEMA IF NOT EXISTS ${da.db_name}_default_location;\n",
+					"CREATE SCHEMA IF NOT EXISTS ${da.db_name}_custom_location LOCATION '${da.paths.working_dir}/_custom_location.db';"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4eff4961-9de3-4d5d-836e-cc48862ef4e6\"/>\n",
+					"\n",
+					" \n",
+					"Note that the location of the first schema is in the default location under **`dbfs:/user/hive/warehouse/`** and that the schema directory is the name of the schema with the **`.db`** extension"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE SCHEMA EXTENDED ${da.db_name}_default_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"58292139-abd2-453b-b327-9ec2ab76dd0a\"/>\n",
+					"\n",
+					"\n",
+					"Note that the location of the second schema is in the directory specified after the **`LOCATION`** keyword."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE SCHEMA EXTENDED ${da.db_name}_custom_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"d794ab19-e4e8-4f5c-b784-385ac7c27bc2\"/>\n",
+					"\n",
+					" \n",
+					"We will create a table in the schema with default location and insert data. \n",
+					"\n",
+					"Note that the schema must be provided because there is no data from which to infer the schema."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"USE ${da.db_name}_default_location;\n",
+					"\n",
+					"CREATE OR REPLACE TABLE managed_table_in_db_with_default_location (width INT, length INT, height INT);\n",
+					"INSERT INTO managed_table_in_db_with_default_location \n",
+					"VALUES (3, 2, 1);\n",
+					"SELECT * FROM managed_table_in_db_with_default_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"17403d69-25b1-44d5-b37f-bab7c091a01b\"/>\n",
+					"\n",
+					" \n",
+					"We can look at the extended table description to find the location (you'll need to scroll down in the results)."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE DETAIL managed_table_in_db_with_default_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"71f3a626-a3d4-48a6-8489-6c9cffd021fc\"/>\n",
+					"\n",
+					"\n",
+					"By default, managed tables in a schema without the location specified will be created in the **`dbfs:/user/hive/warehouse/<schema_name>.db/`** directory.\n",
+					"\n",
+					"We can see that, as expected, the data and metadata for our Delta Table are stored in that location."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"hive_root =  f\"dbfs:/user/hive/warehouse\"\n",
+					"db_name =    f\"{DA.db_name}_default_location.db\"\n",
+					"table_name = f\"managed_table_in_db_with_default_location\"\n",
+					"\n",
+					"tbl_location = f\"{hive_root}/{db_name}/{table_name}\"\n",
+					"print(tbl_location)\n",
+					"\n",
+					"files = dbutils.fs.ls(tbl_location)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"ff92a2d3-9bf0-45d0-b78a-c25638ab9479\"/>\n",
+					"\n",
+					" \n",
+					"Drop the table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DROP TABLE managed_table_in_db_with_default_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e9c2d161-c157-4d67-8b8d-dbd3d89b6460\"/>\n",
+					"\n",
+					" \n",
+					"Note the table's directory and its log and data files are deleted. Only the schema directory remains."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"\n",
+					"db_location = f\"{hive_root}/{db_name}\"\n",
+					"print(db_location)\n",
+					"dbutils.fs.ls(db_location)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"bd185ea7-cd88-4453-a77a-1babe4633451\"/>\n",
+					"\n",
+					" \n",
+					"We now create a table in the schema with custom location and insert data. \n",
+					"\n",
+					"Note that the schema must be provided because there is no data from which to infer the schema."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"USE ${da.db_name}_custom_location;\n",
+					"\n",
+					"CREATE OR REPLACE TABLE managed_table_in_db_with_custom_location (width INT, length INT, height INT);\n",
+					"INSERT INTO managed_table_in_db_with_custom_location VALUES (3, 2, 1);\n",
+					"SELECT * FROM managed_table_in_db_with_custom_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"68e86e08-9400-428d-9c56-d47439af7dff\"/>\n",
+					"\n",
+					" \n",
+					"Again, we'll look at the description to find the table location."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE DETAIL managed_table_in_db_with_custom_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"878787b3-1178-44d1-a775-0bcd6c483184\"/>\n",
+					"\n",
+					" \n",
+					"As expected, this managed table is created in the path specified with the **`LOCATION`** keyword during schema creation. As such, the data and metadata for the table are persisted in a directory here."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"\n",
+					"table_name = f\"managed_table_in_db_with_custom_location\"\n",
+					"tbl_location =   f\"{DA.paths.working_dir}/_custom_location.db/{table_name}\"\n",
+					"print(tbl_location)\n",
+					"\n",
+					"files = dbutils.fs.ls(tbl_location)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"699d9cda-0276-4d93-bf8c-5e1d370ce113\"/>\n",
+					"\n",
+					" \n",
+					"Let's drop the table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DROP TABLE managed_table_in_db_with_custom_location;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"c87c1801-0101-4378-9f52-9a8d052a38e1\"/>\n",
+					"\n",
+					" \n",
+					"Note the table's folder and the log file and data file are deleted.  \n",
+					"  \n",
+					"Only the schema location remains"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"\n",
+					"db_location =   f\"{DA.paths.working_dir}/_custom_location.db\"\n",
+					"print(db_location)\n",
+					"\n",
+					"dbutils.fs.ls(db_location)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"67fd15cf-0ca9-4e76-8806-f24c60d324b1\"/>\n",
+					"\n",
+					" \n",
+					"## Tables\n",
+					"We will create an external (unmanaged) table from sample data. \n",
+					"\n",
+					"The data we are going to use are in CSV format. We want to create a Delta table with a **`LOCATION`** provided in the directory of our choice."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"USE ${da.db_name}_default_location;\n",
+					"\n",
+					"CREATE OR REPLACE TEMPORARY VIEW temp_delays USING CSV OPTIONS (\n",
+					"  path = '${DA.paths.datasets}/flights/departuredelays.csv',\n",
+					"  header = \"true\",\n",
+					"  mode = \"FAILFAST\" -- abort file parsing with a RuntimeException if any malformed lines are encountered\n",
+					");\n",
+					"CREATE OR REPLACE TABLE external_table LOCATION '${da.paths.working_dir}/external_table' AS\n",
+					"  SELECT * FROM temp_delays;\n",
+					"\n",
+					"SELECT * FROM external_table;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"367720a7-b738-4782-8f42-571b522c95c2\"/>\n",
+					"\n",
+					" \n",
+					"Let's note the location of the table's data in this lesson's working directory."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE TABLE EXTENDED external_table;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3267ab86-f8fe-40dc-aa52-44aecf8d8fc1\"/>\n",
+					"\n",
+					" \n",
+					"Now, we drop the table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DROP TABLE external_table;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"b9b3c493-3a09-4fdb-9615-1e8c56824b12\"/>\n",
+					"\n",
+					" \n",
+					"The table definition no longer exists in the metastore, but the underlying data remain intact."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"tbl_path = f\"{DA.paths.working_dir}/external_table\"\n",
+					"files = dbutils.fs.ls(tbl_path)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"c456ac65-ab0b-435a-ae00-acbde5048a96\"/>\n",
+					"\n",
+					" \n",
+					"## Clean up\n",
+					"Drop both schemas."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DROP SCHEMA ${da.db_name}_default_location CASCADE;\n",
+					"DROP SCHEMA ${da.db_name}_custom_location CASCADE;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"6fa204d5-12ff-4ede-9fe1-871a346052c4\"/>\n",
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

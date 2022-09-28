@@ -1,0 +1,859 @@
+{
+	"name": "DE 3-3L - Databases  Tables   Views Lab",
+	"properties": {
+		"folder": {
+			"name": "03 - Relational Entities on Databricks"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "6053456f-e497-48d5-bd79-9ac6de7e8994"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"047624c1-1764-4d00-8f75-2640a0b9ad8e\"/>\n",
+					"\n",
+					"\n",
+					"# Databases, Tables, and Views Lab\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"- Create and explore interactions between various relational entities, including:\n",
+					"  - Databases\n",
+					"  - Tables (managed and external)\n",
+					"  - Views (views, temp views, and global temp views)\n",
+					"\n",
+					"**Resources**\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html\" target=\"_blank\">Databases and Tables - Databricks Docs</a>\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#managed-and-unmanaged-tables\" target=\"_blank\">Managed and Unmanaged Tables</a>\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-table-using-the-ui\" target=\"_blank\">Creating a Table with the UI</a>\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-local-table\" target=\"_blank\">Create a Local Table</a>\n",
+					"* <a href=\"https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#saving-to-persistent-tables\" target=\"_blank\">Saving to Persistent Tables</a>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"702fc20d-b0bf-4138-9045-49571c496cc0\"/>\n",
+					"\n",
+					"\n",
+					"### Getting Started\n",
+					"\n",
+					"Run the following cell to configure variables and datasets for this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-03.3L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"306e4a60-45cf-40af-850f-4339700000b8\"/>\n",
+					"\n",
+					"\n",
+					"## Overview of the Data\n",
+					"\n",
+					"The data include multiple entries from a selection of weather stations, including average temperatures recorded in either Fahrenheit or Celsius. The schema for the table:\n",
+					"\n",
+					"|ColumnName  | DataType| Description|\n",
+					"|------------|---------|------------|\n",
+					"|NAME        |string   | Station name |\n",
+					"|STATION     |string   | Unique ID |\n",
+					"|LATITUDE    |float    | Latitude |\n",
+					"|LONGITUDE   |float    | Longitude |\n",
+					"|ELEVATION   |float    | Elevation |\n",
+					"|DATE        |date     | YYYY-MM-DD |\n",
+					"|UNIT        |string   | Temperature units |\n",
+					"|TAVG        |float    | Average temperature |\n",
+					"\n",
+					"This data is stored in the Parquet format; preview the data with the query below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * \n",
+					"FROM parquet.`${DA.paths.datasets}/weather/StationData-parquet`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"9b640cc4-561c-4f2e-8db4-806496e0300f\"/>\n",
+					"\n",
+					"\n",
+					"## Create a Database\n",
+					"\n",
+					"Create a database in the default location using the **`da.db_name`** variable defined in setup script."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL-IN> ${da.db_name}"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"eb27d1be-83d9-44d6-a3c5-a330d58f4d1b\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.sql(f\"SHOW DATABASES\").filter(f\"databaseName == '{DA.db_name}'\").count() == 1, \"Database not present\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4007b86a-f1c2-4431-9605-278256a18502\"/>\n",
+					"\n",
+					"\n",
+					"## Change to Your New Database\n",
+					"\n",
+					"**`USE`** your newly created database."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL-IN> ${da.db_name}"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"a1799160-4921-48a9-84fd-d6b30eda2294\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.sql(f\"SHOW CURRENT DATABASE\").first()[\"namespace\"] == DA.db_name, \"Not using the correct database\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"29616225-cd27-4d1f-abf3-70257760ba80\"/>\n",
+					"\n",
+					"\n",
+					"## Create a Managed Table\n",
+					"Use a CTAS statement to create a managed table named **`weather_managed`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL-IN>\n",
+					"SELECT * \n",
+					"FROM parquet.`${DA.paths.datasets}/weather/StationData-parquet`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"77e8b20b-0627-49a9-9d59-cf7e02225a64\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"weather_managed\"), \"Table named `weather_managed` does not exist\"\n",
+					"assert spark.table(\"weather_managed\").count() == 2559, \"Incorrect row count\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"155e14f1-65cf-40be-9d01-68b3775c2381\"/>\n",
+					"\n",
+					"\n",
+					"## Create an External Table\n",
+					"\n",
+					"Recall that an external table differs from a managed table through specification of a location. Create an external table called **`weather_external`** below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL-IN>\n",
+					"LOCATION \"${da.paths.working_dir}/lab/external\"\n",
+					"AS SELECT * \n",
+					"FROM parquet.`${DA.paths.datasets}/weather/StationData-parquet`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"b7853935-465f-406f-8742-46a2a00ad3b5\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"weather_external\"), \"Table named `weather_external` does not exist\"\n",
+					"assert spark.table(\"weather_external\").count() == 2559, \"Incorrect row count\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3992398d-0f77-4fc2-8b9e-2f4064f10480\"/>\n",
+					"\n",
+					"\n",
+					"## Examine Table Details\n",
+					"Use the SQL command **`DESCRIBE EXTENDED table_name`** to examine the two weather tables."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE EXTENDED weather_managed"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE EXTENDED weather_external"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"6996903c-737b-4b88-8d51-3e0a01b347be\"/>\n",
+					"\n",
+					"\n",
+					"Run the following helper code to extract and compare the table locations."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"def getTableLocation(tableName):\n",
+					"    return spark.sql(f\"DESCRIBE DETAIL {tableName}\").select(\"location\").first()[0]"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"managedTablePath = getTableLocation(\"weather_managed\")\n",
+					"externalTablePath = getTableLocation(\"weather_external\")\n",
+					"\n",
+					"print(f\"\"\"The weather_managed table is saved at: \n",
+					"\n",
+					"    {managedTablePath}\n",
+					"\n",
+					"The weather_external table is saved at:\n",
+					"\n",
+					"    {externalTablePath}\"\"\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"63b73ebc-ccd0-460b-87ae-e09addada714\"/>\n",
+					"\n",
+					"\n",
+					"List the contents of these directories to confirm that data exists in both locations."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"files = dbutils.fs.ls(managedTablePath)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"files = dbutils.fs.ls(externalTablePath)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"09f43b5b-e050-4e58-9769-e2e01829ddbc\"/>\n",
+					"\n",
+					"\n",
+					"### Check Directory Contents after Dropping Database and All Tables\n",
+					"The **`CASCADE`** keyword will accomplish this."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL_IN> ${da.db_name}"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e7babacd-bed8-47d7-ad52-7cc644e4f06a\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.sql(f\"SHOW DATABASES\").filter(f\"databaseName == '{DA.db_name}'\").count() == 0, \"Database present\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"7d7053b8-e1b9-421a-9687-b205feadbf68\"/>\n",
+					"\n",
+					"\n",
+					"With the database dropped, the files will have been deleted as well.\n",
+					"\n",
+					"Uncomment and run the following cell, which will throw a **`FileNotFoundException`** as your confirmation."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"# files = dbutils.fs.ls(managedTablePath)\n",
+					"# display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"files = dbutils.fs.ls(externalTablePath)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"files = dbutils.fs.ls(DA.paths.working_dir)\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"5b66fbc5-c641-40e1-90a9-d69271bc0e8b\"/>\n",
+					"\n",
+					"\n",
+					"**This highlights the main differences between managed and external tables.** By default, the files associated with managed tables will be stored to this location on the root DBFS storage linked to the workspace, and will be deleted when a table is dropped.\n",
+					"\n",
+					"Files for external tables will be persisted in the location provided at table creation, preventing users from inadvertently deleting underlying files. **External tables can easily be migrated to other databases or renamed, but these operations with managed tables will require rewriting ALL underlying files.**"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"1928eede-5218-47df-affe-b6a7654524ab\"/>\n",
+					"\n",
+					"\n",
+					"## Create a Database with a Specified Path\n",
+					"\n",
+					"Assuming you dropped your database in the last step, you can use the same **`database`** name."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE DATABASE ${da.db_name} LOCATION '${da.paths.working_dir}/${da.db_name}';\n",
+					"USE ${da.db_name};"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"5b5dbf00-f9ee-4bc5-964e-22376e09be79\"/>\n",
+					"\n",
+					"\n",
+					"Recreate your **`weather_managed`** table in this new database and print out the location of this table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL_IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"getTableLocation(\"weather_managed\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"91684fed-3851-4979-be1d-ba8af8cfe314\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"weather_managed\"), \"Table named `weather_managed` does not exist\"\n",
+					"assert spark.table(\"weather_managed\").count() == 2559, \"Incorrect row count\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"7ddc86a3-fbc4-4373-aacb-2f510c1eb708\"/>\n",
+					"\n",
+					"\n",
+					"While here we're using the **`working_dir`** directory created on the DBFS root, _any_ object store can be used as the database directory. **Defining database directories for groups of users can greatly reduce the chances of accidental data exfiltration**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"07f87efe-13e4-48c3-84a7-576828359464\"/>\n",
+					"\n",
+					"\n",
+					"## Views and their Scoping\n",
+					"\n",
+					"In this section, use the provided **`AS`** clause to register:\n",
+					"- a view named **`celsius`**\n",
+					"- a temporary view named **`celsius_temp`**\n",
+					"- a global temp view named **`celsius_global`**\n",
+					"\n",
+					"Start by creating the first view in the code cell below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL-IN>\n",
+					"AS (SELECT *\n",
+					"  FROM weather_managed\n",
+					"  WHERE UNIT = \"C\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"14937501-7f2a-469d-b47f-db0c656d8da3\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"celsius\"), \"Table named `celsius` does not exist\"\n",
+					"assert spark.sql(f\"SHOW TABLES\").filter(f\"tableName == 'celsius'\").first()[\"isTemporary\"] == False, \"Table is temporary\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"1465024c-c6c9-4043-9bfa-54a5e9ad8b04\"/>\n",
+					"\n",
+					"\n",
+					"Now create a temporary view."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL-IN>\n",
+					"AS (SELECT *\n",
+					"  FROM weather_managed\n",
+					"  WHERE UNIT = \"C\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"5593edb6-0a98-4b8f-af24-4c9caa65dac2\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"celsius_temp\"), \"Table named `celsius_temp` does not exist\"\n",
+					"assert spark.sql(f\"SHOW TABLES\").filter(f\"tableName == 'celsius_temp'\").first()[\"isTemporary\"] == True, \"Table is not temporary\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"a89de892-1615-4f60-a8d2-0da7aebfda14\"/>\n",
+					"\n",
+					"\n",
+					"Now register a global temp view."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"\n",
+					"<FILL-IN>\n",
+					"AS (SELECT *\n",
+					"  FROM weather_managed\n",
+					"  WHERE UNIT = \"C\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4cb8cfe6-f058-48df-8807-1338907261f7\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"global_temp.celsius_global\"), \"Global temporary view named `celsius_global` does not exist\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"dde3cbe9-3ed4-497a-b778-ca6268b57973\"/>\n",
+					"\n",
+					"\n",
+					"Views will be displayed alongside tables when listing from the catalog."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SHOW TABLES"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"6cf76f7b-8577-4cfe-b3a1-dc08a9ac24de\"/>\n",
+					"\n",
+					"\n",
+					"Note the following:\n",
+					"- The view is associated with the current database. This view will be available to any user that can access this database and will persist between sessions.\n",
+					"- The temp view is not associated with any database. The temp view is ephemeral and is only accessible in the current SparkSession.\n",
+					"- The global temp view does not appear in our catalog. **Global temp views will always register to the **`global_temp`** database**. The **`global_temp`** database is ephemeral but tied to the lifetime of the cluster; however, it is only accessible by notebooks attached to the same cluster on which it was created."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM global_temp.celsius_global"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"eda8a0b1-94f8-4c61-bf07-c86a016746ba\"/>\n",
+					"\n",
+					"\n",
+					"While no job was triggered when defining these views, a job is triggered _each time_ a query is executed against the view."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"1723a769-272c-47ca-93e8-7b3a9b0674dd\"/>\n",
+					"\n",
+					"\n",
+					"## Clean Up\n",
+					"Drop the database and all tables to clean up your workspace."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DROP DATABASE ${da.db_name} CASCADE"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"03511454-16d6-40e6-a62a-cd8bdb7de57d\"/>\n",
+					"\n",
+					"\n",
+					"## Synopsis\n",
+					"\n",
+					"In this lab we:\n",
+					"- Created and deleted databases\n",
+					"- Explored behavior of managed and external tables\n",
+					"- Learned about the scoping of views"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"de458d67-efe9-4d5e-87d7-240093072332\"/>\n",
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
