@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"cffedc4f-a6a4-4412-8193-46a7a8a6a213\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Lab: Migrating a SQL Pipeline to Delta Live Tables\n",
@@ -60,9 +59,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"01e06565-56e7-4581-8833-14bc0db8c281\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Declare Bronze Table\n",
@@ -86,9 +85,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"57422f74-b830-4abb-b4a9-969d0ab90be6\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"### PII File\n",
@@ -117,9 +116,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3573b6a4-233a-4f23-a002-aab072eb5096\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Declare Silver Tables\n",
@@ -157,9 +156,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3b9309a8-9e1d-46a2-a0eb-e95fe698d23b\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Gold Table\n",
@@ -186,10 +185,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

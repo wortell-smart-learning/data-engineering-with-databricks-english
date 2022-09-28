@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7d67b345-b680-4f39-a384-31655b390a78\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Reshaping Data Lab\n",
@@ -63,9 +62,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"db657989-4a07-41c5-acc8-18d6ceabbc85\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Run Setup\n",
@@ -82,9 +81,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3b76127f-ef49-4024-a970-67ac52a1fa63\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Reshape Datasets to Create Click Paths\n",
@@ -95,9 +94,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"a4124fa1-e5cc-467f-8a7c-fb5978fefad1\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -148,9 +147,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"8646882a-e334-4293-ba4d-550e86a2ed79\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -170,9 +169,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"75fd31d6-3674-48c4-bc6b-c321a47ade9b\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -190,9 +189,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"bb41e6ea-aeae-4f4f-97c5-cad043d151cd\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -236,9 +235,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"db501e67-0444-4988-a850-e7f374b38f3e\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -256,9 +255,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ed22d836-9233-469c-8aa1-4bea42f84517\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Flag Types of Products Purchased\n",
@@ -289,9 +288,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3d56b9b4-957d-4ea2-8c49-f4e92a4918c9\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -310,9 +309,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e78c6d7f-bd25-4af8-8d01-a6943f24b8d6\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
@@ -328,10 +327,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

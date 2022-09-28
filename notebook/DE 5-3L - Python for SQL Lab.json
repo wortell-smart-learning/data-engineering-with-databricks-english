@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"358d2c22-9d78-4888-a7ec-54b7d5f3db64\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Just Enough Python for Databricks SQL Lab\n",
@@ -67,9 +66,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"97cba873-1459-478f-831b-b52fc54265eb\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Reviewing Python Basics\n",
@@ -108,9 +107,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"bc8fda28-92ad-4cd5-aa24-34022269698a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"1. **Cmd 5** assigns a string to a variable. When a variable assignment is successful, no output is displayed to the notebook. A new variable is added to the current execution environment.\n",
@@ -120,9 +119,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ef0b350e-c470-4e89-9617-948e49dd1710\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Setting Up a Development Environment\n",
@@ -154,9 +153,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1273f7a3-823a-4b1f-914a-ce6eaaa867b3\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Below, we add a simple control flow statement to this logic to create and use this user-specific database. \n",
@@ -192,9 +191,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"cfa0adf3-cc23-4ba1-8daf-2c70af7fa079\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"While this logic as defined is geared toward isolating students in shared workspaces for instructional purposes, the same basic design could be leveraged for testing new logic in an isolated environment before pushing to production."
@@ -202,9 +201,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1c994e19-2b72-45c3-a174-8a7e21701688\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Handling Errors Gracefully\n",
@@ -240,9 +239,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5a449d08-9811-4b0d-9004-74b8bb04eef5\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Try to identify the following before executing the next cell:\n",
@@ -260,9 +259,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"8ddb2ea1-9e4e-4ac7-a369-ff984114653f\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Now answer the same three questions before running the same query below."
@@ -277,9 +276,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"6efbda51-9c51-440a-aaaf-7276ad175398\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"- On the first execution, the table **`demo_table`** did not yet exist. As such, the attempt to return the contents of the table created an error, which resulted in our **`except`** block of logic executing. This block:\n",
@@ -291,9 +290,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"a0f957ea-7604-46b9-9b06-d672b73efcec\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Adapting SQL to Python\n",
@@ -317,9 +316,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"c4abcb35-3733-4565-8f8c-0df4b23f1e71\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -336,9 +335,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"6a4e7e96-c53a-4b8e-abf5-412fe4170c27\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Let's use this simple example to practice creating a Python function that adds optional functionality.\n",
@@ -375,9 +374,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"060207a1-a34c-4817-abee-f6e0b9c3b48a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"The assert statements below can be used to check whether or not your function works as intended."
@@ -403,10 +402,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

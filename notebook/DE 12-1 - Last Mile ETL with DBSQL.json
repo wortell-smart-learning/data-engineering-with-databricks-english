@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"85ab95fa-7d86-4b8b-9c7e-9f9b82dd637a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Last Mile ETL with Databricks SQL\n",
@@ -79,9 +78,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"d6f21ada-50df-44ac-8551-72eca61d5af7\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Run Setup Script\n",
@@ -97,9 +96,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5c6209ed-ee86-40bb-bbf9-8d9a8663f21c\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Create a Demo Database\n",
@@ -122,9 +121,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"d6a42a10-ba37-431d-82e2-f41f1d196e12\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"**NOTE**: The queries above are only designed to be run once after resetting the demo completely to reconfigure the environment. \n",
@@ -134,9 +133,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"8ee7715b-c65f-47d4-9109-f57438bed8a8\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -146,9 +145,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"eba9ff4a-b242-4cd5-82a6-d004a5dacd8f\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Create a Query to Load Data\n",
@@ -167,9 +166,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"f417b0ba-5c46-4f3a-8392-fe4cf2157e81\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Executing the query should load some data and return a preview of the data in the table.\n",
@@ -179,9 +178,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"030532dc-d29d-4974-99a0-4485467d9135\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Set a Query Refresh Schedule\n",
@@ -198,9 +197,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e2e67230-afa7-4bbc-8506-bf226b5f6848\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Create a Query to Track Total Records\n",
@@ -219,9 +218,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"59774aed-7953-4c3e-82c0-eada95504895\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Create a Bar Graph Visualization\n",
@@ -236,9 +235,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"c2eb4e36-df48-4137-94e5-6ae708ccef96\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Create a New Dashboard\n",
@@ -253,9 +252,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"84ba9714-dcc2-4c06-803a-f566ad868c39\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Create a Query to Calculate the Recent Average Ping\n",
@@ -274,9 +273,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"2b7bc15b-cead-4e5f-b36a-a635597c5358\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Add a Line Plot Visualization to your Dashboard\n",
@@ -296,9 +295,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"99c42ddb-7993-4c6f-a3cf-842be65b02ed\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Create a Query to Report Summary Statistics\n",
@@ -317,9 +316,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"353d04dd-997d-44b0-84f8-8352dcabdc53\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Add the Summary Table to your Dashboard\n",
@@ -332,9 +331,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"87c5be59-847a-4e0d-b608-ad50f5f9415a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Review and Refresh your Dashboard\n",
@@ -350,9 +349,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"9ea31415-a5e2-445c-9e1d-46f0aab374a6\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Share your Dashboard\n",
@@ -369,9 +368,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"b5146776-0448-4f5d-a72c-e83b39ff4b98\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Set Up an Alert\n",
@@ -392,9 +391,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"08e96878-726f-44b7-8bfb-7effd43bbee3\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Review Alert Destination Options\n",
@@ -416,10 +415,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

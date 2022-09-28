@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"b9ee68dd-a00f-45a6-9c7a-9c59a41fef6a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# SQL for Delta Live Tables\n",
@@ -67,9 +66,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1cc1fe77-a235-40dd-beb5-bacc94425b96\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Declare Bronze Layer Tables\n",
@@ -79,9 +78,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"458afeb2-4472-4ed2-a4c7-6dea2338c3f2\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"### sales_orders_raw\n",
@@ -107,9 +106,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"57accbe1-e96d-44ca-8937-8849634d1da2\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"### customers\n",
@@ -130,9 +129,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"09bc5c4d-1408-47f8-8102-ddaf0a96a6c0\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -143,9 +142,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"eb20ea4d-1115-4536-adac-7bbd85491726\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"### sales_orders_cleaned\n",
@@ -193,9 +192,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ae062501-5a39-4183-976a-53662619d516\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Declare Gold Table\n",
@@ -222,9 +221,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"c3efd15d-6587-4cd4-9758-37643dcfd694\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Explore Results\n",
@@ -240,9 +239,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"77c262ce-1b24-4ca2-a931-e481927d1739\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Update Pipeline\n",
@@ -276,10 +275,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

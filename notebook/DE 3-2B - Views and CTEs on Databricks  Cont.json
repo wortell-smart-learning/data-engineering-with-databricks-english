@@ -33,9 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"dba9ce4f-16fd-4879-ae52-eec0809a7119\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Views and CTEs on Databricks, Cont'\n",
@@ -46,9 +46,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
 				"source": [
-					"%md-sandbox <i18n value=\"e47c5b24-e7be-4829-b4e2-090c1768e0ab\"/>\n",
+
 					"\n",
 					"\n",
 					"\n",
@@ -57,9 +57,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"bf4f1bbd-1e0b-4275-8b50-59b3203c7939\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -77,9 +77,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"bc121186-a49e-41e9-bd17-521c17b303ce\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -95,9 +95,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"961c1d5a-f611-4e44-a4d0-b5c04b5f4fb1\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -127,9 +127,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"908cef33-0f97-472a-9bb5-10c1f9a2b33a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -144,9 +144,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1cf155bd-1953-49e3-8c2b-f2db695f93af\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -168,9 +168,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"2aaa6c4a-8b04-4b56-97c2-9a653f5fb5eb\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -181,9 +181,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"30eadd27-c9ea-4c5c-8c9b-7cfa9476a054\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"## Common Table Expressions (CTEs)\n",
@@ -218,9 +218,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ae0fbf5e-e72d-4647-8074-01547c3a54ae\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"Next, is an example of a CTE in a CTE definition."
@@ -254,9 +254,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"8c21831e-55c8-4225-b905-91c6238fdad0\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"Now, here is an example of a CTE in a subquery."
@@ -285,9 +285,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"b722389c-c57b-47e0-9918-d8930990f5fe\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"We can also use a CTE in a subquery expression."
@@ -311,9 +311,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"21377157-d4e9-4783-abf9-f2fa95fa683c\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"Finally, here is a CTE in a **`CREATE VIEW`** statement."
@@ -334,9 +334,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"123c2fbd-3b51-4466-8e9d-59c78d479bd9\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Clean up \n",
@@ -352,9 +352,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"abe1b8ee-976f-4960-b56b-ce963a822eea\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
@@ -375,10 +375,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

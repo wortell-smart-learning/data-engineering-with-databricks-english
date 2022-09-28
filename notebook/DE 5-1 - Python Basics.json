@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"54f96b76-aa49-4769-b067-4f5232dc4b58\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Just Enough Python for Databricks SQL\n",
@@ -66,9 +65,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ae07e616-51d4-4ccb-ae28-6c22b7a203e6\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Strings\n",
@@ -84,9 +83,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"f6b947f5-3dbd-4def-ab31-fa7f3692145f\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"To preview how a string will render, we can call **`print()`**."
@@ -101,9 +100,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5d9d751f-e0c3-434a-9bf4-5b8741131a2b\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"By wrapping a string in triple quotes (**`\"\"\"`**), it's possible to use multiple lines."
@@ -124,9 +123,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"4f3b441e-39a7-42b8-982c-3d27e1a4f5d5\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"This makes it easy to turn SQL queries into Python strings."
@@ -144,9 +143,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"825c71d8-26ee-4c90-910c-64b0a3d6600a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"When we execute SQL from a Python cell, we will pass a string as an argument to **`spark.sql()`**."
@@ -161,9 +160,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"86cfbbf7-5e50-4d93-99bd-794b790be9d3\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"To render a query the way it would appear in a normal SQL notebook, we call **`display()`** on this function."
@@ -178,9 +177,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"6af577e2-3621-4871-b12b-25716defbaba\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"**NOTE**: Executing a cell with only a Python string in it will just print the string. Using **`print()`** with a string just renders it back to the notebook.\n",
@@ -190,9 +189,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"6182d5b6-59e8-401f-acb1-d4d57c5b6018\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Variables\n",
@@ -214,9 +213,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"a0d528ec-e75e-4978-ad2e-c8bd2f8d2454\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Executing a cell with this variable will return its value."
@@ -231,9 +230,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e579ffd9-9053-4c28-bd69-e0ccb66f2225\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"The output here is the same as if we typed **`\"This is a string\"`** into the cell and ran it.\n",
@@ -250,9 +249,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"cc95571a-ebbd-4d64-8d6a-8ef34db4161b\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"This variable can be used the same way a string would be.\n",
@@ -269,9 +268,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"8c371bcd-a3a2-466e-aef8-b76dbb61c3cd\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"We can join string variables with other string variables."
@@ -287,9 +286,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"0a43629e-d3a8-4b47-97ca-f1ac4087ca4e\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Functions\n",
@@ -310,9 +309,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7cc9b4bf-3bd9-4bca-aed9-f2edd1a8dbcf\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"When we pass a string as the argument, it will be printed."
@@ -327,9 +326,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"8be00c15-f836-440d-9c78-df661f63f5db\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"We can also pass a variable as an argument."
@@ -344,9 +343,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e32021af-f1ad-4372-a25e-0e0bcad7c058\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Oftentimes we want to return the results of our function for use elsewhere. For this we use the **`return`** keyword.\n",
@@ -364,9 +363,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"91f4a773-4f34-4775-b279-1b34cc0ed5d2\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Running this function returns the output."
@@ -381,9 +380,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"75eb96a6-81eb-4eee-b02f-f2f5b75a52f9\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Assigning it to a variable captures the output for reuse elsewhere."
@@ -398,9 +397,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"dee0b420-4c7d-4144-8d76-144be3600c08\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"This variable doesn't contain our function, just the results of our function (a string)."
@@ -415,9 +414,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e74d9e23-a516-405a-94bb-b6c92bfdfc37\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## F-strings\n",
@@ -435,9 +434,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"da4b6564-4016-4c2a-99a7-117d3a8a5876\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"The following cell inserts the string returned by a function."
@@ -452,9 +451,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1d51c2c3-518c-4c51-a48d-09af1113cbe9\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Combine this with triple quotes and you can format a paragraph or list, like below."
@@ -475,9 +474,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5c613732-30bc-4ca8-918d-fed64f39bb5c\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Or you could format a SQL query."
@@ -501,10 +500,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

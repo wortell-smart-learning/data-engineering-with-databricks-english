@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3a66b3fc-6b92-436c-8b22-95b91bddeac3\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"# Writing to Delta Tables\n",
@@ -64,9 +63,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3fa1b6f1-9faa-453f-b033-c5f2cf011703\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Run Setup\n",
@@ -83,9 +82,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3a8cba57-5d9e-4514-b589-d263a2f02f74\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"## Complete Overwrites\n",
@@ -113,9 +112,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"a4090f92-557e-4d23-a808-155356270d1b\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Reviewing the table history shows a previous version of this table was replaced."
@@ -130,9 +129,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"06628fba-431d-4cb7-bd52-449fdc203cb2\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"**`INSERT OVERWRITE`** provides a nearly identical outcome as above: data in the target table will be replaced by data from the query. \n",
@@ -154,9 +153,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"c668da22-a355-441f-aeab-a513997b8d71\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Note that different metrics are displayed than a CRAS statement; the table history also records the operation differently."
@@ -171,9 +170,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"4fa20011-e560-45d5-85c0-c82930974804\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"A primary difference here has to do with how Delta Lake enforces schema on write.\n",
@@ -193,9 +192,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"02c9c3f2-2996-42b5-9d56-60967a0031c0\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -216,9 +215,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3a0a94f8-43fa-4dc3-be0c-110b07f1db89\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -227,9 +226,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"cad7b32f-3e35-4962-a911-823d92f2f653\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -259,9 +258,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"edc2f42c-8cd2-47c6-a8e6-09b1541e1e00\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"The main benefits of **`MERGE`**:\n",
@@ -288,9 +287,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"90e330ce-5596-4fa8-a474-78442e48ae67\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Note that we explicitly specify the behavior of this function for both the **`MATCHED`** and **`NOT MATCHED`** conditions; the example demonstrated here is just an example of logic that can be applied, rather than indicative of all **`MERGE`** behavior."
@@ -298,9 +297,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"493c7f22-4011-4b08-ad79-4b2a4ef2a12f\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Insert-Only Merge for Deduplication\n",
@@ -327,9 +326,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1162da2b-3c56-42ff-b6b8-2532276b03cd\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"## Load Incrementally\n",
@@ -356,9 +355,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"567f82f1-956b-42c5-98d7-7914675b105e\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
@@ -379,10 +378,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

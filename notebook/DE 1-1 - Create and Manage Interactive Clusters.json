@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"014a6669-786f-416d-ac00-9c2e4e9eecfe\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"  \n",
 					"# Create and Manage Interactive Clusters\n",
 					"\n",
@@ -66,9 +65,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"cb2cc2e0-3923-4969-bc01-11698cd1761c\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"  \n",
 					"## Create Cluster\n",
 					"\n",
@@ -92,9 +91,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"21e3f0c5-0ced-4742-8f25-07775db546fd\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"### <img src=\"https://files.training.databricks.com/images/icon_warn_24.png\"> Single-Node Cluster Required for This Course\n",
 					"**IMPORTANT:** This course requires you to run notebooks on a single-node cluster. \n",
@@ -104,9 +103,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"d1a8cf77-f6e8-40df-8355-3a598441457a\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"## Manage Clusters\n",
 					"\n",
@@ -121,9 +120,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"b7ce6ce1-4d68-4a91-b325-3831c1653c67\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"## Restart, Terminate, and Delete\n",
 					"\n",
@@ -145,10 +144,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,9 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"bc50b1e9-781a-405d-bed4-c80dbd97e0d1\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"# Advanced SQL Transformations\n",
@@ -67,9 +66,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"4c84edde-f73e-4873-aa45-aca0cf4c7159\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Run Setup\n",
@@ -86,9 +85,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"836f7278-abe6-42e5-8e54-73410c439a55\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Interacting with JSON Data\n",
@@ -111,9 +110,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"c758863e-eb79-4b7b-b397-255b78699287\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Spark SQL has built-in functionality to directly interact with JSON data stored as strings. We can use the **`:`** syntax to traverse nested data structures."
@@ -129,9 +128,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"773a02a1-6208-4f7c-ad6a-e50850be0055\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Spark SQL also has the ability to parse JSON objects into struct types (a native Spark type with nested attributes).\n",
@@ -152,9 +151,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"99cdb6bd-f03b-487d-a581-98ecf5fb86a3\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Spark SQL also has a **`schema_of_json`** function to derive the JSON schema from an example. Here, we copy and paste an example JSON to the function and chain it into the **`from_json`** function to cast our **`value`** field to a struct type."
@@ -173,9 +172,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"72757378-3490-4160-af61-cc8e86986633\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"Once a JSON string is unpacked to a struct type, Spark supports **`*`** (star) unpacking to flatten fields into columns."
@@ -194,9 +193,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"71294bed-5a75-4577-8e34-d6cf319f7925\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Explore Data Structures\n",
@@ -215,9 +214,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"50bc40ad-f9fc-42f9-bb00-e1afecceff26\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"The **`ecommerce`** field is a struct that contains a double and 2 longs.\n",
@@ -236,9 +235,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"0c5d4757-46c8-4ddd-8ad0-b81bcfd6d178\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"## Working with Arrays\n",
 					"The **`items`** field in the **`events`** table is an array of structs.\n",
@@ -261,9 +260,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"0167fd9c-9374-4b86-90cf-53ae9feae297\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"## Explode Arrays\n",
@@ -284,9 +283,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"df218c13-c1e9-4644-8859-d1d66106f224\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"## Collect Arrays\n",
@@ -313,9 +312,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"211f8b57-6202-4fdb-a60c-50dab87f48ca\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"## Join Tables\n",
@@ -342,9 +341,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ee523edb-b563-41af-82e1-f9b28a076989\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Set Operators\n",
@@ -366,9 +365,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"99487e80-251a-4468-98e2-6f7d25b147ef\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"**`INTERSECT`** returns all rows found in both relations."
@@ -385,9 +384,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"c00adc33-1831-407b-b787-8d3bfaddadf9\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"The above query returns no results because our two datasets have no values in common.\n",
@@ -397,9 +396,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e43bb5f8-d2d6-440f-a8f5-15387bd5bff1\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"\n",
@@ -454,9 +453,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"d1ed83fa-4d2f-4138-b343-4d070c0d0e40\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"\n",
@@ -472,9 +471,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5fcad266-d5a0-4255-9c6b-be3634ea9e79\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Filter\n",
@@ -504,9 +503,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7ef7b728-dfad-4cdf-8f41-8c72a76d4310\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"You may write a filter that produces a lot of empty arrays in the created column. When that happens, it can be useful to use a **`WHERE`** clause to show only non-empty array values in the returned column. \n",
@@ -533,9 +532,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e30bf997-6eb6-4ee7-94b8-6827ecdcce7d\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Transform\n",
@@ -570,9 +569,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"6c15bff7-7667-4118-9b72-27068d6fa6be\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					"\n",
 					"## Summary\n",
@@ -583,9 +582,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"2f9ae39d-2908-4ee1-9609-594c3d043a38\"/>\n",
+				"cell_type": "markdown",
+"source": [
+ 
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
@@ -601,10 +600,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
