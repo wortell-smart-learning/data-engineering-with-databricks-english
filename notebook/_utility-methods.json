@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "b48e1e5d-f40b-4974-9411-7dd6362cb34b"
+				"spark.autotune.trackingId": "739bc5da-9536-473e-af1b-7be082fd33dd"
 			}
 		},
 		"metadata": {
@@ -46,7 +46,7 @@
 				"nodeCount": 3,
 				"cores": 4,
 				"memory": 28,
-				"automaticScaleJobs": false
+				"automaticScaleJobs": true
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -60,12 +60,12 @@
 					"git+https://github.com/databricks-academy/dbacademy-helper@e0e819d661e6bf972c6fb1872c1ae1a7d2a74b23 \\\n",
 					"--quiet --disable-pip-version-check"
 				],
-				"execution_count": 1
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
 				"source": [
-					"%run ./_remote_files"
+					"%run /Includes/_remote_files"
 				],
 				"execution_count": null
 			},
