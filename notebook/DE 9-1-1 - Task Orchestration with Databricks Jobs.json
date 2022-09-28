@@ -1,0 +1,302 @@
+{
+	"name": "DE 9-1-1 - Task Orchestration with Databricks Jobs",
+	"properties": {
+		"folder": {
+			"name": "09 - Task Orchestration with Jobs/DE 9.1 - Scheduling Tasks with the Jobs UI"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "cf3a79e6-0f9e-4c81-8019-dc8b44b564d8"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# Orchestrating Jobs with Databricks Workflows\n",
+					"\n",
+					"New updates to the Databricks Jobs UI have added the ability to schedule multiple tasks as part of a job, allowing Databricks Jobs to fully handle orchestration for most production workloads.\n",
+					"\n",
+					"Here, we'll start by reviewing the steps for scheduling a notebook task as a triggered standalone job, and then add a dependent task using a DLT pipeline. \n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"* Schedule a notebook task in a Databricks Workflow Job\n",
+					"* Describe job scheduling options and differences between cluster types\n",
+					"* Review Job Runs to track progress and see results\n",
+					"* Schedule a DLT pipeline task in a Databricks Workflow Job\n",
+					"* Configure linear dependencies between tasks using the Databricks Workflows UI"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../../Includes/Classroom-Setup-09.1.1"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Create and configure a pipeline\n",
+					"The pipeline we create here is nearly identical to the one in the previous unit.\n",
+					"\n",
+					"We will use it as part of a scheduled job in this lesson.\n",
+					"\n",
+					"Execute the following cell to print out the values that will be used during the following configuration steps."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.print_pipeline_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Create and configure a Pipeline\n",
+					"\n",
+					"Steps:\n",
+					"1. Click the **Workflows** button on the sidebar.\n",
+					"1. Select the **Delta Live Tables** tab.\n",
+					"1. Click **Create Pipeline**.\n",
+					"1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **Pipeline Name** provided in the cell above.\n",
+					"1. For **Notebook Libraries**, use the navigator to locate and select the companion notebook provided in the cell above.\n",
+					"1. Under **Configuration**, add the two configuration parameters:\n",
+					"   * Click **Add configuration**, set the \"key\" to **spark.master** and the \"value\" to **local[\\*]**.\n",
+					"   * Click **Add configuration**, set the \"key\" to **datasets_path** and the \"value\" to the value provided in the cell above.\n",
+					"1. In the **Target** field, enter the database name provided in the cell above.<br/>\n",
+					"This should follow the pattern **`da_<name>_<hash>_dewd_jobs_demo_91`**\n",
+					"1. In the **Storage location** field, copy the directory as printed above.\n",
+					"1. For **Pipeline Mode**, select **Triggered**\n",
+					"1. Uncheck the **Enable autoscaling** box\n",
+					"1. Set the number of **`workers`** to **`0`** (zero).\n",
+					"1. Enable **Photon Acceleration**.\n",
+					"\n",
+					"Finally, click **Create**.\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> **Note**: we won't be executing this pipline directly as it will be executed by our job later in this lesson,<br/>\n",
+					"but if you want to test it real quick, you can click the **Start** button now."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.validate_pipeline_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"## Schedule a Notebook Job\n",
+					"\n",
+					"When using the Jobs UI to orchestrate a workload with multiple tasks, you'll always begin by scheduling a single task.\n",
+					"\n",
+					"Before we start run the following cell to get the values used in this step."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.print_job_config_task_reset()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"Here, we'll start by scheduling the next notebook.\n",
+					"\n",
+					"Steps:\n",
+					"1. Click the **Workflows** button on the sidebar.\n",
+					"1. Select the **Jobs** tab.\n",
+					"1. Click the **Create Job** button.\n",
+					"1. Configure the task:\n",
+					"    1. Enter **Reset** for the task name\n",
+					"    1. For **Type**, select **Notebook**\n",
+					"    1. For **Path**, select the **Reset Notebook Path** value provided in the cell above\n",
+					"    1. From the **Cluster** dropdown, under **Existing All Purpose Clusters**, select your cluster\n",
+					"    1. Click **Create**\n",
+					"1. In the top-left of the screen, rename the job (not the task) from **`Reset`** (the defaulted value) to the **Job Name** value provided in the cell above.\n",
+					"1. Click the blue **Run now** button in the top right to start the job.\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> **Note**: When selecting your all-purpose cluster, you will get a warning about how this will be billed as all-purpose compute. Production jobs should always be scheduled against new job clusters appropriately sized for the workload, as this is billed at a much lower rate."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.validate_job_v1_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Cron Scheduling of Databricks Jobs\n",
+					"\n",
+					"Note that on the right hand side of the Jobs UI, directly under the **Job Details** section is a section labeled **Schedule**.\n",
+					"\n",
+					"Click on the **Edit schedule** button to explore scheduling options.\n",
+					"\n",
+					"Changing the **Schedule type** field from **Manual** to **Scheduled** will bring up a cron scheduling UI.\n",
+					"\n",
+					"This UI provides extensive options for setting up chronological scheduling of your Jobs. Settings configured with the UI can also be output in cron syntax, which can be edited if custom configuration not available with the UI is needed.\n",
+					"\n",
+					"At this time, we'll leave our job set to the **Manual (Paused)** scheduling type."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Review Run\n",
+					"\n",
+					"As currently configured, our single notebook provides identical performance to the legacy Databricks Jobs UI, which only allowed a single notebook to be scheduled.\n",
+					"\n",
+					"To Review the Job Run\n",
+					"1. Select the **Runs** tab in the top-left of the screen (you should currently be on the **Tasks** tab)\n",
+					"1. Find your job. If **the job is still running**, it will be under the **Active runs** section. If **the job finished running**, it will be under the **Completed runs** section\n",
+					"1. Open the Output details by clicking on the timestamp field under the **Start time** column\n",
+					"1. If **the job is still running**, you will see the active state of the notebook with a **Status** of **`Pending`** or **`Running`** in the right side panel. If **the job has completed**, you will see the full execution of the notebook with a **Status** of **`Succeeded`** or **`Failed`** in the right side panel\n",
+					"  \n",
+					"The notebook employs the magic command **`%run`** to call an additional notebook using a relative path. Note that while not covered in this course, <a href=\"https://docs.databricks.com/repos.html#work-with-non-notebook-files-in-a-databricks-repo\" target=\"_blank\">new functionality added to Databricks Repos allows loading Python modules using relative paths</a>.\n",
+					"\n",
+					"The actual outcome of the scheduled notebook is to reset the environment for our new job and pipeline."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Schedule a DLT Pipeline as a Task\n",
+					"\n",
+					"In this step, we'll add a DLT pipeline to execute after the success of the task we configured at the start of this lesson.\n",
+					"\n",
+					"Steps:\n",
+					"1. At the top left of your screen, you'll see the **Runs** tab is currently selected; click the **Tasks** tab.\n",
+					"1. Click the large blue circle with a **+** at the center bottom of the screen to add a new task\n",
+					"1. Configure the task:\n",
+					"    1. Enter **DLT** for the task name\n",
+					"    1. For **Type**, select  **Delta Live Tables pipeline**\n",
+					"    1. For **Pipeline**, select the DLT pipeline you configured previously in this exercise<br/>\n",
+					"    Note: The pipeline will start with **DLT-Job-Demo-91** and will end with your email address.\n",
+					"    1. The **Depends on** field defaults to your previously defined task, **Reset** - leave this value as-is.\n",
+					"    1. Click the blue **Create task** button\n",
+					"\n",
+					"You should now see a screen with 2 boxes and a downward arrow between them. \n",
+					"\n",
+					"Your **`Reset`** task will be at the top, leading into your **`DLT`** task. \n",
+					"\n",
+					"This visualization represents the dependencies between these tasks.\n",
+					"\n",
+					"Click **Run now** to execute your job.\n",
+					"\n",
+					"**NOTE**: You may need to wait a few minutes as infrastructure for your job and pipeline is deployed."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.validate_job_v2_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Review Multi-Task Run Results\n",
+					"\n",
+					"Select the **Runs** tab again and then the most recent run under **Active runs** or **Completed runs** depending on if the job has completed or not.\n",
+					"\n",
+					"The visualizations for tasks will update in real time to reflect which tasks are actively running, and will change colors if task failures occur. \n",
+					"\n",
+					"Clicking on a task box will render the scheduled notebook in the UI. \n",
+					"\n",
+					"You can think of this as just an additional layer of orchestration on top of the previous Databricks Jobs UI, if that helps; note that if you have workloads scheduling jobs with the CLI or REST API, <a href=\"https://docs.databricks.com/dev-tools/api/latest/jobs.html\" target=\"_blank\">the JSON structure used to configure and get results about jobs has seen similar updates to the UI</a>.\n",
+					"\n",
+					"**NOTE**: At this time, DLT pipelines scheduled as tasks do not directly render results in the Runs GUI; instead, you will be directed back to the DLT Pipeline GUI for the scheduled Pipeline."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

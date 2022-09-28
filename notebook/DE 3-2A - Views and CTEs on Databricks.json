@@ -1,0 +1,305 @@
+{
+	"name": "DE 3-2A - Views and CTEs on Databricks",
+	"properties": {
+		"folder": {
+			"name": "03 - Relational Entities on Databricks"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "a28c5ca4-621c-45d8-98e4-f7ebecb9c729"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"# Views and CTEs on Databricks\n",
+					"In this demonstration, you will create and explore views and common table expressions (CTEs).\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"* Use Spark SQL DDL to define views\n",
+					"* Run queries that use common table expressions\n",
+					"\n",
+					"\n",
+					"\n",
+					"**Resources**\n",
+					"* <a href=\"https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-view.html\" target=\"_blank\">Create View - Databricks Docs</a>\n",
+					"* <a href=\"https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-qry-select-cte.html\" target=\"_blank\">Common Table Expressions - Databricks Docs</a>"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Classroom Setup\n",
+					"The following script clears out previous runs of this demo and configures some Hive variables that will be used in our SQL queries."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-03.2A"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					" \n",
+					"We start by creating a table of data we can use for the demonstration."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- mode \"FAILFAST\" will abort file parsing with a RuntimeException if any malformed lines are encountered\n",
+					"CREATE TABLE external_table\n",
+					"USING CSV OPTIONS (\n",
+					"  path = '${da.paths.datasets}/flights/departuredelays.csv',\n",
+					"  header = \"true\",\n",
+					"  mode = \"FAILFAST\"\n",
+					");\n",
+					"\n",
+					"SELECT * FROM external_table;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"To show a list of tables (and views), we use the **`SHOW TABLES`** command also demonstrated below."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SHOW TABLES;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Views, Temp Views & Global Temp Views\n",
+					"\n",
+					"To set this demonstration up, we are going to first create one of each type of view.\n",
+					"\n",
+					"Then in the next notebook, we will explore the differences between how each one behaves."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"### Views\n",
+					"Let's create a view that contains only the data where the origin is \"ABQ\" and the destination is \"LAX\"."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE VIEW view_delays_abq_lax AS\n",
+					"  SELECT * \n",
+					"  FROM external_table \n",
+					"  WHERE origin = 'ABQ' AND destination = 'LAX';\n",
+					"\n",
+					"SELECT * FROM view_delays_abq_lax;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					" \n",
+					" \n",
+					"Note that the **`view_delays_abq_lax`** view has been added to the list below:"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SHOW TABLES;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					" \n",
+					"### Temporary Views\n",
+					"\n",
+					"Next we'll create a temporary view. \n",
+					"\n",
+					"The syntax is very similar but adds **`TEMPORARY`** to the command."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE TEMPORARY VIEW temp_view_delays_gt_120\n",
+					"AS SELECT * FROM external_table WHERE delay > 120 ORDER BY delay ASC;\n",
+					"\n",
+					"SELECT * FROM temp_view_delays_gt_120;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Now if we show our tables again, we will see the one table and both views.\n",
+					"\n",
+					"Make note of the values in the **`isTemporary`** column."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SHOW TABLES;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"### Global Temp Views\n",
+					"\n",
+					"Lastly, we'll create a global temp view. \n",
+					"\n",
+					"Here we simply add **`GLOBAL`** to the command. \n",
+					"\n",
+					"Also note the **`global_temp`** database qualifer in the subsequent **`SELECT`** statement."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE GLOBAL TEMPORARY VIEW global_temp_view_dist_gt_1000 \n",
+					"AS SELECT * FROM external_table WHERE distance > 1000;\n",
+					"\n",
+					"SELECT * FROM global_temp.global_temp_view_dist_gt_1000;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Before we move on, review one last time the database's tables and views..."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SHOW TABLES;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"...and the tables and views in the **`global_temp`** database:"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SHOW TABLES IN global_temp;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Next we are going to demonstrate how tables and views are persisted across multiple sessions and how temp views are not.\n",
+					"\n",
+					"To do this simply open the next notebook, [DE 3.2B - Views and CTEs on Databricks, Cont]($./DE 3.2B - Views and CTEs on Databricks, Cont), and continue with the lesson.\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> Note: There are several scenarios in which a new session may be created:\n",
+					"* Restarting a cluster\n",
+					"* Detaching and reataching to a cluster\n",
+					"* Installing a python package which in turn restarts the Python interpreter\n",
+					"* Or simply opening a new notebook"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				]
+			}
+		]
+	}
+}

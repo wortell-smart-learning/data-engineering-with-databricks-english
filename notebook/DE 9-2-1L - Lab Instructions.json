@@ -1,0 +1,275 @@
+{
+	"name": "DE 9-2-1L - Lab Instructions",
+	"properties": {
+		"folder": {
+			"name": "09 - Task Orchestration with Jobs/DE 9.2L - Jobs Lab"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "cbfb5e69-171e-47a9-902b-2faee942892b"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# Lab: Orchestrating Jobs with Databricks\n",
+					"\n",
+					"In this lab, you'll be configuring a multi-task job comprising of:\n",
+					"* A notebook that lands a new batch of data in a storage directory\n",
+					"* A Delta Live Table pipeline that processes this data through a series of tables\n",
+					"* A notebook that queries the gold table produced by this pipeline as well as various metrics output by DLT\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"* Schedule a notebook as a task in a Databricks Job\n",
+					"* Schedule a DLT pipeline as a task in a Databricks Job\n",
+					"* Configure linear dependencies between tasks using the Databricks Workflows UI"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../../Includes/Classroom-Setup-09.2.1L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Land Initial Data\n",
+					"Seed the landing zone with some data before proceeding. You will re-run this command to land additional data later."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.data_factory.load()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Create and Configure a Pipeline\n",
+					"\n",
+					"The pipeline we create here is nearly identical to the one in the previous unit.\n",
+					"\n",
+					"We will use it as part of a scheduled job in this lesson.\n",
+					"\n",
+					"Execute the following cell to print out the values that will be used during the following configuration steps."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.print_pipeline_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Steps:\n",
+					"1. Click the **Workflows** button on the sidebar.\n",
+					"1. Select the **Delta Live Tables** tab.\n",
+					"1. Click **Create Pipeline**.\n",
+					"1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **Pipeline Name** provided in the cell above.\n",
+					"1. For **Notebook Libraries**, use the navigator to locate and select the companion notebook provided in the cell above.\n",
+					"1. Under **Configuration**, add the three configuration parameters:\n",
+					"   * Click **Add configuration**, set the \"key\" to **spark.master** and the \"value\" to **local[\\*]**.\n",
+					"   * Click **Add configuration**, set the \"key\" to **datasets_path** and the \"value\" to the value provided in the cell above.\n",
+					"   * Click **Add configuration**, set the \"key\" to **source** and the \"value\" to the value provided in the cell above.\n",
+					"1. In the **Target** field, enter the database name provided in the cell above.<br/>\n",
+					"This should follow the pattern **`da_<name>_<hash>_dewd_jobs_lab_92`**\n",
+					"1. In the **Storage location** field, copy the directory as printed above.\n",
+					"1. For **Pipeline Mode**, select **Triggered**\n",
+					"1. Uncheck the **Enable autoscaling** box\n",
+					"1. Set the number of **`workers`** to **`0`** (zero).\n",
+					"1. Enable **Photon Acceleration**.\n",
+					"\n",
+					"Finally, click **Create**.\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> **Note**: we won't be executing this pipline directly as it will be executed by our job later in this lesson,<br/>\n",
+					"but if you want to test it real quick, you can click the **Start** button now."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.validate_pipeline_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Schedule a Notebook Job\n",
+					"\n",
+					"When using the Jobs UI to orchestrate a workload with multiple tasks, you'll always begin by scheduling a single task.\n",
+					"\n",
+					"Before we start run the following cell to get the values used in this step."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.print_job_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Here, we'll start by scheduling the next notebook.\n",
+					"\n",
+					"Steps:\n",
+					"1. Click the **Workflows** button on the sidebar\n",
+					"1. Select the **Jobs** tab.\n",
+					"1. Click the blue **Create Job** button\n",
+					"1. Configure the task:\n",
+					"    1. Enter **Batch-Job** for the task name\n",
+					"    1. For **Type**, select **Notebook**\n",
+					"    1. For **Path**, select the **Batch Notebook Path** value provided in the cell above\n",
+					"    1. From the **Cluster** dropdown, under **Existing All Purpose Clusters**, select your cluster\n",
+					"    1. Click **Create**\n",
+					"1. In the top-left of the screen, rename the job (not the task) from **`Batch-Job`** (the defaulted value) to the **Job Name** value provided in the cell above.\n",
+					"1. Click the blue **Run now** button in the top right to start the job.\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> **Note**: When selecting your all purpose cluster, you will get a warning about how this will be billed as all purpose compute. Production jobs should always be scheduled against new job clusters appropriately sized for the workload, as this is billed at a much lower rate."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Schedule a DLT Pipeline as a Task\n",
+					"\n",
+					"In this step, we'll add a DLT pipeline to execute after the success of the task we configured at the start of this lesson.\n",
+					"\n",
+					"Steps:\n",
+					"1. At the top left of your screen, you'll see the **Runs** tab is currently selected; click the **Tasks** tab.\n",
+					"1. Click the large blue circle with a **+** at the center bottom of the screen to add a new task\n",
+					"1. Configure the task:\n",
+					"    1. Enter **DLT** for the task name\n",
+					"    1. For **Type**, select  **Delta Live Tables pipeline**\n",
+					"    1. For **Pipeline**, select the DLT pipeline you configured previously in this exercise<br/>\n",
+					"    Note: The pipeline will start with **DLT-Job-Lab-92** and will end with your email address.\n",
+					"    1. The **Depends on** field defaults to your previously defined task, **Batch-Job** - leave this value as-is.\n",
+					"    1. Click the blue **Create task** button\n",
+					"\n",
+					"You should now see a screen with 2 boxes and a downward arrow between them. \n",
+					"\n",
+					"Your **`Batch-Job`** task will be at the top, leading into your **`DLT`** task."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Schedule an Additional Notebook Task\n",
+					"\n",
+					"An additional notebook has been provided which queries some of the DLT metrics and the gold table defined in the DLT pipeline. \n",
+					"\n",
+					"We'll add this as a final task in our job.\n",
+					"\n",
+					"Steps:\n",
+					"1. Click the large blue circle with a **+** at the center bottom of the screen to add a new task\n",
+					"Steps:\n",
+					"1. Configure the task:\n",
+					"    1. Enter **Query-Results** for the task name\n",
+					"    1. For **Type**, select **Notebook**\n",
+					"    1. For **Path**, select the **Query Notebook Path** value provided in the cell above\n",
+					"    1. From the **Cluster** dropdown, under **Existing All Purpose Clusters**, select your cluster\n",
+					"    1. The **Depends on** field defaults to your previously defined task, **DLT** - leave this value as-is.\n",
+					"    1. Click the blue **Create task** button\n",
+					"    \n",
+					"Click the blue **Run now** button in the top right of the screen to run this job.\n",
+					"\n",
+					"From the **Runs** tab, you will be able to click on the start time for this run under the **Active runs** section and visually track task progress.\n",
+					"\n",
+					"Once all your tasks have succeeded, review the contents of each task to confirm expected behavior."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.validate_job_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

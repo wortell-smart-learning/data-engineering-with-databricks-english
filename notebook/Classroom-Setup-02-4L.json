@@ -1,0 +1,56 @@
+{
+	"name": "Classroom-Setup-02-4L",
+	"properties": {
+		"folder": {
+			"name": "Includes"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "57992eb4-308d-4022-b30f-0e8cfd189b31"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ./_utility-methods"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA = DBAcademyHelper(**helper_arguments) # Create the DA object\n",
+					"DA.reset_environment()                   # Reset by removing databases and files from other lessons\n",
+					"DA.init(install_datasets=True,           # Initialize, install and validate the datasets\n",
+					"        create_db=True)                  # Continue initialization, create the user-db\n",
+					"DA.conclude_setup()                      # Conclude setup by advertising environmental changes\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

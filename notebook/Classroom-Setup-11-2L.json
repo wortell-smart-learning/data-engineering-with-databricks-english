@@ -1,0 +1,208 @@
+{
+	"name": "Classroom-Setup-11-2L",
+	"properties": {
+		"folder": {
+			"name": "Includes"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "dace2a2f-6d89-474c-bad1-8b194068712f"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ./_utility-methods"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# The lesson name is specifically named \"acls_lab\" as it is a significantly user-facing - JDP\n",
+					"DA = DBAcademyHelper(lesson=\"acls_lab\", **helper_arguments)\n",
+					"DA.reset_environment() # Not sequenced, but \"acls_lab\" is directly referenced in the prose\n",
+					"DA.init(install_datasets=True, create_db=False)\n",
+					"DA.conclude_setup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def print_sql(self, rows, sql):\n",
+					"    displayHTML(f\"\"\"<body><textarea style=\"width:100%\" rows={rows}> \\n{sql.strip()}</textarea></body>\"\"\")\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def generate_query(self):\n",
+					"    import re\n",
+					"    import random\n",
+					"\n",
+					"    self.print_sql(23, f\"\"\"\n",
+					"CREATE DATABASE IF NOT EXISTS {DA.db_name}\n",
+					"LOCATION '{DA.paths.user_db}';\n",
+					"\n",
+					"USE {DA.db_name};\n",
+					"    \n",
+					"CREATE TABLE beans \n",
+					"(name STRING, color STRING, grams FLOAT, delicious BOOLEAN); \n",
+					"\n",
+					"INSERT INTO beans\n",
+					"VALUES ('black', 'black', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('lentils', 'brown', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('jelly', 'rainbow', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('pinto', 'brown', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('green', 'green', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('beanbag chair', 'white', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('lentils', 'green', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('kidney', 'red', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])}),\n",
+					"       ('castor', 'brown', {random.uniform(0, 5000):.2f}, {random.choice([\"true\", \"false\"])});\n",
+					"\n",
+					"CREATE VIEW tasty_beans\n",
+					"AS SELECT * FROM beans WHERE delicious = true;\n",
+					"    \"\"\")\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def generate_confirmation_query(self, username):\n",
+					"    import re\n",
+					"    # clean_username = re.sub(\"[^a-zA-Z0-9]\", \"_\", username)\n",
+					"    database = DA.db_name #.replace(DA.clean_username, clean_username)\n",
+					"    \n",
+					"    self.print_sql(11, f\"\"\"\n",
+					"USE {database};\n",
+					"\n",
+					"SELECT * FROM beans;\n",
+					"SELECT * FROM tasty_beans;\n",
+					"SELECT * FROM beans MINUS SELECT * FROM tasty_beans;\n",
+					"\n",
+					"UPDATE beans\n",
+					"SET color = 'pink'\n",
+					"WHERE name = 'black'\n",
+					"\"\"\")\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def generate_union_query(self):\n",
+					"    self.print_sql(6, f\"\"\"\n",
+					"USE {DA.db_name};\n",
+					"\n",
+					"SELECT * FROM beans\n",
+					"UNION ALL TABLE beans;\"\"\")\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def generate_derivative_view(self):\n",
+					"    self.print_sql(7, f\"\"\"\n",
+					"USE {DA.db_name};\n",
+					"\n",
+					"CREATE VIEW our_beans \n",
+					"AS SELECT * FROM beans\n",
+					"UNION ALL TABLE beans;\n",
+					"\"\"\")\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def get_their_db(self, their_username):\n",
+					"    import re\n",
+					"    db_name_prefix = self.to_database_name(username=their_username, course_code=self.course_code)\n",
+					"    \n",
+					"#     da_name, da_hash = self.get_username_hash(their_username)\n",
+					"#     db_name_prefix = f\"da-{da_name}@{da_hash}-{self.course_code}\"         # Composite all the values to create the \"dirty\" database name\n",
+					"#     while \"__\" in db_name_prefix: \n",
+					"#         db_name_prefix = self.db_name_prefix.replace(\"__\", \"_\")           # Replace all double underscores with single underscores\n",
+					"\n",
+					"    if DA.lesson is None: \n",
+					"      # No lesson, database name is the same as prefix\n",
+					"      return db_name_prefix                        \n",
+					"    else:\n",
+					"      # Database name includes the lesson name\n",
+					"      return f\"{db_name_prefix}_{DA.clean_lesson}\" \n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def generate_partner_view(self, their_username):\n",
+					"    self.print_sql(7, f\"\"\"\n",
+					"USE {self.get_their_db(their_username)};\n",
+					"\n",
+					"SELECT name, color, delicious, sum(grams)\n",
+					"FROM our_beans\n",
+					"GROUP BY name, color, delicious;\"\"\")\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def generate_delete_query(self, their_username):\n",
+					"    \n",
+					"    self.print_sql(5, f\"\"\"\n",
+					"USE {self.get_their_db(their_username)};\n",
+					"\n",
+					"DELETE FROM beans\n",
+					"    \"\"\")\n",
+					"\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

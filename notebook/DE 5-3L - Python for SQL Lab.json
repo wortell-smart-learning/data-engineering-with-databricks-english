@@ -1,0 +1,416 @@
+{
+	"name": "DE 5-3L - Python for SQL Lab",
+	"properties": {
+		"folder": {
+			"name": "05 - OPTIONAL Python for Spark SQL"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "86f725c3-4911-4181-8a9d-5d655323ed38"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# Just Enough Python for Databricks SQL Lab\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"* Review basic Python code and describe expected outcomes of code execution\n",
+					"* Reason through control flow statements in Python functions\n",
+					"* Add parameters to a SQL query by wrapping it in a Python function"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-05.3L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# Reviewing Python Basics\n",
+					"\n",
+					"In the previous notebook, we briefly explored using **`spark.sql()`** to execute arbitrary SQL commands from Python.\n",
+					"\n",
+					"Look at the following 3 cells. Before executing each cell, identify:\n",
+					"1. The expected output of cell execution\n",
+					"1. What logic is being executed\n",
+					"1. Changes to the resultant state of the environment\n",
+					"\n",
+					"Then execute the cells, compare the results to your expectations, and see the explanations below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"course = \"dewd\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"spark.sql(f\"SELECT '{course}' AS course_name\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"df = spark.sql(f\"SELECT '{course}' AS course_name\")\n",
+					"display(df)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"1. **Cmd 5** assigns a string to a variable. When a variable assignment is successful, no output is displayed to the notebook. A new variable is added to the current execution environment.\n",
+					"1. **Cmd 6** executes a SQL query and displays the schema for the DataFrame alongside the word **`DataFrame`**. In this case, the SQL query is just to select a string, so no changes to our environment occur. \n",
+					"1. **Cmd 7** executes the same SQL query and displays the output of the DataFrame. This combination of **`display()`** and **`spark.sql()`** most closely mirrors executing logic in a **`%sql`** cell; the results will always be printed in a formatted table, assuming results are returned by the query; some queries will instead manipulate tables or databases, in which case the word **`OK`** will print to show successful execution. In this case, no changes to our environment occur from running this code."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Setting Up a Development Environment\n",
+					"\n",
+					"Throughout this course, we use logic similar to the following cell to capture information about the user currently executing the notebook and create an isolated development database.\n",
+					"\n",
+					"The **`re`** library is the <a href=\"https://docs.python.org/3/library/re.html\" target=\"_blank\">standard Python library for regex</a>.\n",
+					"\n",
+					"Databricks SQL has a special method to capture the username of the **`current_user()`**; and the **`.first()[0]`** code is a quick hack to capture the first row of the first column of a query executed with **`spark.sql()`** (in this case, we do this safely knowing that there will only be 1 row and 1 column).\n",
+					"\n",
+					"All other logic below is just string formatting."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"import re\n",
+					"\n",
+					"username = spark.sql(\"SELECT current_user()\").first()[0]\n",
+					"clean_username = re.sub(\"[^a-zA-Z0-9]\", \"_\", username)\n",
+					"db_name = f\"dbacademy_{clean_username}_{course}_5_3l\"\n",
+					"working_dir = f\"dbfs:/user/{username}/dbacademy/{course}/5.3l\"\n",
+					"\n",
+					"print(f\"username:    {username}\")\n",
+					"print(f\"db_name:     {db_name}\")\n",
+					"print(f\"working_dir: {working_dir}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Below, we add a simple control flow statement to this logic to create and use this user-specific database. \n",
+					"\n",
+					"Optionally, we will reset this database and drop all of the contents on repeat execution. (Note the the default value for the parameter **`reset`** is **`True`**)."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def create_database(course, reset=True):\n",
+					"    import re\n",
+					"\n",
+					"    username = spark.sql(\"SELECT current_user()\").first()[0]\n",
+					"    clean_username = re.sub(\"[^a-zA-Z0-9]\", \"_\", username)\n",
+					"    db_name = f\"dbacademy_{clean_username}_{course}_5_3l\"\n",
+					"    working_dir = f\"dbfs:/user/{username}/dbacademy/{course}/5.3l\"\n",
+					"\n",
+					"    print(f\"username:    {username}\")\n",
+					"    print(f\"db_name:     {db_name}\")\n",
+					"    print(f\"working_dir: {working_dir}\")\n",
+					"\n",
+					"    if reset:\n",
+					"        spark.sql(f\"DROP DATABASE IF EXISTS {db_name} CASCADE\")\n",
+					"        dbutils.fs.rm(working_dir, True)\n",
+					"        \n",
+					"    spark.sql(f\"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{working_dir}/{db_name}.db'\")\n",
+					"    spark.sql(f\"USE {db_name}\")\n",
+					"    \n",
+					"create_database(course)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"While this logic as defined is geared toward isolating students in shared workspaces for instructional purposes, the same basic design could be leveraged for testing new logic in an isolated environment before pushing to production."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Handling Errors Gracefully\n",
+					"\n",
+					"Review the logic in the function below.\n",
+					"\n",
+					"Note that we've just declared a new database that currently contains no tables."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def query_or_make_demo_table(table_name):\n",
+					"    try:\n",
+					"        display(spark.sql(f\"SELECT * FROM {table_name}\"))\n",
+					"        print(f\"Displayed results for the table {table_name}\")\n",
+					"        \n",
+					"    except:\n",
+					"        spark.sql(f\"CREATE TABLE {table_name} (id INT, name STRING, value DOUBLE, state STRING)\")\n",
+					"        spark.sql(f\"\"\"INSERT INTO {table_name}\n",
+					"                      VALUES (1, \"Yve\", 1.0, \"CA\"),\n",
+					"                             (2, \"Omar\", 2.5, \"NY\"),\n",
+					"                             (3, \"Elia\", 3.3, \"OH\"),\n",
+					"                             (4, \"Rebecca\", 4.7, \"TX\"),\n",
+					"                             (5, \"Ameena\", 5.3, \"CA\"),\n",
+					"                             (6, \"Ling\", 6.6, \"NY\"),\n",
+					"                             (7, \"Pedro\", 7.1, \"KY\")\"\"\")\n",
+					"        \n",
+					"        display(spark.sql(f\"SELECT * FROM {table_name}\"))\n",
+					"        print(f\"Created the table {table_name}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Try to identify the following before executing the next cell:\n",
+					"1. The expected output of cell execution\n",
+					"1. What logic is being executed\n",
+					"1. Changes to the resultant state of the environment"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"query_or_make_demo_table(\"demo_table\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Now answer the same three questions before running the same query below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"query_or_make_demo_table(\"demo_table\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"- On the first execution, the table **`demo_table`** did not yet exist. As such, the attempt to return the contents of the table created an error, which resulted in our **`except`** block of logic executing. This block:\n",
+					"  1. Created the table\n",
+					"  1. Inserted values\n",
+					"  1. Printed or displayed the contents of the table\n",
+					"- On the second execution, the table **`demo_table`** already exists, and so the first query in the **`try`** block executes without error. As a result, we just display the results of the query without modifying anything in our environment."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Adapting SQL to Python\n",
+					"Let's consider the following SQL query against our demo table created above."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT id, value \n",
+					"FROM demo_table\n",
+					"WHERE state = \"CA\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"which can also be expressed using the PySpark API and the **`display`** function as seen here:"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"results = spark.sql(\"SELECT id, value FROM demo_table WHERE state = 'CA'\")\n",
+					"display(results)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Let's use this simple example to practice creating a Python function that adds optional functionality.\n",
+					"\n",
+					"Our target function will:\n",
+					"* Be based upon a query that only includes the **`id`** and **`value`** columns from the a table named **`demo_table`**\n",
+					"* Will allow filtering of that query by **`state`** where the the default behavior is to include all states\n",
+					"* Will optionally render the results of the query using the **`display`** function where the default behavior is to not render\n",
+					"* Will return:\n",
+					"  * The query result object (a PySpark DataFrame) if **`render_results`** is False\n",
+					"  * The **`None`** value  if **`render_results`** is True\n",
+					"\n",
+					"Stretch Goal:\n",
+					"* Add an assert statement to verify that the value passed for the **`state`** parameter contains two, uppercase letters\n",
+					"\n",
+					"Some starter logic has been provided below:"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"def preview_values(state=<FILL-IN>, render_results=<FILL-IN>):\n",
+					"    query = <FILL-IN>\n",
+					"\n",
+					"    if state is not None:\n",
+					"        <FILL-IN>\n",
+					"\n",
+					"    if render_results\n",
+					"        <FILL-IN>\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"The assert statements below can be used to check whether or not your function works as intended."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"import pyspark.sql.dataframe\n",
+					"\n",
+					"assert type(preview_values()) == pyspark.sql.dataframe.DataFrame, \"Function should return the results as a DataFrame\"\n",
+					"assert preview_values().columns == [\"id\", \"value\"], \"Query should only return **`id`** and **`value`** columns\"\n",
+					"\n",
+					"assert preview_values(render_results=True) is None, \"Function should not return None when rendering\"\n",
+					"assert preview_values(render_results=False) is not None, \"Function should return DataFrame when not rendering\"\n",
+					"\n",
+					"assert preview_values(state=None).count() == 7, \"Function should allow no state\"\n",
+					"assert preview_values(state=\"NY\").count() == 2, \"Function should allow filtering by state\"\n",
+					"assert preview_values(state=\"CA\").count() == 2, \"Function should allow filtering by state\"\n",
+					"assert preview_values(state=\"OH\").count() == 1, \"Function should allow filtering by state\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

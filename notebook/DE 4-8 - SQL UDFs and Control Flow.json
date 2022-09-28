@@ -1,0 +1,317 @@
+{
+	"name": "DE 4-8 - SQL UDFs and Control Flow",
+	"properties": {
+		"folder": {
+			"name": "04 - ETL with Spark SQL"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "67f50faf-34e3-4394-a333-da5200fd38a1"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# SQL UDFs and Control Flow\n",
+					"\n",
+					"Databricks added support for User Defined Functions (UDFs) registered natively in SQL starting in DBR 9.1.\n",
+					"\n",
+					"This feature allows users to register custom combinations of SQL logic as functions in a database, making these methods reusable anywhere SQL can be run on Databricks. These functions leverage Spark SQL directly, maintaining all of the optimizations of Spark when applying your custom logic to large datasets.\n",
+					"\n",
+					"In this notebook, we'll first have a simple introduction to these methods, and then explore how this logic can be combined with **`CASE`** / **`WHEN`** clauses to provide reusable custom control flow logic.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"* Define and registering SQL UDFs\n",
+					"* Describe the security model used for sharing SQL UDFs\n",
+					"* Use **`CASE`** / **`WHEN`** statements in SQL code\n",
+					"* Leverage **`CASE`** / **`WHEN`** statements in SQL UDFs for custom control flow"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Setup\n",
+					"Run the following cell to setup your environment."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-04.8"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Create a Simple Dataset\n",
+					"\n",
+					"For this notebook, we'll consider the following dataset, registered here as a temporary view."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REPLACE TEMPORARY VIEW foods(food) AS VALUES\n",
+					"(\"beef\"),\n",
+					"(\"beans\"),\n",
+					"(\"potatoes\"),\n",
+					"(\"bread\");\n",
+					"\n",
+					"SELECT * FROM foods"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## SQL UDFs\n",
+					"At minimum, a SQL UDF requires a function name, optional parameters, the type to be returned, and some custom logic.\n",
+					"\n",
+					"Below, a simple function named **`yelling`** takes one parameter named **`text`**. It returns a string that will be in all uppercase letters with three exclamation points added to the end."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REPLACE FUNCTION yelling(text STRING)\n",
+					"RETURNS STRING\n",
+					"RETURN concat(upper(text), \"!!!\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Note that this function is applied to all values of the column in a parallel fashion within the Spark processing engine. SQL UDFs are an efficient way to define custom logic that is optimized for execution on Databricks."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT yelling(food) FROM foods"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Scoping and Permissions of SQL UDFs\n",
+					"\n",
+					"Note that SQL UDFs will persist between execution environments (which can include notebooks, DBSQL queries, and jobs).\n",
+					"\n",
+					"We can describe the function to see where it was registered and basic information about expected inputs and what is returned."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE FUNCTION yelling"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"By describing extended, we can get even more information. \n",
+					"\n",
+					"Note that the **`Body`** field at the bottom of the function description shows the SQL logic used in the function itself."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE FUNCTION EXTENDED yelling"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"SQL UDFs exist as objects in the metastore and are governed by the same Table ACLs as databases, tables, or views.\n",
+					"\n",
+					"In order to use a SQL UDF, a user must have **`USAGE`** and **`SELECT`** permissions on the function."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## CASE/WHEN\n",
+					"\n",
+					"The standard SQL syntactic construct **`CASE`** / **`WHEN`** allows the evaluation of multiple conditional statements with alternative outcomes based on table contents.\n",
+					"\n",
+					"Again, everything is evaluated natively in Spark, and so is optimized for parallel execution."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT *,\n",
+					"  CASE \n",
+					"    WHEN food = \"beans\" THEN \"I love beans\"\n",
+					"    WHEN food = \"potatoes\" THEN \"My favorite vegetable is potatoes\"\n",
+					"    WHEN food <> \"beef\" THEN concat(\"Do you have any good recipes for \", food ,\"?\")\n",
+					"    ELSE concat(\"I don't eat \", food)\n",
+					"  END\n",
+					"FROM foods"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Simple Control Flow Functions\n",
+					"\n",
+					"Combining SQL UDFs with control flow in the form of **`CASE`** / **`WHEN`** clauses provides optimized execution for control flows within SQL workloads.\n",
+					"\n",
+					"Here, we demonstrate wrapping the previous logic in a function that will be reusable anywhere we can execute SQL."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE FUNCTION foods_i_like(food STRING)\n",
+					"RETURNS STRING\n",
+					"RETURN CASE \n",
+					"  WHEN food = \"beans\" THEN \"I love beans\"\n",
+					"  WHEN food = \"potatoes\" THEN \"My favorite vegetable is potatoes\"\n",
+					"  WHEN food <> \"beef\" THEN concat(\"Do you have any good recipes for \", food ,\"?\")\n",
+					"  ELSE concat(\"I don't eat \", food)\n",
+					"END;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Using this method on our data provides the desired outcome."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT foods_i_like(food) FROM foods"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"While the example provided here are simple string methods, these same basic principles can be used to add custom computations and logic for native execution in Spark SQL. \n",
+					"\n",
+					"Especially for enterprises that might be migrating users from systems with many defined procedures or custom-defined formulas, SQL UDFs can allow a handful of users to define the complex logic needed for common reporting and analytic queries."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

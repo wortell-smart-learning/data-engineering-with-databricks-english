@@ -1,0 +1,84 @@
+{
+	"name": "DE 12-2-2L - DLT Task",
+	"properties": {
+		"folder": {
+			"name": "12 - Productionalizing Dashboards and Queries in DBSQL/DE 12.2L - OPTIONAL Capstone"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "2dfec068-5b7c-48c8-b0f3-dfd88c807820"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH STREAMING LIVE TABLE recordings_bronze\n",
+					"AS SELECT current_timestamp() AS receipt_time, input_file_name() AS source_file, *\n",
+					"  FROM cloud_files(\"${source}\", \"json\", map(\"cloudFiles.schemaHints\", \"time DOUBLE\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH STREAMING LIVE TABLE pii\n",
+					"AS SELECT *\n",
+					"  FROM cloud_files(\"${datasets_path}/healthcare/patient\", \"csv\", map(\"header\", \"true\", \"cloudFiles.inferColumnTypes\", \"true\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH STREAMING LIVE TABLE recordings_enriched\n",
+					"  (CONSTRAINT positive_heartrate EXPECT (heartrate > 0) ON VIOLATION DROP ROW)\n",
+					"AS SELECT \n",
+					"  CAST(a.device_id AS INTEGER) AS device_id, \n",
+					"  CAST(a.mrn AS LONG) AS mrn, \n",
+					"  CAST(a.heartrate AS DOUBLE) AS heartrate, \n",
+					"  CAST(from_unixtime(a.time, 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) AS time,\n",
+					"  b.name\n",
+					"  FROM STREAM(live.recordings_bronze) a\n",
+					"  INNER JOIN STREAM(live.pii) b\n",
+					"  ON a.mrn = b.mrn"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH STREAMING LIVE TABLE daily_patient_avg\n",
+					"  COMMENT \"Daily mean heartrates by patient\"\n",
+					"AS SELECT mrn, name, MEAN(heartrate) avg_heartrate, DATE(time) `date`\n",
+					"  FROM STREAM(live.recordings_enriched)\n",
+					"  GROUP BY mrn, name, DATE(time)\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

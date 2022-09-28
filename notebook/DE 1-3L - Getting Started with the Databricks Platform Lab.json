@@ -1,0 +1,428 @@
+{
+	"name": "DE 1-3L - Getting Started with the Databricks Platform Lab",
+	"properties": {
+		"folder": {
+			"name": "01 - Synapse Workspace and Services"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "76564c94-bb5b-48ba-9688-ae763d9e83b4"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Getting Started with the Databricks Platform\n",
+					"\n",
+					"This notebook provides a hands-on review of some of the basic functionality of the Databricks Data Science and Engineering Workspace.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"- Rename a notebook and change the default language\n",
+					"- Attach a cluster\n",
+					"- Use the **`%run`** magic command\n",
+					"- Run Python and SQL cells\n",
+					"- Create a Markdown cell"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Renaming a Notebook\n",
+					"\n",
+					"Changing the name of a notebook is easy. Click on the name at the top of this page, then make changes to the name. To make it easier to navigate back to this notebook later in case you need to, append a short test string to the end of the existing name."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Attaching a cluster\n",
+					"\n",
+					"Executing cells in a notebook requires computing resources, which is provided by clusters. The first time you execute a cell in a notebook, you will be prompted to attach to a cluster if one is not already attached.\n",
+					"\n",
+					"Attach a cluster to this notebook now by clicking the dropdown near the top-left corner of this page. Select the cluster you created previously. This will clear the execution state of the notebook and connect the notebook to the selected cluster.\n",
+					"\n",
+					"Note that the dropdown menu provides the option of starting or restarting the cluster as needed. You can also detach and re-attach to a cluster in a single movement. This is useful for clearing the execution state when needed."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Using %run\n",
+					"\n",
+					"Complex projects of any type can benefit from the ability to break them down into simpler, reusable components.\n",
+					"\n",
+					"In the context of Databricks notebooks, this facility is provided through the **`%run`** magic command.\n",
+					"\n",
+					"When used this way, variables, functions and code blocks become part of the current programming context.\n",
+					"\n",
+					"Consider this example:\n",
+					"\n",
+					"**`Notebook_A`** has four commands:\n",
+					"  1. **`name = \"John\"`**\n",
+					"  2. **`print(f\"Hello {name}\")`**\n",
+					"  3. **`%run ./Notebook_B`**\n",
+					"  4. **`print(f\"Welcome back {full_name}`**\n",
+					"\n",
+					"**`Notebook_B`** has only one commands:\n",
+					"  1. **`full_name = f\"{name} Doe\"`**\n",
+					"\n",
+					"If we run **`Notebook_B`** it will fail to execute because the variable **`name`** is not defined in **`Notebook_B`**\n",
+					"\n",
+					"Likewise, one might think that **`Notebook_A`** would fail becase it uses the variable **`full_name`** which is likewise not defined in **`Notebook_A`**, but it doesn't!\n",
+					"\n",
+					"What actually happens is that the two notebooks are merged together as we see below and **then** executed:\n",
+					"1. **`name = \"John\"`**\n",
+					"2. **`print(f\"Hello {name}\")`**\n",
+					"3. **`full_name = f\"{name} Doe\"`**\n",
+					"4. **`print(f\"Welcome back {full_name}\")`**\n",
+					"\n",
+					"And thus providing the expected behavior:\n",
+					"* **`Hello John`**\n",
+					"* **`Welcome back John Doe`**"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"The folder that contains this notebook contains a subfolder named **`ExampleSetupFolder`**, which in turn contains a notebook called **`example-setup`**. \n",
+					"\n",
+					"This simple notebook declares the variable **`my_name`**, sets it to **`None`** and then creates a DataFrame called **`example_df`**. \n",
+					"\n",
+					"Open the example-setup notebook and modify it so that name is not **`None`** but rather your name (or anyone's name) enclosed in quotes, and so that the following two cells execute without throwing an **`AssertionError`**.\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> You will see additional references **`_utility-methods`** and **`DBAcademyHelper`** which are used to this configure  courseware and should be ignored for this exercise."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ./ExampleSetupFolder/example-setup"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert my_name is not None, \"Name is still None\"\n",
+					"print(my_name)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Run a Python cell\n",
+					"\n",
+					"Run the following cell to verify that the **`example-setup`** notebook was executed by displaying the **`example_df`** Dataframe. This table consists of 16 rows of increasing values."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"display(example_df)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Change Language\n",
+					"\n",
+					"Notice that the default language for this notebook is set to Python. Change this by clicking the **Python** button to the right of the notebook name. Change the default language to SQL.\n",
+					"\n",
+					"Notice that the Python cells are automatically prepended with a <strong><code>&#37;python</code></strong> magic command to maintain validity of those cells. Notice that this operation also clears the execution state."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Create a Markdown Cell\n",
+					"\n",
+					"Add a new cell below this one. Populate with some Markdown that includes at least the following elements:\n",
+					"* A header\n",
+					"* Bullet points\n",
+					"* A link (using your choice of HTML or Markdown conventions)"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Run a SQL cell\n",
+					"\n",
+					"Run the following cell to query a Delta table using SQL. This executes a simple query against a table is backed by a Databricks-provided example dataset included in all DBFS installations."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM delta.`${DA.paths.datasets}/nyctaxi-with-zipcodes/data`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Execute the following cell to view the underlying files backing this table."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"files = dbutils.fs.ls(f\"{DA.paths.datasets}/nyctaxi-with-zipcodes/data\")\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"# Clearing notebook state\n",
+					"\n",
+					"Sometimes it is useful to clear all variables defined in the notebook and start from the begining.  This can be useful when you want to test cells in isolation, or you simply want to reset the execution state.\n",
+					"\n",
+					"Visit the **Clear** menu and select the **Clear State & Cell Outputs**.\n",
+					"\n",
+					"Now try running the cell below and notice the variables defined earlier are no longer defined, until you rerun the earlier cells above."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"print(my_name)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Review Changes\n",
+					"\n",
+					"Assuming you have imported this material into your workspace using a Databricks Repo, open the Repo dialog by clicking the **`published`** branch button at the top-left corner of this page. You should see three changes:\n",
+					"1. **Removed** with the old notebook name\n",
+					"1. **Added** with the new notebook name\n",
+					"1. **Modified** for creating a markdown cell above\n",
+					"\n",
+					"Use the dialog to revert the changes and restore this notebook to its original state."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Wrapping Up\n",
+					"\n",
+					"By completing this lab, you should now feel comfortable manipulating notebooks, creating new cells, and running notebooks within notebooks."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				]
+			}
+		]
+	}
+}

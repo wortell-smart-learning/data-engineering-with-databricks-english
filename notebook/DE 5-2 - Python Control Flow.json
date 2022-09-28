@@ -1,0 +1,873 @@
+{
+	"name": "DE 5-2 - Python Control Flow",
+	"properties": {
+		"folder": {
+			"name": "05 - OPTIONAL Python for Spark SQL"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "0291f178-831d-4b6d-b592-b841abf42361"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# Just Enough Python for Databricks SQL\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"* Leverage **`if`** / **`else`**\n",
+					"* Describe how errors impact notebook execution\n",
+					"* Write simple tests with **`assert`**\n",
+					"* Use **`try`** / **`except`** to handle errors"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## if/else\n",
+					"\n",
+					"**`if`** / **`else`** clauses are common in many programming languages.\n",
+					"\n",
+					"Note that SQL has the **`CASE WHEN ... ELSE`** construct, which is similar.\n",
+					"\n",
+					"<strong>If you're seeking to evaluate conditions within your tables or queries, use **`CASE WHEN`**.</strong>\n",
+					"\n",
+					"Python control flow should be reserved for evaluating conditions outside of your query.\n",
+					"\n",
+					"More on this later. First, an example with **`\"beans\"`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"food = \"beans\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Working with **`if`** and **`else`** is all about evaluating whether or not certain conditions are true in your execution environment.\n",
+					"\n",
+					"Note that in Python, we have the following comparison operators:\n",
+					"\n",
+					"| Syntax | Operation |\n",
+					"| --- | --- |\n",
+					"| **`==`** | equals |\n",
+					"| **`>`** | greater than |\n",
+					"| **`<`** | less than |\n",
+					"| **`>=`** | greater than or equal |\n",
+					"| **`<=`** | less than or equal |\n",
+					"| **`!=`** | not equal |\n",
+					"\n",
+					"If you read the sentence below out loud, you will be describing the control flow of your program."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"if food == \"beans\":\n",
+					"    print(f\"I love {food}\")\n",
+					"else:\n",
+					"    print(f\"I don't eat {food}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"As expected, because the variable **`food`** is the string literal **`\"beans\"`**, the **`if`** statement evaluated to **`True`** and the first print statement evaluated.\n",
+					"\n",
+					"Let's assign a different value to the variable."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"food = \"beef\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Now the first condition will evaluate as **`False`**. \n",
+					"\n",
+					"What do you think will happen when you run the following cell?"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"if food == \"beans\":\n",
+					"    print(f\"I love {food}\")\n",
+					"else:\n",
+					"    print(f\"I don't eat {food}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Note that each time we assign a new value to a variable, this completely erases the old variable."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"food = \"potatoes\"\n",
+					"print(food)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"The Python keyword **`elif`** (short for **`else`** + **`if`**) allows us to evaluate multiple conditions.\n",
+					"\n",
+					"Note that conditions are evaluated from top to bottom. Once a condition evaluates to true, no further conditions will be evaluated.\n",
+					"\n",
+					"**`if`** / **`else`** control flow patterns:\n",
+					"1. Must contain an **`if`** clause\n",
+					"1. Can contain any number of **`elif`** clauses\n",
+					"1. Can contain at most one **`else`** clause"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"if food == \"beans\":\n",
+					"    print(f\"I love {food}\")\n",
+					"elif food == \"potatoes\":\n",
+					"    print(f\"My favorite vegetable is {food}\")\n",
+					"elif food != \"beef\":\n",
+					"    print(f\"Do you have any good recipes for {food}?\")\n",
+					"else:\n",
+					"    print(f\"I don't eat {food}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"By encapsulating the above logic in a function, we can reuse this logic and formatting with arbitrary arguments rather than referencing globally-defined variables."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def foods_i_like(food):\n",
+					"    if food == \"beans\":\n",
+					"        print(f\"I love {food}\")\n",
+					"    elif food == \"potatoes\":\n",
+					"        print(f\"My favorite vegetable is {food}\")\n",
+					"    elif food != \"beef\":\n",
+					"        print(f\"Do you have any good recipes for {food}?\")\n",
+					"    else:\n",
+					"        print(f\"I don't eat {food}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Here, we pass the string **`\"bread\"`** to the function."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"foods_i_like(\"bread\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"As we evaluate the function, we locally assign the string **`\"bread\"`** to the **`food`** variable, and the logic behaves as expected.\n",
+					"\n",
+					"Note that we don't overwrite the value of the **`food`** variable as previously defined in the notebook."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"food"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## try/except\n",
+					"\n",
+					"While **`if`** / **`else`** clauses allow us to define conditional logic based on evaluating conditional statements, **`try`** / **`except`** focuses on providing robust error handling.\n",
+					"\n",
+					"Let's begin by considering a simple function."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def three_times(number):\n",
+					"    return number * 3"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Let's assume that the desired use of this function is to multiply an integer value by 3.\n",
+					"\n",
+					"The below cell demonstrates this behavior."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"three_times(2)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Note what happens if a string is passed to the function."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"three_times(\"2\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"In this case, we don't get an error, but we also do not get the desired outcome.\n",
+					"\n",
+					"**`assert`** statements allow us to run simple tests of Python code. If an **`assert`** statement evaluates to true, nothing happens. \n",
+					"\n",
+					"If it evaluates to false, an error is raised.\n",
+					"\n",
+					"Run the following cell to assert that the number **`2`** is an integer"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert type(2) == int"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"Uncomment the following cell and then run it to assert that the string **`\"2\"`** is an integer.\n",
+					"\n",
+					"It should throw an **`AssertionError`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# assert type(\"2\") == int"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"As expected, the string **`\"2\"`** is not an integer.\n",
+					"\n",
+					"Python strings have a property to report whether or not they can be safely cast as numeric value as seen below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert \"2\".isnumeric()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"String numbers are common; you may see them as results from an API query, raw records in a JSON or CSV file, or returned by a SQL query.\n",
+					"\n",
+					"**`int()`** and **`float()`** are two common methods for casting values to numeric types. \n",
+					"\n",
+					"An **`int`** will always be a whole number, while a **`float`** will always have a decimal."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"int(\"2\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"While Python will gladly cast a string containing numeric characters to a numeric type, it will not allow you to change other strings to numbers.\n",
+					"\n",
+					"Uncomment the following cell and give it a try:"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# int(\"two\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Note that errors will stop the execution of a notebook script; all cells after an error will be skipped when a notebook is scheduled as a production job.\n",
+					"\n",
+					"If we enclose code that might throw an error in a **`try`** statement, we can define alternate logic when an error is encountered.\n",
+					"\n",
+					"Below is a simple function that demonstrates this."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def try_int(num_string):\n",
+					"    try:\n",
+					"        int(num_string)\n",
+					"        result = f\"{num_string} is a number.\"\n",
+					"    except:\n",
+					"        result = f\"{num_string} is not a number!\"\n",
+					"        \n",
+					"    print(result)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"When a numeric string is passed, the function will return the result as an integer."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"try_int(\"2\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"When a non-numeric string is passed, an informative message is printed out.\n",
+					"\n",
+					"**NOTE**: An error is **not** raised, even though an error occurred, and no value was returned. Implementing logic that suppresses errors can lead to logic silently failing."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"try_int(\"two\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Below, our earlier function is updated to include logic for handling errors to return an informative message."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def three_times(number):\n",
+					"    try:\n",
+					"        return int(number) * 3\n",
+					"    except ValueError as e:\n",
+					"        print(f\"You passed the string variable '{number}'.\\n\")\n",
+					"        print(f\"Try passing an integer instead.\")\n",
+					"        return None"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Now our function can process numbers passed as strings."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"three_times(\"2\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"And prints an informative message when a string is passed."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"three_times(\"two\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Note that as implemented, this logic would only be useful for interactive execution of this logic (the message isn't currently being logged anywhere, and the code will not return the data in the desired format; human intervention would be required to act upon the printed message)."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Applying Python Control Flow for SQL Queries\n",
+					"\n",
+					"While the above examples demonstrate the basic principles of using these designs in Python, the goal of this lesson is to learn how to apply these concepts to executing SQL logic on Databricks.\n",
+					"\n",
+					"Let's revisit converting a SQL cell to execute in Python.\n",
+					"\n",
+					"**NOTE**: The following setup script ensures an isolated execution environment."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"CREATE OR REPLACE TEMP VIEW demo_tmp_vw(id, name, value) AS VALUES\n",
+					"  (1, \"Yve\", 1.0),\n",
+					"  (2, \"Omar\", 2.5),\n",
+					"  (3, \"Elia\", 3.3);"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Run the SQL cell below to preview the contents of this temp view."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM demo_tmp_vw"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Running SQL in a Python cell simply requires passing the string query to **`spark.sql()`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"query = \"SELECT * FROM demo_tmp_vw\"\n",
+					"spark.sql(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"But recall that executing a query with **`spark.sql()`** returns the results as a DataFrame rather than displaying them; below, the code is augmented to capture the result and display it."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"query = \"SELECT * FROM demo_tmp_vw\"\n",
+					"result = spark.sql(query)\n",
+					"display(result)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Using a simple **`if`** clause with a function allows us to execute arbitrary SQL queries, optionally displaying the results, and always returning the resultant DataFrame."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def simple_query_function(query, preview=True):\n",
+					"    query_result = spark.sql(query)\n",
+					"    if preview:\n",
+					"        display(query_result)\n",
+					"    return query_result"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"result = simple_query_function(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Below, we execute a different query and set preview to **`False`**, as the purpose of the query is to create a temp view rather than return a preview of data."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"new_query = \"CREATE OR REPLACE TEMP VIEW id_name_tmp_vw AS SELECT id, name FROM demo_tmp_vw\"\n",
+					"\n",
+					"simple_query_function(new_query, preview=False)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"We now have a simple extensible function that could be further parameterized depending on the needs of our organization.\n",
+					"\n",
+					"For example, suppose we want to protect our company from malicious SQL, like the query below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"injection_query = \"SELECT * FROM demo_tmp_vw; DROP DATABASE prod_db CASCADE; SELECT * FROM demo_tmp_vw\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"We can use the **`find()`** method to test for multiple SQL statements by looking for a semicolon."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"injection_query.find(\";\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"If it's not found it will return **`-1`**"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"injection_query.find(\"x\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"With that knowledge, we can define a simple search for a semicolon in the query string and raise a custom error message if it was found (not **`-1`**)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def injection_check(query):\n",
+					"    semicolon_index = query.find(\";\")\n",
+					"    if semicolon_index >= 0:\n",
+					"        raise ValueError(f\"Query contains semi-colon at index {semicolon_index}\\nBlocking execution to avoid SQL injection attack\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"**NOTE**: The example shown here is not sophisticated, but seeks to demonstrate a general principle. \n",
+					"\n",
+					"Always be wary of allowing untrusted users to pass text that will be passed to SQL queries. \n",
+					"\n",
+					"Also note that only one query can be executed using **`spark.sql()`**, so text with a semi-colon will always throw an error."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"Uncomment the following cell and give it a try:"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# injection_check(injection_query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"If we add this method to our earlier query function, we now have a more robust function that will assess each query for potential threats before execution."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"def secure_query_function(query, preview=True):\n",
+					"    injection_check(query)\n",
+					"    query_result = spark.sql(query)\n",
+					"    if preview:\n",
+					"        display(query_result)\n",
+					"    return query_result"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"As expected, we see normal performance with a safe query."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"secure_query_function(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"But prevent execution when bad logic is run."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

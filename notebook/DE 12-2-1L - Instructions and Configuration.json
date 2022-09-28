@@ -1,0 +1,357 @@
+{
+	"name": "DE 12-2-1L - Instructions and Configuration",
+	"properties": {
+		"folder": {
+			"name": "12 - Productionalizing Dashboards and Queries in DBSQL/DE 12.2L - OPTIONAL Capstone"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "bb591a1e-de2b-4a41-af4f-1f37a0402bd0"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"## End-to-End ETL in the Lakehouse\n",
+					"\n",
+					"In this notebook, you will pull together concepts learned throughout the course to complete an example data pipeline.\n",
+					"\n",
+					"The following is a non-exhaustive list of skills and tasks necessary to successfully complete this exercise:\n",
+					"* Using Databricks notebooks to write queries in SQL and Python\n",
+					"* Creating and modifying databases, tables, and views\n",
+					"* Using Auto Loader and Spark Structured Streaming for incremental data processing in a multi-hop architecture\n",
+					"* Using Delta Live Table SQL syntax\n",
+					"* Configuring a Delta Live Table pipeline for continuous processing\n",
+					"* Using Databricks Jobs to orchestrate tasks from notebooks stored in Repos\n",
+					"* Setting chronological scheduling for Databricks Jobs\n",
+					"* Defining queries in Databricks SQL\n",
+					"* Creating visualizations in Databricks SQL\n",
+					"* Defining Databricks SQL dashboards to review metrics and results"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Run Setup\n",
+					"Run the following cell to reset all the databases and directories associated with this lab."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../../Includes/Classroom-Setup-12.2.1L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Land Initial Data\n",
+					"Seed the landing zone with some data before proceeding."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.data_factory.load()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Create and Configure a DLT Pipeline\n",
+					"**NOTE**: The main difference between the instructions here and in previous labs with DLT is that in this instance, we will be setting up our pipeline for **Continuous** execution in **Production** mode."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.print_pipeline_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Steps:\n",
+					"1. Click the **Workflows** button on the sidebar.\n",
+					"1. Select the **Delta Live Tables** tab.\n",
+					"1. Click **Create Pipeline**.\n",
+					"1. Fill in a **Pipeline Name** - because these names must be unique, we suggest using the **Pipeline Name** provided in the cell above.\n",
+					"1. For **Notebook Libraries**, use the navigator to locate and select the companion notebook provided in the cell above.\n",
+					"1. Under **Configuration**, add the three configuration parameters:\n",
+					"   * Click **Add configuration**, set the \"key\" to **spark.master** and the \"value\" to **local[\\*]**.\n",
+					"   * Click **Add configuration**, set the \"key\" to **datasets_path** and the \"value\" to the value provided in the cell above.\n",
+					"   * Click **Add configuration**, set the \"key\" to **source** and the \"value\" to the value provided in the cell above.\n",
+					"1. In the **Target** field, enter the database name provided in the cell above.<br/>\n",
+					"This should follow the pattern **`da_<name>_<hash>_dewd_cap_12`**\n",
+					"1. In the **Storage location** field, copy the directory as printed above.\n",
+					"1. For **Pipeline Mode**, select **Continuous**\n",
+					"1. Uncheck the **Enable autoscaling** box\n",
+					"1. Set the number of **`workers`** to **`0`** (zero).\n",
+					"1. Enable **Photon Acceleration**.\n",
+					"1. Click **Create**.\n",
+					"1. After the UI updates, change from **Development** to **Production** mode\n",
+					"\n",
+					"This should begin the deployment of infrastructure."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.validate_pipeline_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Schedule a Notebook Job\n",
+					"\n",
+					"Our DLT pipeline is setup to process data as soon as it arrives. \n",
+					"\n",
+					"We'll schedule a notebook to land a new batch of data each minute so we can see this functionality in action.\n",
+					"\n",
+					"Before we start run the following cell to get the values used in this step."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.print_job_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Steps:\n",
+					"1. Click the **Workflows** button on the sidebar\n",
+					"1. Select the **Jobs** tab.\n",
+					"1. Click the blue **Create Job** button\n",
+					"1. Configure the task:\n",
+					"    1. Enter **Land-Data** for the task name\n",
+					"    1. For **Type**, select **Notebook**\n",
+					"    1. For **Path**, select the **Notebook Path** value provided in the cell above\n",
+					"    1. From the **Cluster** dropdown, under **Existing All Purpose Clusters**, select your cluster\n",
+					"    1. Click **Create**\n",
+					"1. In the top-left of the screen rename the job (not the task) from **`Land-Data`** (the defaulted value) to the **Job Name** provided for you in the previous cell.    \n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_24.png\"> **Note**: When selecting your all purpose cluster, you will get a warning about how this will be billed as all purpose compute. Production jobs should always be scheduled against new job clusters appropriately sized for the workload, as this is billed at a much lower rate."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Set a Chronological Schedule for your Job\n",
+					"Steps:\n",
+					"1. Locate the **Schedule** section in the side panel on the right.\n",
+					"1. Click on the **Edit schedule** button to explore scheduling options.\n",
+					"1. Change the **Schedule type** field from **Manual (Paused)** to **Scheduled**, which will bring up a chron scheduling UI.\n",
+					"1. Set the schedule to update **Every 2**, **Minutes** from **0 minutes past the hour** \n",
+					"1. Click **Save**\n",
+					"\n",
+					"**NOTE**: If you wish, you can click **Run now** to trigger the first run, or wait until the top of the next minute to make sure your scheduling has worked successfully."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.validate_job_config()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Register DLT Event Metrics for Querying with DBSQL\n",
+					"\n",
+					"The following cell prints out SQL statements to register the DLT event logs to your target database for querying in DBSQL.\n",
+					"\n",
+					"Execute the output code with the DBSQL Query Editor to register these tables and views. \n",
+					"\n",
+					"Explore each and make note of the logged event metrics."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.generate_register_dlt_event_metrics_sql()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Define a Query on the Gold Table\n",
+					"\n",
+					"The **daily_patient_avg** table is automatically updated each time a new batch of data is processed through the DLT pipeline. Each time a query is executed against this table, DBSQL will confirm if there is a newer version and then materialize results from the newest available version.\n",
+					"\n",
+					"Run the following cell to print out a query with your database name. Save this as a DBSQL query."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.generate_daily_patient_avg()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Add a Line Plot Visualization\n",
+					"\n",
+					"To track trends in patient averages over time, create a line plot and add it to a new dashboard.\n",
+					"\n",
+					"Create a line plot with the following settings:\n",
+					"* **X Column**: **`date`**\n",
+					"* **Y Column**: **`avg_heartrate`**\n",
+					"* **Group By**: **`name`**\n",
+					"\n",
+					"Add this visualization to a dashboard."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Track Data Processing Progress\n",
+					"\n",
+					"The code below extracts the **`flow_name`**, **`timestamp`**, and **`num_output_rows`** from the DLT event logs.\n",
+					"\n",
+					"Save this query in DBSQL, then define a bar plot visualization that shows:\n",
+					"* **X Column**: **`timestamp`**\n",
+					"* **Y Column**: **`num_output_rows`**\n",
+					"* **Group By**: **`flow_name`**\n",
+					"\n",
+					"Add your visualization to your dashboard."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.generate_visualization_query()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Refresh your Dashboard and Track Results\n",
+					"\n",
+					"The **Land-Data** notebook scheduled with Jobs above has 12 batches of data, each representing a month of recordings for our small sampling of patients. As configured per our instructions, it should take just over 20 minutes for all of these batches of data to be triggered and processed (we scheduled the Databricks Job to run every 2 minutes, and batches of data will process through our pipeline very quickly after initial ingestion).\n",
+					"\n",
+					"Refresh your dashboard and review your visualizations to see how many batches of data have been processed. (If you followed the instructions as outlined here, there should be 12 distinct flow updates tracked by your DLT metrics.) If all source data has not yet been processed, you can go back to the Databricks Jobs UI and manually trigger additional batches."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"With everything configured, you can now continue to the final part of your lab in the notebook [DE 12.2.4L - Final Steps]($./DE 12.2.4L - Final Steps)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

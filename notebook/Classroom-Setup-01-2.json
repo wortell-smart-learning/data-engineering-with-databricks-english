@@ -1,0 +1,94 @@
+{
+	"name": "Classroom-Setup-01-2",
+	"properties": {
+		"folder": {
+			"name": "Includes"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "bf7688b8-d651-4a01-8e42-0543b03ffc3b"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%run /Includes/_utility-methods"
+				],
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"@DBAcademyHelper.monkey_patch\n",
+					"def create_demo_tmp_vw(self):\n",
+					"    print(\"\\nCreating the temp view \\\"demo_tmp_vw\\\"\")\n",
+					"\n",
+					"    spark.sql(\"\"\"\n",
+					"        CREATE OR REPLACE TEMP VIEW demo_tmp_vw(name, value) AS VALUES\n",
+					"        (\"Yi\", 1),\n",
+					"        (\"Ali\", 2),\n",
+					"        (\"Selina\", 3)\n",
+					"        \"\"\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA = DBAcademyHelper(**helper_arguments) # Create the DA object\n",
+					"DA.reset_environment()                   # Reset by removing databases and files from other lessons\n",
+					"DA.init(install_datasets=True,           # Initialize, install and validate the datasets\n",
+					"        create_db=False)                 # Continue initialization, create the user-db\n",
+					"\n",
+					"DA.create_demo_tmp_vw()                  # Create demo table\n",
+					"\n",
+					"DA.conclude_setup()                      # Conclude setup by advertising environmental changes\n",
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

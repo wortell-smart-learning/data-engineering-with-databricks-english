@@ -1,0 +1,446 @@
+{
+	"name": "DE 4-2 - Providing Options for External Sources",
+	"properties": {
+		"folder": {
+			"name": "04 - ETL with Spark SQL"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "6ccb97fd-f4a9-40f1-8d0f-69b091a6993b"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"# Providing Options for External Sources\n",
+					"While directly querying files works well for self-describing formats, many data sources require additional configurations or schema declaration to properly ingest records.\n",
+					"\n",
+					"In this lesson, we will create tables using external data sources. While these tables will not yet be stored in the Delta Lake format (and therefore not be optimized for the Lakehouse), this technique helps to facilitate extracting data from diverse external systems.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"- Use Spark SQL to configure options for extracting data from external sources\n",
+					"- Create tables against external data sources for various file formats\n",
+					"- Describe default behavior when querying tables defined against external sources"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Run Setup\n",
+					"\n",
+					"The setup script will create the data and declare necessary values for the rest of this notebook to execute."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-04.2"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## When Direct Queries Don't Work \n",
+					"\n",
+					"While views can be used to persist direct queries against files between sessions, this approach has limited utility.\n",
+					"\n",
+					"CSV files are one of the most common file formats, but a direct query against these files rarely returns the desired results."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM csv.`${DA.paths.sales_csv}`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"We can see from the above that:\n",
+					"1. The header row is being extracted as a table row\n",
+					"1. All columns are being loaded as a single column\n",
+					"1. The file is pipe-delimited (**`|`**)\n",
+					"1. The final column appears to contain nested data that is being truncated"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Registering Tables on External Data with Read Options\n",
+					"\n",
+					"While Spark will extract some self-describing data sources efficiently using default settings, many formats will require declaration of schema or other options.\n",
+					"\n",
+					"While there are many <a href=\"https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-table-using.html\" target=\"_blank\">additional configurations</a> you can set while creating tables against external sources, the syntax below demonstrates the essentials required to extract data from most formats.\n",
+					"\n",
+					"<strong><code>\n",
+					"CREATE TABLE table_identifier (col_name1 col_type1, ...)<br/>\n",
+					"USING data_source<br/>\n",
+					"OPTIONS (key1 = val1, key2 = val2, ...)<br/>\n",
+					"LOCATION = path<br/>\n",
+					"</code></strong>\n",
+					"\n",
+					"Note that options are passed with keys as unquoted text and values in quotes. Spark supports many <a href=\"https://docs.databricks.com/data/data-sources/index.html\" target=\"_blank\">data sources</a> with custom options, and additional systems may have unofficial support through external <a href=\"https://docs.databricks.com/libraries/index.html\" target=\"_blank\">libraries</a>. \n",
+					"\n",
+					"**NOTE**: Depending on your workspace settings, you may need administrator assistance to load libraries and configure the requisite security settings for some data sources."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"The cell below demonstrates using Spark SQL DDL to create a table against an external CSV source, specifying:\n",
+					"1. The column names and types\n",
+					"1. The file format\n",
+					"1. The delimiter used to separate fields\n",
+					"1. The presence of a header\n",
+					"1. The path to where this data is stored"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE TABLE sales_csv\n",
+					"  (order_id LONG, email STRING, transactions_timestamp LONG, total_item_quantity INTEGER, purchase_revenue_in_usd DOUBLE, unique_items INTEGER, items STRING)\n",
+					"USING CSV\n",
+					"OPTIONS (\n",
+					"  header = \"true\",\n",
+					"  delimiter = \"|\"\n",
+					")\n",
+					"LOCATION \"${DA.paths.sales_csv}\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Note that no data has moved during table declaration. \n",
+					"\n",
+					"Similar to when we directly queried our files and created a view, we are still just pointing to files stored in an external location.\n",
+					"\n",
+					"Run the following cell to confirm that data is now being loaded correctly."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM sales_csv"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT COUNT(*) FROM sales_csv"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"All the metadata and options passed during table declaration will be persisted to the metastore, ensuring that data in the location will always be read with these options.\n",
+					"\n",
+					"**NOTE**: When working with CSVs as a data source, it's important to ensure that column order does not change if additional data files will be added to the source directory. Because the data format does not have strong schema enforcement, Spark will load columns and apply column names and data types in the order specified during table declaration.\n",
+					"\n",
+					"Running **`DESCRIBE EXTENDED`** on a table will show all of the metadata associated with the table definition."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE EXTENDED sales_csv"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Limits of Tables with External Data Sources\n",
+					"\n",
+					"If you've taken other courses on Databricks or reviewed any of our company literature, you may have heard about Delta Lake and the Lakehouse. Note that whenever we're defining tables or queries against external data sources, we **cannot** expect the performance guarantees associated with Delta Lake and Lakehouse.\n",
+					"\n",
+					"For example: while Delta Lake tables will guarantee that you always query the most recent version of your source data, tables registered against other data sources may represent older cached versions.\n",
+					"\n",
+					"The cell below executes some logic that we can think of as just representing an external system directly updating the files underlying our table."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"(spark.read\n",
+					"      .option(\"header\", \"true\")\n",
+					"      .option(\"delimiter\", \"|\")\n",
+					"      .csv(DA.paths.sales_csv)\n",
+					"      .write.mode(\"append\")\n",
+					"      .format(\"csv\")\n",
+					"      .save(DA.paths.sales_csv))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"If we look at the current count of records in our table, the number we see will not reflect these newly inserted rows."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT COUNT(*) FROM sales_csv"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"At the time we previously queried this data source, Spark automatically cached the underlying data in local storage. This ensures that on subsequent queries, Spark will provide the optimal performance by just querying this local cache.\n",
+					"\n",
+					"Our external data source is not configured to tell Spark that it should refresh this data. \n",
+					"\n",
+					"We **can** manually refresh the cache of our data by running the **`REFRESH TABLE`** command."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"REFRESH TABLE sales_csv"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Note that refreshing our table will invalidate our cache, meaning that we'll need to rescan our original data source and pull all data back into memory. \n",
+					"\n",
+					"For very large datasets, this may take a significant amount of time."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT COUNT(*) FROM sales_csv"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Extracting Data from SQL Databases\n",
+					"SQL databases are an extremely common data source, and Databricks has a standard JDBC driver for connecting with many flavors of SQL.\n",
+					"\n",
+					"The general syntax for creating these connections is:\n",
+					"\n",
+					"<strong><code>\n",
+					"CREATE TABLE <jdbcTable><br/>\n",
+					"USING JDBC<br/>\n",
+					"OPTIONS (<br/>\n",
+					"&nbsp; &nbsp; url = \"jdbc:{databaseServerType}://{jdbcHostname}:{jdbcPort}\",<br/>\n",
+					"&nbsp; &nbsp; dbtable = \"{jdbcDatabase}.table\",<br/>\n",
+					"&nbsp; &nbsp; user = \"{jdbcUsername}\",<br/>\n",
+					"&nbsp; &nbsp; password = \"{jdbcPassword}\"<br/>\n",
+					")\n",
+					"</code></strong>\n",
+					"\n",
+					"In the code sample below, we'll connect with <a href=\"https://www.sqlite.org/index.html\" target=\"_blank\">SQLite</a>.\n",
+					"  \n",
+					"**NOTE:** SQLite uses a local file to store a database, and doesn't require a port, username, or password.  \n",
+					"  \n",
+					"<img src=\"https://files.training.databricks.com/images/icon_warn_24.png\"> **WARNING**: The backend-configuration of the JDBC server assume you are running this notebook on a single-node cluster. If you are running on a cluster with multiple workers, the client running in the executors will not be able to connect to the driver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DROP TABLE IF EXISTS users_jdbc;\n",
+					"\n",
+					"CREATE TABLE users_jdbc\n",
+					"USING JDBC\n",
+					"OPTIONS (\n",
+					"  url = \"jdbc:sqlite:${DA.paths.ecommerce_db}\",\n",
+					"  dbtable = \"users\"\n",
+					")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Now we can query this table as if it were defined locally."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM users_jdbc"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Looking at the table metadata reveals that we have captured the schema information from the external system.\n",
+					"\n",
+					"Storage properties (which would include the username and password associated with the connection) are automatically redacted."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE EXTENDED users_jdbc"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"While the table is listed as **`MANAGED`**, listing the contents of the specified location confirms that no data is being persisted locally."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"import pyspark.sql.functions as F\n",
+					"\n",
+					"location = spark.sql(\"DESCRIBE EXTENDED users_jdbc\").filter(F.col(\"col_name\") == \"Location\").first()[\"data_type\"]\n",
+					"print(location)\n",
+					"\n",
+					"files = dbutils.fs.ls(location)\n",
+					"print(f\"Found {len(files)} files\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Note that some SQL systems such as data warehouses will have custom drivers. Spark will interact with various external databases differently, but the two basic approaches can be summarized as either:\n",
+					"1. Moving the entire source table(s) to Databricks and then executing logic on the currently active cluster\n",
+					"1. Pushing down the query to the external SQL database and only transferring the results back to Databricks\n",
+					"\n",
+					"In either case, working with very large datasets in external SQL databases can incur significant overhead because of either:\n",
+					"1. Network transfer latency associated with moving all data over the public internet\n",
+					"1. Execution of query logic in source systems not optimized for big data queries"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				]
+			}
+		]
+	}
+}

@@ -1,0 +1,560 @@
+{
+	"name": "DE 2-4L - Delta Lake Versioning  Optimization  and Vacuuming Lab",
+	"properties": {
+		"folder": {
+			"name": "02 - Delta Lake"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "654489ef-5bab-4dc0-92c2-a20460ea5fe3"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"# Delta Lake Versioning, Optimization, and Vacuuming\n",
+					"\n",
+					"This notebook provides a hands-on review of some of the more esoteric features Delta Lake brings to the data lakehouse.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"- Review table history\n",
+					"- Query previous table versions and rollback a table to a specific version\n",
+					"- Perform file compaction and Z-order indexing\n",
+					"- Preview files marked for permanent deletion and commit these deletes"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Setup\n",
+					"Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-02.4L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Recreate the History of your Bean Collection\n",
+					"\n",
+					"This lab picks up where the last lab left off. The cell below condenses all the operations from the last lab into a single cell (other than the final **`DROP TABLE`** statement).\n",
+					"\n",
+					"For quick reference, the schema of the **`beans`** table created is:\n",
+					"\n",
+					"| Field Name | Field type |\n",
+					"| --- | --- |\n",
+					"| name | STRING |\n",
+					"| color | STRING |\n",
+					"| grams | FLOAT |\n",
+					"| delicious | BOOLEAN |"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE TABLE beans \n",
+					"(name STRING, color STRING, grams FLOAT, delicious BOOLEAN);\n",
+					"\n",
+					"INSERT INTO beans VALUES\n",
+					"(\"black\", \"black\", 500, true),\n",
+					"(\"lentils\", \"brown\", 1000, true),\n",
+					"(\"jelly\", \"rainbow\", 42.5, false);\n",
+					"\n",
+					"INSERT INTO beans VALUES\n",
+					"('pinto', 'brown', 1.5, true),\n",
+					"('green', 'green', 178.3, true),\n",
+					"('beanbag chair', 'white', 40000, false);\n",
+					"\n",
+					"UPDATE beans\n",
+					"SET delicious = true\n",
+					"WHERE name = \"jelly\";\n",
+					"\n",
+					"UPDATE beans\n",
+					"SET grams = 1500\n",
+					"WHERE name = 'pinto';\n",
+					"\n",
+					"DELETE FROM beans\n",
+					"WHERE delicious = false;\n",
+					"\n",
+					"CREATE OR REPLACE TEMP VIEW new_beans(name, color, grams, delicious) AS VALUES\n",
+					"('black', 'black', 60.5, true),\n",
+					"('lentils', 'green', 500, true),\n",
+					"('kidney', 'red', 387.2, true),\n",
+					"('castor', 'brown', 25, false);\n",
+					"\n",
+					"MERGE INTO beans a\n",
+					"USING new_beans b\n",
+					"ON a.name=b.name AND a.color = b.color\n",
+					"WHEN MATCHED THEN\n",
+					"  UPDATE SET grams = a.grams + b.grams\n",
+					"WHEN NOT MATCHED AND b.delicious = true THEN\n",
+					"  INSERT *;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Review the Table History\n",
+					"\n",
+					"Delta Lake's transaction log stores information about each transaction that modifies a table's contents or settings.\n",
+					"\n",
+					"Review the history of the **`beans`** table below."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"If all the previous operations were completed as described you should see 7 versions of the table (**NOTE**: Delta Lake versioning starts with 0, so the max version number will be 6).\n",
+					"\n",
+					"The operations should be as follows:\n",
+					"\n",
+					"| version | operation |\n",
+					"| --- | --- |\n",
+					"| 0 | CREATE TABLE |\n",
+					"| 1 | WRITE |\n",
+					"| 2 | WRITE |\n",
+					"| 3 | UPDATE |\n",
+					"| 4 | UPDATE |\n",
+					"| 5 | DELETE |\n",
+					"| 6 | MERGE |\n",
+					"\n",
+					"The **`operationsParameters`** column will let you review predicates used for updates, deletes, and merges. The **`operationMetrics`** column indicates how many rows and files are added in each operation.\n",
+					"\n",
+					"Spend some time reviewing the Delta Lake history to understand which table version matches with a given transaction.\n",
+					"\n",
+					"**NOTE**: The **`version`** column designates the state of a table once a given transaction completes. The **`readVersion`** column indicates the version of the table an operation executed against. In this simple demo (with no concurrent transactions), this relationship should always increment by 1."
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Query a Specific Version\n",
+					"\n",
+					"After reviewing the table history, you decide you want to view the state of your table after your very first data was inserted.\n",
+					"\n",
+					"Run the query below to see this."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM beans VERSION AS OF 1"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"And now review the current state of your data."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM beans"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"You want to review the weights of your beans before you deleted any records.\n",
+					"\n",
+					"Fill in the statement below to register a temporary view of the version just before data was deleted, then run the following cell to query the view."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE OR REPLACE TEMP VIEW pre_delete_vw AS\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM pre_delete_vw"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Run the cell below to check that you have captured the correct version."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"pre_delete_vw\"), \"Make sure you have registered the temporary view with the provided name `pre_delete_vw`\"\n",
+					"assert spark.table(\"pre_delete_vw\").count() == 6, \"Make sure you're querying a version of the table with 6 records\"\n",
+					"assert spark.table(\"pre_delete_vw\").selectExpr(\"int(sum(grams))\").first()[0] == 43220, \"Make sure you query the version of the table after updates were applied\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Restore a Previous Version\n",
+					"\n",
+					"Apparently there was a misunderstanding; the beans your friend gave you that you merged into your collection were not intended for you to keep.\n",
+					"\n",
+					"Revert your table to the version before this **`MERGE`** statement completed."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Review the history of your table. Make note of the fact that restoring to a previous version adds another table version."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE HISTORY beans"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"last_tx = spark.conf.get(\"spark.databricks.delta.lastCommitVersionInSession\")\n",
+					"assert spark.sql(f\"DESCRIBE HISTORY beans\").select(\"operation\").first()[0] == \"RESTORE\", \"Make sure you reverted your table with the `RESTORE` keyword\"\n",
+					"assert spark.table(\"beans\").count() == 5, \"Make sure you reverted to the version after deleting records but before merging\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## File Compaction\n",
+					"Looking at the transaction metrics during your reversion, you are surprised you have some many files for such a small collection of data.\n",
+					"\n",
+					"While indexing on a table of this size is unlikely to improve performance, you decide to add a Z-order index on the **`name`** field in anticipation of your bean collection growing exponentially over time.\n",
+					"\n",
+					"Use the cell below to perform file compaction and Z-order indexing."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Your data should have been compacted to a single file; confirm this manually by running the following cell."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE DETAIL beans"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Run the cell below to check that you've successfully optimized and indexed your table."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"last_tx = spark.sql(\"DESCRIBE HISTORY beans\").first()\n",
+					"assert last_tx[\"operation\"] == \"OPTIMIZE\", \"Make sure you used the `OPTIMIZE` command to perform file compaction\"\n",
+					"assert last_tx[\"operationParameters\"][\"zOrderBy\"] == '[\"name\"]', \"Use `ZORDER BY name` with your optimize command to index your table\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Cleaning Up Stale Data Files\n",
+					"\n",
+					"You know that while all your data now resides in 1 data file, the data files from previous versions of your table are still being stored alongside this. You wish to remove these files and remove access to previous versions of the table by running **`VACUUM`** on the table.\n",
+					"\n",
+					"Executing **`VACUUM`** performs garbage cleanup on the table directory. By default, a retention threshold of 7 days will be enforced.\n",
+					"\n",
+					"The cell below modifies some Spark configurations. The first command overrides the retention threshold check to allow us to demonstrate permanent removal of data. \n",
+					"\n",
+					"**NOTE**: Vacuuming a production table with a short retention can lead to data corruption and/or failure of long-running queries. This is for demonstration purposes only and extreme caution should be used when disabling this setting.\n",
+					"\n",
+					"The second command sets **`spark.databricks.delta.vacuum.logging.enabled`** to **`true`** to ensure that the **`VACUUM`** operation is recorded in the transaction log.\n",
+					"\n",
+					"**NOTE**: Because of slight differences in storage protocols on various clouds, logging **`VACUUM`** commands is not on by default for some clouds as of DBR 9.1."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SET spark.databricks.delta.retentionDurationCheck.enabled = false;\n",
+					"SET spark.databricks.delta.vacuum.logging.enabled = true;"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Before permanently deleting data files, review them manually using the **`DRY RUN`** option."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"VACUUM beans RETAIN 0 HOURS DRY RUN"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"All data files not in the current version of the table will be shown in the preview above.\n",
+					"\n",
+					"Run the command again without **`DRY RUN`** to permanently delete these files.\n",
+					"\n",
+					"**NOTE**: All previous versions of the table will no longer be accessible."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"VACUUM beans RETAIN 0 HOURS"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Because **`VACUUM`** can be such a destructive act for important datasets, it's always a good idea to turn the retention duration check back on. Run the cell below to reactive this setting."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SET spark.databricks.delta.retentionDurationCheck.enabled = true"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Note that the table history will indicate the user that completed the **`VACUUM`** operation, the number of files deleted, and log that the retention check was disabled during this operation."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE HISTORY beans"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"Query your table again to confirm you still have access to the current version."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"SELECT * FROM beans"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_warn_32.png\"> Because Delta Cache stores copies of files queried in the current session on storage volumes deployed to your currently active cluster, you may still be able to temporarily access previous table versions (though systems should **not** be designed to expect this behavior). \n",
+					"\n",
+					"Restarting the cluster will ensure that these cached data files are permanently purged.\n",
+					"\n",
+					"You can see an example of this by uncommenting and running the following cell that may, or may not, fail\n",
+					"(depending on the state of the cache)."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- SELECT * FROM beans@v1"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"By completing this lab, you should now feel comfortable:\n",
+					"* Completing standard Delta Lake table creation and data manipulation commands\n",
+					"* Reviewing table metadata including table history\n",
+					"* Leverage Delta Lake versioning for snapshot queries and rollbacks\n",
+					"* Compacting small files and indexing tables\n",
+					"* Using **`VACUUM`** to review files marked for deletion and committing these deletes"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				]
+			}
+		]
+	}
+}

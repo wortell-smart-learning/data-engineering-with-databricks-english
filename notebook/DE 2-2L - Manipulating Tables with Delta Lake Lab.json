@@ -1,0 +1,505 @@
+{
+	"name": "DE 2-2L - Manipulating Tables with Delta Lake Lab",
+	"properties": {
+		"folder": {
+			"name": "02 - Delta Lake"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "460be32e-e01c-49d1-8603-3303d1374525"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"# Manipulating Tables with Delta Lake\n",
+					"\n",
+					"This notebook provides a hands-on review of some of the basic functionality of Delta Lake.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"- Execute standard operations to create and manipulate Delta Lake tables, including:\n",
+					"  - **`CREATE TABLE`**\n",
+					"  - **`INSERT INTO`**\n",
+					"  - **`SELECT FROM`**\n",
+					"  - **`UPDATE`**\n",
+					"  - **`DELETE`**\n",
+					"  - **`MERGE`**\n",
+					"  - **`DROP TABLE`**"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Setup\n",
+					"Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-02.2L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Create a Table\n",
+					"\n",
+					"In this notebook, we'll be creating a table to track our bean collection.\n",
+					"\n",
+					"Use the cell below to create a managed Delta Lake table named **`beans`**.\n",
+					"\n",
+					"Provide the following schema:\n",
+					"\n",
+					"| Field Name | Field type |\n",
+					"| --- | --- |\n",
+					"| name | STRING |\n",
+					"| color | STRING |\n",
+					"| grams | FLOAT |\n",
+					"| delicious | BOOLEAN |"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"**NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return as error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"beans\"), \"Table named `beans` does not exist\"\n",
+					"assert spark.table(\"beans\").columns == [\"name\", \"color\", \"grams\", \"delicious\"], \"Please name the columns in the order provided above\"\n",
+					"assert spark.table(\"beans\").dtypes == [(\"name\", \"string\"), (\"color\", \"string\"), (\"grams\", \"float\"), (\"delicious\", \"boolean\")], \"Please make sure the column types are identical to those provided above\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"## Insert Data\n",
+					"\n",
+					"Run the following cell to insert three rows into the table."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"INSERT INTO beans VALUES\n",
+					"(\"black\", \"black\", 500, true),\n",
+					"(\"lentils\", \"brown\", 1000, true),\n",
+					"(\"jelly\", \"rainbow\", 42.5, false)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Manually review the table contents to ensure data was written as expected."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Insert the additional records provided below. Make sure you execute this as a single transaction."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>\n",
+					"('pinto', 'brown', 1.5, true),\n",
+					"('green', 'green', 178.3, true),\n",
+					"('beanbag chair', 'white', 40000, false)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Run the cell below to confirm the data is in the proper state."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"beans\").count() == 6, \"The table should have 6 records\"\n",
+					"assert spark.conf.get(\"spark.databricks.delta.lastCommitVersionInSession\") == \"2\", \"Only 3 commits should have been made to the table\"\n",
+					"assert set(row[\"name\"] for row in spark.table(\"beans\").select(\"name\").collect()) == {'beanbag chair', 'black', 'green', 'jelly', 'lentils', 'pinto'}, \"Make sure you have not modified the data provided\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Update Records\n",
+					"\n",
+					"A friend is reviewing your inventory of beans. After much debate, you agree that jelly beans are delicious.\n",
+					"\n",
+					"Run the following cell to update this record."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"UPDATE beans\n",
+					"SET delicious = true\n",
+					"WHERE name = \"jelly\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"You realize that you've accidentally entered the weight of your pinto beans incorrectly.\n",
+					"\n",
+					"Update the **`grams`** column for this record to the correct weight of 1500."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Run the cell below to confirm this has completed properly."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"beans\").filter(\"name='pinto'\").count() == 1, \"There should only be 1 entry for pinto beans\"\n",
+					"row = spark.table(\"beans\").filter(\"name='pinto'\").first()\n",
+					"assert row[\"color\"] == \"brown\", \"The pinto bean should be labeled as the color brown\"\n",
+					"assert row[\"grams\"] == 1500, \"Make sure you correctly specified the `grams` as 1500\"\n",
+					"assert row[\"delicious\"] == True, \"The pinto bean is a delicious bean\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Delete Records\n",
+					"\n",
+					"You've decided that you only want to keep track of delicious beans.\n",
+					"\n",
+					"Execute a query to drop all beans that are not delicious."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Run the following cell to confirm this operation was successful."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.table(\"beans\").filter(\"delicious=true\").count() == 5, \"There should be 5 delicious beans in your table\"\n",
+					"assert spark.table(\"beans\").filter(\"name='beanbag chair'\").count() == 0, \"Make sure your logic deletes non-delicious beans\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Using Merge to Upsert Records\n",
+					"\n",
+					"Your friend gives you some new beans. The cell below registers these as a temporary view."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REPLACE TEMP VIEW new_beans(name, color, grams, delicious) AS VALUES\n",
+					"('black', 'black', 60.5, true),\n",
+					"('lentils', 'green', 500, true),\n",
+					"('kidney', 'red', 387.2, true),\n",
+					"('castor', 'brown', 25, false);\n",
+					"\n",
+					"SELECT * FROM new_beans"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"In the cell below, use the above view to write a merge statement to update and insert new records to your **`beans`** table as one transaction.\n",
+					"\n",
+					"Make sure your logic:\n",
+					"- Matches beans by name **and** color\n",
+					"- Updates existing beans by adding the new weight to the existing weight\n",
+					"- Inserts new beans only if they are delicious"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Run the cell below to check your work."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"version = spark.sql(\"DESCRIBE HISTORY beans\").selectExpr(\"max(version)\").first()[0]\n",
+					"last_tx = spark.sql(\"DESCRIBE HISTORY beans\").filter(f\"version={version}\")\n",
+					"assert last_tx.select(\"operation\").first()[0] == \"MERGE\", \"Transaction should be completed as a merge\"\n",
+					"metrics = last_tx.select(\"operationMetrics\").first()[0]\n",
+					"assert metrics[\"numOutputRows\"] == \"3\", \"Make sure you only insert delicious beans\"\n",
+					"assert metrics[\"numTargetRowsUpdated\"] == \"1\", \"Make sure you match on name and color\"\n",
+					"assert metrics[\"numTargetRowsInserted\"] == \"2\", \"Make sure you insert newly collected beans\"\n",
+					"assert metrics[\"numTargetRowsDeleted\"] == \"0\", \"No rows should be deleted by this operation\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Dropping Tables\n",
+					"\n",
+					"When working with managed Delta Lake tables, dropping a table results in permanently deleting access to the table and all underlying data files.\n",
+					"\n",
+					"**NOTE**: Later in the course, we'll learn about external tables, which approach Delta Lake tables as a collection of files and have different persistence guarantees.\n",
+					"\n",
+					"In the cell below, write a query to drop the **`beans`** table."
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Run the cell below to assert that your table no longer exists."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"assert spark.sql(\"SHOW TABLES LIKE 'beans'\").collect() == [], \"Confirm that you have dropped the `beans` table from your current database\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"## Wrapping Up\n",
+					"\n",
+					"By completing this lab, you should now feel comfortable:\n",
+					"* Completing standard Delta Lake table creation and data manipulation commands"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"\n",
+					"\n",
+					"\n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				]
+			}
+		]
+	}
+}

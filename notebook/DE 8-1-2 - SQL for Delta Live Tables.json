@@ -1,0 +1,289 @@
+{
+	"name": "DE 8-1-2 - SQL for Delta Live Tables",
+	"properties": {
+		"folder": {
+			"name": "08 - Delta Live Tables/DE 8.1 - DLT"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "1c8277b5-2df0-436a-8ee2-cea4f0551d94"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# SQL for Delta Live Tables\n",
+					"\n",
+					"In the last lesson, we walked through the process of scheduling this notebook as a Delta Live Table (DLT) pipeline. Now we'll explore the contents of this notebook to better understand the syntax used by Delta Live Tables.\n",
+					"\n",
+					"This notebook uses SQL to declare Delta Live Tables that together implement a simple multi-hop architecture based on a Databricks-provided example dataset loaded by default into Databricks workspaces.\n",
+					"\n",
+					"At its simplest, you can think of DLT SQL as a slight modification to traditional CTAS statements. DLT tables and views will always be preceded by the **`LIVE`** keyword.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"* Define tables and views with Delta Live Tables\n",
+					"* Use SQL to incrementally ingest raw data with Auto Loader\n",
+					"* Perform incremental reads on Delta tables with SQL\n",
+					"* Update code and redeploy a pipeline"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Declare Bronze Layer Tables\n",
+					"\n",
+					"Below we declare two tables implementing the bronze layer. This represents data in its rawest form, but captured in a format that can be retained indefinitely and queried with the performance and benefits that Delta Lake has to offer."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"### sales_orders_raw\n",
+					"\n",
+					"**`sales_orders_raw`** ingests JSON data incrementally from our **retail-org/sales_orders** dataset.\n",
+					"\n",
+					"Incremental processing via <a herf=\"https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html\" target=\"_blank\">Auto Loader</a> (which uses the same processing model as Structured Streaming), requires the addition of the **`STREAMING`** keyword in the declaration as seen below. The **`cloud_files()`** method enables Auto Loader to be used natively with SQL. This method takes the following positional parameters:\n",
+					"* The source location, as mentioned above\n",
+					"* The source data format, which is JSON in this case\n",
+					"* An arbitrarily sized array of optional reader options. In this case, we set **`cloudFiles.inferColumnTypes`** to **`true`**\n",
+					"\n",
+					"The following declaration also demonstrates the declaration of additional table metadata (a comment and properties in this case) that would be visible to anyone exploring the data catalog."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH STREAMING LIVE TABLE sales_orders_raw\n",
+					"COMMENT \"The raw sales orders, ingested from retail-org/sales_orders.\"\n",
+					"AS SELECT * FROM cloud_files(\"${datasets_path}/retail-org/sales_orders\", \"json\", map(\"cloudFiles.inferColumnTypes\", \"true\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"### customers\n",
+					"\n",
+					"**`customers`** presents CSV customer data found in **retail-org/customers**.\n",
+					"\n",
+					"This table will soon be used in a join operation to look up customer data based on sales records."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH STREAMING LIVE TABLE customers\n",
+					"COMMENT \"The customers buying finished products, ingested from retail-org/customers.\"\n",
+					"AS SELECT * FROM cloud_files(\"${datasets_path}/retail-org/customers/\", \"csv\");"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"\n",
+					"## Declare Silver Layer Tables\n",
+					"\n",
+					"Now we declare tables implementing the silver layer. This layer represents a refined copy of data from the bronze layer, with the intention of optimizing downstream applications. At this level we apply operations like data cleansing and enrichment."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"### sales_orders_cleaned\n",
+					"\n",
+					"Here we declare our first silver table, which enriches the sales transaction data with customer information in addition to implementing quality control by rejecting records with a null order number.\n",
+					"\n",
+					"This declaration introduces a number of new concepts.\n",
+					"\n",
+					"#### Quality Control\n",
+					"\n",
+					"The **`CONSTRAINT`** keyword introduces quality control. Similar in function to a traditional **`WHERE`** clause, **`CONSTRAINT`** integrates with DLT, enabling it to collect metrics on constraint violations. Constraints provide an optional **`ON VIOLATION`** clause, specifying an action to take on records that violate the constraint. The three modes currently supported by DLT include:\n",
+					"\n",
+					"| **`ON VIOLATION`** | Behavior |\n",
+					"| --- | --- |\n",
+					"| **`FAIL UPDATE`** | Pipeline failure when constraint is violated |\n",
+					"| **`DROP ROW`** | Discard records that violate constraints |\n",
+					"| Omitted | Records violating constraints will be included (but violations will be reported in metrics) |\n",
+					"\n",
+					"#### References to DLT Tables and Views\n",
+					"References to other DLT tables and views will always include the **`live.`** prefix. A target database name will automatically be substituted at runtime, allowing for easily migration of pipelines between DEV/QA/PROD environments.\n",
+					"\n",
+					"#### References to Streaming Tables\n",
+					"\n",
+					"References to streaming DLT tables use the **`STREAM()`**, supplying the table name as an argument."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH STREAMING LIVE TABLE sales_orders_cleaned(\n",
+					"  CONSTRAINT valid_order_number EXPECT (order_number IS NOT NULL) ON VIOLATION DROP ROW\n",
+					")\n",
+					"COMMENT \"The cleaned sales orders with valid order_number(s).\"\n",
+					"AS\n",
+					"  SELECT f.customer_id, f.customer_name, f.number_of_line_items, \n",
+					"         timestamp(from_unixtime((cast(f.order_datetime as long)))) as order_datetime, \n",
+					"         date(from_unixtime((cast(f.order_datetime as long)))) as order_date, \n",
+					"         f.order_number, f.ordered_products, c.state, c.city, c.lon, c.lat, c.units_purchased, c.loyalty_segment\n",
+					"  FROM STREAM(LIVE.sales_orders_raw) f\n",
+					"  LEFT JOIN LIVE.customers c\n",
+					"    ON c.customer_id = f.customer_id\n",
+					"    AND c.customer_name = f.customer_name"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Declare Gold Table\n",
+					"\n",
+					"At the most refined level of the architecture, we declare a table delivering an aggregation with business value, in this case a collection of sales order data based in a specific region. In aggregating, the report generates counts and totals of orders by date and customer."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REFRESH LIVE TABLE sales_order_in_la\n",
+					"COMMENT \"Sales orders in LA.\"\n",
+					"AS\n",
+					"  SELECT city, order_date, customer_id, customer_name, ordered_products_explode.curr, \n",
+					"         sum(ordered_products_explode.price) as sales, \n",
+					"         sum(ordered_products_explode.qty) as quantity, \n",
+					"         count(ordered_products_explode.id) as product_count\n",
+					"  FROM (SELECT city, order_date, customer_id, customer_name, explode(ordered_products) as ordered_products_explode\n",
+					"        FROM LIVE.sales_orders_cleaned \n",
+					"        WHERE city = 'Los Angeles')\n",
+					"  GROUP BY order_date, city, customer_id, customer_name, ordered_products_explode.curr"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Explore Results\n",
+					"\n",
+					"Explore the DAG (Directed Acyclic Graph) representing the entities involved in the pipeline and the relationships between them. Click on each to view a summary, which includes:\n",
+					"* Run status\n",
+					"* Metadata summary\n",
+					"* Schema\n",
+					"* Data quality metrics\n",
+					"\n",
+					"Refer to this <a href=\"$./DE 8.3 - Pipeline Results\" target=\"_blank\">companion notebook</a> to inspect tables and logs."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Update Pipeline\n",
+					"\n",
+					"Uncomment the following cell to declare another gold table. Similar to the previous gold table declaration, this filters for the **`city`** of Chicago. \n",
+					"\n",
+					"Re-run your pipeline to examine the updated results. \n",
+					"\n",
+					"Does it run as expected? \n",
+					"\n",
+					"Can you identify any issues?"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"-- CREATE OR REFRESH LIVE TABLE sales_order_in_chicago\n",
+					"-- COMMENT \"Sales orders in Chicago.\"\n",
+					"-- AS\n",
+					"--   SELECT city, order_date, customer_id, customer_name, ordered_products_explode.curr, \n",
+					"--          sum(ordered_products_explode.price) as sales, \n",
+					"--          sum(ordered_products_explode.qty) as quantity, \n",
+					"--          count(ordered_products_explode.id) as product_count\n",
+					"--   FROM (SELECT city, order_date, customer_id, customer_name, explode(ordered_products) as ordered_products_explode\n",
+					"--         FROM sales_orders_cleaned \n",
+					"--         WHERE city = 'Chicago')\n",
+					"--   GROUP BY order_date, city, customer_id, customer_name, ordered_products_explode.curr"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

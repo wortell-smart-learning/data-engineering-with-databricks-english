@@ -1,0 +1,318 @@
+{
+	"name": "DE 11-2L - Configuring Privileges for Production Data and Derived Tables Lab",
+	"properties": {
+		"folder": {
+			"name": "11 - Managing Permissions"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "c6ff6d13-077c-43d6-9783-8f36afd597fa"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"# Configuring Privileges for Production Data and Derived Tables\n",
+					"\n",
+					"The instructions as detailed below are provided for pairs of users to explore how Table ACLs on Databricks work. It leverages Databricks SQL and the Data Explorer to accomplish these tasks, and assumes that neither user has admin privileges for the workspace. An admin will need to have previously granted **`CREATE`** and **`USAGE`** privileges on a catalog for users to be able to create databases in Databricks SQL.\n",
+					"\n",
+					"##Learning Objectives\n",
+					"\n",
+					"By the end of this lab, you should be able to:\n",
+					"* Use Data Explorer to navigate relational entities\n",
+					"* Configure permissions for tables and views with Data Explorer\n",
+					"* Configure minimal permissions to allow for table discovery and querying\n",
+					"* Change ownership for databases, tables, and views created in DBSQL"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-11.2L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Exchange User Names with your Partner\n",
+					"If you are not in a workspace where your usernames correspond with your email address, make sure your partner has your username.\n",
+					"\n",
+					"They will need this when assigning privileges and searching for your database at later steps.\n",
+					"\n",
+					"The following cell will print your username."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"print(f\"Your username: {DA.username}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Generate Setup Statements\n",
+					"\n",
+					"The following cell uses Python to extract the username of the current user and format this into several statements used to create databases, tables, and views.\n",
+					"\n",
+					"Both students should execute the following cell. \n",
+					"\n",
+					"Successful execution will print out a series of formatted SQL queries, which can be copied into the DBSQL query editor and executed."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.generate_query()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"Steps:\n",
+					"1. Run the cell above\n",
+					"1. Copy the entire output to your clipboard\n",
+					"1. Navigate to the Databricks SQL workspace\n",
+					"1. Make sure that a SQL warehouse is running\n",
+					"1. Use the left sidebar to select the **SQL Editor**\n",
+					"1. Paste the query above and click the blue **Run** in the top right\n",
+					"\n",
+					"**NOTE**: You will need to be connected to a SQL warehouse to execute these queries successfully. If you cannot connect to a SQL warehouse, you will need to contact your administrator to give you access."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Find Your Database\n",
+					"In the Data Explorer, find the database you created earlier (this should follow the pattern **`dbacademy_<username>_dewd_acls_lab`**).\n",
+					"\n",
+					"Clicking on the database name should display a list of the contained tables and views on the left hand side.\n",
+					"\n",
+					"On the right, you'll see some details about the database, including the **Owner** and **Location**.\n",
+					"\n",
+					"Click the **Permissions** tab to review who presently has permissions (depending on your workspace configuration, some permissions may have been inherited from settings on the catalog)."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Change Database Permissions\n",
+					"\n",
+					"Steps:\n",
+					"1. Make sure you have the **Permissions** tab selected for the database\n",
+					"1. Click the blue **Grant** button\n",
+					"1. Select the **USAGE**, **SELECT**, and **READ_METADATA** options\n",
+					"1. Enter the username of your partner in the field at the top.\n",
+					"1. Click **OK**\n",
+					"\n",
+					"Confirm with your partner that you can each see each others' databases and tables."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Run a Query to Confirm\n",
+					"\n",
+					"By granting **`USAGE`**, **`SELECT`**, and **`READ_METADATA`** on your database, your partner should now be able to freely query the tables and views in this database, but will not be able to create new tables OR modify your data.\n",
+					"\n",
+					"In the SQL Editor, each user should run a series of queries to confirm this behavior in the database they were just added to.\n",
+					"\n",
+					"**Make sure you specify your partner's database while running the queries below.**\n",
+					"\n",
+					"**NOTE**: These first 3 queries should succeed, but the last should fail."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# Replace FILL_IN with your partner's username\n",
+					"DA.generate_confirmation_query(\"FILL_IN\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Execute a Query to Generate the Union of Your Beans\n",
+					"\n",
+					"Execute the query below against your own databases.\n",
+					"\n",
+					"**NOTE**: Because random values were inserted for the **`grams`** and **`delicious`** columns, you should see 2 distinct rows for each **`name`**, **`color`** pair."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.generate_union_query()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Register a Derivative View to Your Database\n",
+					"\n",
+					"Execute the query below to register the results of the previous query to your database."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.generate_derivative_view()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Query Your Partner's View\n",
+					"\n",
+					"Once your partner has successfully completed the previous step, run the following query against each of your tables; you should get the same results:"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# Replace FILL_IN with your partner's username\n",
+					"DA.generate_partner_view(\"FILL_IN\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"## Add Modify Permissions\n",
+					"\n",
+					"Now try to drop each other's **`beans`** tables. \n",
+					"\n",
+					"At the moment, this shouldn't work.\n",
+					"\n",
+					"Using the Data Explorer, add the **`MODIFY`** permission for your **`beans`** table for your partner.\n",
+					"\n",
+					"Again, attempt to drop your partner's **`beans`** table. \n",
+					"\n",
+					"It should again fail. \n",
+					"\n",
+					"**Only the owner of a table should be able to issue this statement**.<br/>\n",
+					"(Note that ownership can be transferred from an individual to a group, if desired).\n",
+					"\n",
+					"Instead, execute a query to delete records from your partner's table:"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# Replace FILL_IN with your partner's username\n",
+					"DA.generate_delete_query(\"FILL_IN\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 
+					"\n",
+					"\n",
+					"This query should successfully drop all records from the target table.\n",
+					"\n",
+					"Try to re-execute queries against any of the views of tables you'd previously queried in this lab.\n",
+					"\n",
+					"**NOTE**: If steps were completed successfully, none of your previous queries should return results, as the data referenced by your views has been deleted. This demonstrates the risks associated with providing **`MODIFY`** privileges to users on data that will be used in production applications and dashboards.\n",
+					"\n",
+					"If you have additional time, see if you can use the Delta methods **`DESCRIBE HISTORY`** and **`RESTORE`** to revert the records in your table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
