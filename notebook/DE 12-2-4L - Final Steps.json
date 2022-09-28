@@ -1,0 +1,227 @@
+{
+	"name": "DE 12-2-4L - Final Steps",
+	"properties": {
+		"folder": {
+			"name": "12 - Productionalizing Dashboards and Queries in DBSQL/DE 12.2L - OPTIONAL Capstone"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "2afbe21e-978a-43a5-b439-65dfba6b43c3"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"405115f0-8ffe-4a64-861b-b4a6772972be\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"# End-to-End ETL in the Lakehouse\n",
+					"## Final Steps\n",
+					"\n",
+					"We are picking up from the first notebook in this lab, [DE 12.2.1L - Instructions and Configuration]($./DE 12.2.1L - Instructions and Configuration)\n",
+					"\n",
+					"If everything is setup correctly, you should have:\n",
+					"* A DLT Pipeline running in **Continuous** mode\n",
+					"* A job that is feeding that pipeline new data every 2 minutes\n",
+					"* A series of Databricks SQL Queries analysing the outputs of that pipeline"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../../Includes/Classroom-Setup-12.2.4L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"ce3151f0-a3dc-4cd5-9f92-a075c851101a\"/>\n",
+					"\n",
+					"\n",
+					"## Execute a Query to Repair Broken Data\n",
+					"\n",
+					"Review the code that defined the **`recordings_enriched`** table to identify the filter applied for the quality check.\n",
+					"\n",
+					"In the cell below, write a query that returns all the records from the **`recordings_bronze`** table that were refused by this quality check."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"-- TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"25e86690-7fc4-45ea-b567-c6a229cef220\"/>\n",
+					"\n",
+					"\n",
+					"For the purposes of our demo, let's assume that thorough manual review of our data and systems has demonstrated that occasionally otherwise valid heartrate recordings are returned as negative values.\n",
+					"\n",
+					"Run the following query to examine these same rows with the negative sign removed."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT abs(heartrate), * FROM ${da.db_name}.recordings_bronze WHERE heartrate <= 0"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"6f853894-27ff-4edb-8e64-ff2fa3c0be39\"/>\n",
+					"\n",
+					"\n",
+					"To complete our dataset, we wish to insert these fixed records into the silver **`recordings_enriched`** table.\n",
+					"\n",
+					"Use the cell below to update the query used in the DLT pipeline to execute this repair.\n",
+					"\n",
+					"**NOTE**: Make sure you update the code to only process those records that were previously rejected due to the quality check."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"# CREATE OR REFRESH STREAMING LIVE TABLE recordings_enriched\n",
+					"#   (CONSTRAINT positive_heartrate EXPECT (heartrate > 0) ON VIOLATION DROP ROW)\n",
+					"# AS SELECT \n",
+					"#   CAST(a.device_id AS INTEGER) device_id, \n",
+					"#   CAST(a.mrn AS LONG) mrn, \n",
+					"#   CAST(a.heartrate AS DOUBLE) heartrate, \n",
+					"#   CAST(from_unixtime(a.time, 'yyyy-MM-dd HH:mm:ss') AS TIMESTAMP) time,\n",
+					"#   b.name\n",
+					"#   FROM STREAM(live.recordings_bronze) a\n",
+					"#   INNER JOIN STREAM(live.pii) b\n",
+					"#   ON a.mrn = b.mrn"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"03ebb8bd-781d-4d5d-87ff-f4a842e2419a\"/>\n",
+					"\n",
+					"\n",
+					"Use the cell below to manually or programmatically confirm that this update has been successful.\n",
+					"\n",
+					"(The total number of records in the **`recordings_bronze`** should now be equal to the total records in **`recordings_enriched`**)."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"9b9685f0-dc1a-490c-92e9-ec068c7064d5\"/>\n",
+					"\n",
+					"\n",
+					"## Consider Production Data Permissions\n",
+					"\n",
+					"Note that while our manual repair of the data was successful, as the owner of these datasets, by default we have permissions to modify or delete these data from any location we're executing code.\n",
+					"\n",
+					"To put this another way: our current permissions would allow us to change or drop our production tables permanently if an errant SQL query is accidentally executed with the current user's permissions (or if other users are granted similar permissions).\n",
+					"\n",
+					"While for the purposes of this lab, we desired to have full permissions on our data, as we move code from development to production, it is safer to leverage <a href=\"https://docs.databricks.com/administration-guide/users-groups/service-principals.html\" target=\"_blank\">service principals</a> when scheduling Jobs and DLT Pipelines to avoid accidental data modifications."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"15d7d859-5788-4c66-88f8-f276dba39347\"/>\n",
+					"\n",
+					"\n",
+					"## Shut Down Production Infrastructure\n",
+					"\n",
+					"Note that Databricks Jobs, DLT Pipelines, and scheduled DBSQL queries and dashboards are all designed to provide sustained execution of production code. In this end-to-end demo, you were instructed to configure a Job and Pipeline for continuous data processing. To prevent these workloads from continuing to execute, you should **Pause** your Databricks Job and **Stop** your DLT pipeline. Deleting these assets will also ensure that production infrastructure is terminated.\n",
+					"\n",
+					"**NOTE**: All instructions for DBSQL asset scheduling in previous lessons instructed users to set the update schedule to end tomorrow. You may choose to go back and also cancel these updates to prevent Databricks SQL warehouses from staying on until that time."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
