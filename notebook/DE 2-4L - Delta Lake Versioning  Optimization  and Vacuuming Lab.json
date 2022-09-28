@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "88e6db31-d854-4330-b572-28b2db8894cb"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "654489ef-5bab-4dc0-92c2-a20460ea5fe3"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,36 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"# Delta Lake Versioning, Optimization, and Vacuuming\n",
@@ -58,19 +75,16 @@
 					"- Query previous table versions and rollback a table to a specific version\n",
 					"- Perform file compaction and Z-order indexing\n",
 					"- Preview files marked for permanent deletion and commit these deletes"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Setup\n",
 					"Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -81,8 +95,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Recreate the History of your Bean Collection\n",
@@ -97,8 +110,7 @@
 					"| color | STRING |\n",
 					"| grams | FLOAT |\n",
 					"| delicious | BOOLEAN |"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -145,8 +157,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Review the Table History\n",
@@ -154,8 +165,7 @@
 					"Delta Lake's transaction log stores information about each transaction that modifies a table's contents or settings.\n",
 					"\n",
 					"Review the history of the **`beans`** table below."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -167,8 +177,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"If all the previous operations were completed as described you should see 7 versions of the table (**NOTE**: Delta Lake versioning starts with 0, so the max version number will be 6).\n",
@@ -190,13 +199,11 @@
 					"Spend some time reviewing the Delta Lake history to understand which table version matches with a given transaction.\n",
 					"\n",
 					"**NOTE**: The **`version`** column designates the state of a table once a given transaction completes. The **`readVersion`** column indicates the version of the table an operation executed against. In this simple demo (with no concurrent transactions), this relationship should always increment by 1."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Query a Specific Version\n",
@@ -204,8 +211,7 @@
 					"After reviewing the table history, you decide you want to view the state of your table after your very first data was inserted.\n",
 					"\n",
 					"Run the query below to see this."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -216,13 +222,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"And now review the current state of your data."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -233,15 +237,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"You want to review the weights of your beans before you deleted any records.\n",
 					"\n",
 					"Fill in the statement below to register a temporary view of the version just before data was deleted, then run the following cell to query the view."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -261,13 +263,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Run the cell below to check that you have captured the correct version."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -286,8 +286,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Restore a Previous Version\n",
@@ -295,8 +294,7 @@
 					"Apparently there was a misunderstanding; the beans your friend gave you that you merged into your collection were not intended for you to keep.\n",
 					"\n",
 					"Revert your table to the version before this **`MERGE`** statement completed."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -308,13 +306,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Review the history of your table. Make note of the fact that restoring to a previous version adds another table version."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -340,8 +336,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## File Compaction\n",
@@ -350,8 +345,7 @@
 					"While indexing on a table of this size is unlikely to improve performance, you decide to add a Z-order index on the **`name`** field in anticipation of your bean collection growing exponentially over time.\n",
 					"\n",
 					"Use the cell below to perform file compaction and Z-order indexing."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -363,13 +357,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Your data should have been compacted to a single file; confirm this manually by running the following cell."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -380,13 +372,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Run the cell below to check that you've successfully optimized and indexed your table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -405,8 +395,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Cleaning Up Stale Data Files\n",
@@ -422,8 +411,7 @@
 					"The second command sets **`spark.databricks.delta.vacuum.logging.enabled`** to **`true`** to ensure that the **`VACUUM`** operation is recorded in the transaction log.\n",
 					"\n",
 					"**NOTE**: Because of slight differences in storage protocols on various clouds, logging **`VACUUM`** commands is not on by default for some clouds as of DBR 9.1."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -435,13 +423,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Before permanently deleting data files, review them manually using the **`DRY RUN`** option."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -452,8 +438,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"All data files not in the current version of the table will be shown in the preview above.\n",
@@ -461,8 +446,7 @@
 					"Run the command again without **`DRY RUN`** to permanently delete these files.\n",
 					"\n",
 					"**NOTE**: All previous versions of the table will no longer be accessible."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -473,13 +457,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Because **`VACUUM`** can be such a destructive act for important datasets, it's always a good idea to turn the retention duration check back on. Run the cell below to reactive this setting."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -490,13 +472,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Note that the table history will indicate the user that completed the **`VACUUM`** operation, the number of files deleted, and log that the retention check was disabled during this operation."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -507,13 +487,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Query your table again to confirm you still have access to the current version."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -524,8 +502,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"<img src=\"https://files.training.databricks.com/images/icon_warn_32.png\"> Because Delta Cache stores copies of files queried in the current session on storage volumes deployed to your currently active cluster, you may still be able to temporarily access previous table versions (though systems should **not** be designed to expect this behavior). \n",
@@ -534,8 +511,7 @@
 					"\n",
 					"You can see an example of this by uncommenting and running the following cell that may, or may not, fail\n",
 					"(depending on the state of the cache)."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -546,8 +522,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"By completing this lab, you should now feel comfortable:\n",
@@ -556,18 +531,15 @@
 					"* Leverage Delta Lake versioning for snapshot queries and rollbacks\n",
 					"* Compacting small files and indexing tables\n",
 					"* Using **`VACUUM`** to review files marked for deletion and committing these deletes"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -584,13 +556,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}

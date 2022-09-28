@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9071c3c1-8c9c-4403-bc05-f47b8ec75496"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "a28c5ca4-621c-45d8-98e4-f7ebecb9c729"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,36 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"# Views and CTEs on Databricks\n",
@@ -61,19 +78,16 @@
 					"**Resources**\n",
 					"* <a href=\"https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-ddl-create-view.html\" target=\"_blank\">Create View - Databricks Docs</a>\n",
 					"* <a href=\"https://docs.databricks.com/spark/latest/spark-sql/language-manual/sql-ref-syntax-qry-select-cte.html\" target=\"_blank\">Common Table Expressions - Databricks Docs</a>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Classroom Setup\n",
 					"The following script clears out previous runs of this demo and configures some Hive variables that will be used in our SQL queries."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -84,13 +98,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"We start by creating a table of data we can use for the demonstration."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -109,14 +121,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"To show a list of tables (and views), we use the **`SHOW TABLES`** command also demonstrated below."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -127,8 +137,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -137,19 +146,16 @@
 					"To set this demonstration up, we are going to first create one of each type of view.\n",
 					"\n",
 					"Then in the next notebook, we will explore the differences between how each one behaves."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"### Views\n",
 					"Let's create a view that contains only the data where the origin is \"ABQ\" and the destination is \"LAX\"."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -165,14 +171,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					" \n",
 					"Note that the **`view_delays_abq_lax`** view has been added to the list below:"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -183,8 +187,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"### Temporary Views\n",
@@ -192,8 +195,7 @@
 					"Next we'll create a temporary view. \n",
 					"\n",
 					"The syntax is very similar but adds **`TEMPORARY`** to the command."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -207,16 +209,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Now if we show our tables again, we will see the one table and both views.\n",
 					"\n",
 					"Make note of the values in the **`isTemporary`** column."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -227,8 +227,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -239,8 +238,7 @@
 					"Here we simply add **`GLOBAL`** to the command. \n",
 					"\n",
 					"Also note the **`global_temp`** database qualifer in the subsequent **`SELECT`** statement."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -254,14 +252,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Before we move on, review one last time the database's tables and views..."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -272,14 +268,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"...and the tables and views in the **`global_temp`** database:"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -290,8 +284,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -304,18 +297,16 @@
 					"* Detaching and reataching to a cluster\n",
 					"* Installing a python package which in turn restarts the Python interpreter\n",
 					"* Or simply opening a new notebook"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}

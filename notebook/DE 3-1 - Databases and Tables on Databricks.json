@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9326e85a-00cd-4d8d-9870-f87c003eeccf"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "9eb5bd13-6d5a-454b-bf84-50484cdb463c"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,36 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"# Schemas and Tables on Databricks\n",
@@ -64,19 +81,16 @@
 					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-table-using-the-ui\" target=\"_blank\">Creating a Table with the UI</a>\n",
 					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-local-table\" target=\"_blank\">Create a Local Table</a>\n",
 					"* <a href=\"https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#saving-to-persistent-tables\" target=\"_blank\">Saving to Persistent Tables</a>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Lesson Setup\n",
 					"The following script clears out previous runs of this demo and configures some Hive variables that will be used in our SQL queries."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -87,8 +101,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Using Hive Variables\n",
@@ -96,8 +109,7 @@
 					"While not a pattern that is generally recommended in Spark SQL, this notebook will use some Hive variables to substitute in string values derived from the account email of the current user.\n",
 					"\n",
 					"The following cell demonstrates this pattern."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -109,26 +121,22 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Because you may be working in a shared workspace, this course uses variables derived from your username so the schemas don't conflict with other users. Again, consider this use of Hive variables a hack for our lesson environment rather than a good practice for development."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"## Schemas\n",
 					"Let's start by creating two schemas:\n",
 					"- One with no **`LOCATION`** specified\n",
 					"- One with **`LOCATION`** specified"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -140,13 +148,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Note that the location of the first schema is in the default location under **`dbfs:/user/hive/warehouse/`** and that the schema directory is the name of the schema with the **`.db`** extension"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -157,13 +163,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Note that the location of the second schema is in the directory specified after the **`LOCATION`** keyword."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -174,15 +178,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"We will create a table in the schema with default location and insert data. \n",
 					"\n",
 					"Note that the schema must be provided because there is no data from which to infer the schema."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -198,13 +200,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"We can look at the extended table description to find the location (you'll need to scroll down in the results)."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -215,15 +215,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"By default, managed tables in a schema without the location specified will be created in the **`dbfs:/user/hive/warehouse/<schema_name>.db/`** directory.\n",
 					"\n",
 					"We can see that, as expected, the data and metadata for our Delta Table are stored in that location."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -248,13 +246,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Drop the table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -265,13 +261,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Note the table's directory and its log and data files are deleted. Only the schema directory remains."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -291,15 +285,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"We now create a table in the schema with custom location and insert data. \n",
 					"\n",
 					"Note that the schema must be provided because there is no data from which to infer the schema."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -314,13 +306,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Again, we'll look at the description to find the table location."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -331,13 +321,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"As expected, this managed table is created in the path specified with the **`LOCATION`** keyword during schema creation. As such, the data and metadata for the table are persisted in a directory here."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -360,13 +348,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Let's drop the table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -377,15 +363,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Note the table's folder and the log file and data file are deleted.  \n",
 					"  \n",
 					"Only the schema location remains"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -406,16 +390,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"## Tables\n",
 					"We will create an external (unmanaged) table from sample data. \n",
 					"\n",
 					"The data we are going to use are in CSV format. We want to create a Delta table with a **`LOCATION`** provided in the directory of our choice."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -436,13 +418,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Let's note the location of the table's data in this lesson's working directory."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -453,13 +433,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Now, we drop the table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -470,13 +448,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"The table definition no longer exists in the metastore, but the underlying data remain intact."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -495,14 +471,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"## Clean up\n",
 					"Drop both schemas."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -514,13 +488,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -537,13 +509,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}

@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "6053456f-e497-48d5-bd79-9ac6de7e8994"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "f80b53a9-82ef-448e-b796-e0333917489d"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,37 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
+				"source": [
 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"# Databases, Tables, and Views Lab\n",
 					"\n",
@@ -62,19 +80,17 @@
 					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-table-using-the-ui\" target=\"_blank\">Creating a Table with the UI</a>\n",
 					"* <a href=\"https://docs.databricks.com/user-guide/tables.html#create-a-local-table\" target=\"_blank\">Create a Local Table</a>\n",
 					"* <a href=\"https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#saving-to-persistent-tables\" target=\"_blank\">Saving to Persistent Tables</a>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"### Getting Started\n",
 					"\n",
 					"Run the following cell to configure variables and datasets for this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -85,8 +101,8 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Overview of the Data\n",
 					"\n",
@@ -104,8 +120,7 @@
 					"|TAVG        |float    | Average temperature |\n",
 					"\n",
 					"This data is stored in the Parquet format; preview the data with the query below."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -117,14 +132,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Create a Database\n",
 					"\n",
 					"Create a database in the default location using the **`da.db_name`** variable defined in setup script."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -137,11 +151,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -158,14 +171,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Change to Your New Database\n",
 					"\n",
 					"**`USE`** your newly created database."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -178,11 +190,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -199,13 +210,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Create a Managed Table\n",
 					"Use a CTAS statement to create a managed table named **`weather_managed`**."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -220,11 +230,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -242,14 +251,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Create an External Table\n",
 					"\n",
 					"Recall that an external table differs from a managed table through specification of a location. Create an external table called **`weather_external`** below."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -265,11 +273,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -287,13 +294,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Examine Table Details\n",
 					"Use the SQL command **`DESCRIBE EXTENDED table_name`** to examine the two weather tables."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -311,12 +317,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Run the following helper code to extract and compare the table locations."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -356,12 +361,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"List the contents of these directories to confirm that data exists in both locations."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -393,13 +397,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"### Check Directory Contents after Dropping Database and All Tables\n",
 					"The **`CASCADE`** keyword will accomplish this."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -412,11 +415,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -433,14 +435,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"With the database dropped, the files will have been deleted as well.\n",
 					"\n",
 					"Uncomment and run the following cell, which will throw a **`FileNotFoundException`** as your confirmation."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -486,25 +487,23 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"**This highlights the main differences between managed and external tables.** By default, the files associated with managed tables will be stored to this location on the root DBFS storage linked to the workspace, and will be deleted when a table is dropped.\n",
 					"\n",
 					"Files for external tables will be persisted in the location provided at table creation, preventing users from inadvertently deleting underlying files. **External tables can easily be migrated to other databases or renamed, but these operations with managed tables will require rewriting ALL underlying files.**"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Create a Database with a Specified Path\n",
 					"\n",
 					"Assuming you dropped your database in the last step, you can use the same **`database`** name."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -516,12 +515,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Recreate your **`weather_managed`** table in this new database and print out the location of this table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -547,11 +545,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -569,17 +566,16 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"While here we're using the **`working_dir`** directory created on the DBFS root, _any_ object store can be used as the database directory. **Defining database directories for groups of users can greatly reduce the chances of accidental data exfiltration**."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Views and their Scoping\n",
 					"\n",
@@ -589,8 +585,7 @@
 					"- a global temp view named **`celsius_global`**\n",
 					"\n",
 					"Start by creating the first view in the code cell below."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -606,11 +601,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -628,12 +622,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Now create a temporary view."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -649,11 +642,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -671,12 +663,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Now register a global temp view."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -692,11 +683,10 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -713,12 +703,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Views will be displayed alongside tables when listing from the catalog."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -729,15 +718,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Note the following:\n",
 					"- The view is associated with the current database. This view will be available to any user that can access this database and will persist between sessions.\n",
 					"- The temp view is not associated with any database. The temp view is ephemeral and is only accessible in the current SparkSession.\n",
 					"- The global temp view does not appear in our catalog. **Global temp views will always register to the **`global_temp`** database**. The **`global_temp`** database is ephemeral but tied to the lifetime of the cluster; however, it is only accessible by notebooks attached to the same cluster on which it was created."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -748,22 +736,20 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"While no job was triggered when defining these views, a job is triggered _each time_ a query is executed against the view."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Clean Up\n",
 					"Drop the database and all tables to clean up your workspace."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -774,8 +760,8 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Synopsis\n",
 					"\n",
@@ -783,17 +769,15 @@
 					"- Created and deleted databases\n",
 					"- Explored behavior of managed and external tables\n",
 					"- Learned about the scoping of views"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -810,13 +794,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- "&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}

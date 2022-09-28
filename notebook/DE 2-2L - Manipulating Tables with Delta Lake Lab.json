@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5d0819d4-7891-4b9e-8f2f-98dc09e835e6"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "460be32e-e01c-49d1-8603-3303d1374525"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,36 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -63,20 +80,17 @@
 					"  - **`DELETE`**\n",
 					"  - **`MERGE`**\n",
 					"  - **`DROP TABLE`**"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"## Setup\n",
 					"Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -87,8 +101,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -106,8 +119,7 @@
 					"| color | STRING |\n",
 					"| grams | FLOAT |\n",
 					"| delicious | BOOLEAN |"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -119,14 +131,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"**NOTE**: We'll use Python to run checks occasionally throughout the lab. The following cell will return as error with a message on what needs to change if you have not followed instructions. No output from cell execution means that you have completed this step."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -145,15 +155,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Insert Data\n",
 					"\n",
 					"Run the following cell to insert three rows into the table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -167,14 +175,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Manually review the table contents to ensure data was written as expected."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -186,14 +192,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Insert the additional records provided below. Make sure you execute this as a single transaction."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -208,14 +212,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Run the cell below to confirm the data is in the proper state."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -234,8 +236,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -244,8 +245,7 @@
 					"A friend is reviewing your inventory of beans. After much debate, you agree that jelly beans are delicious.\n",
 					"\n",
 					"Run the following cell to update this record."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -258,16 +258,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"You realize that you've accidentally entered the weight of your pinto beans incorrectly.\n",
 					"\n",
 					"Update the **`grams`** column for this record to the correct weight of 1500."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -279,14 +277,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Run the cell below to confirm this has completed properly."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -307,8 +303,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -317,8 +312,7 @@
 					"You've decided that you only want to keep track of delicious beans.\n",
 					"\n",
 					"Execute a query to drop all beans that are not delicious."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -330,14 +324,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Run the following cell to confirm this operation was successful."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -355,16 +347,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"## Using Merge to Upsert Records\n",
 					"\n",
 					"Your friend gives you some new beans. The cell below registers these as a temporary view."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -381,8 +371,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -392,8 +381,7 @@
 					"- Matches beans by name **and** color\n",
 					"- Updates existing beans by adding the new weight to the existing weight\n",
 					"- Inserts new beans only if they are delicious"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -405,14 +393,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Run the cell below to check your work."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -436,8 +422,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -448,8 +433,7 @@
 					"**NOTE**: Later in the course, we'll learn about external tables, which approach Delta Lake tables as a collection of files and have different persistence guarantees.\n",
 					"\n",
 					"In the cell below, write a query to drop the **`beans`** table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -461,14 +445,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Run the cell below to assert that your table no longer exists."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -485,8 +467,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -494,19 +475,16 @@
 					"\n",
 					"By completing this lab, you should now feel comfortable:\n",
 					"* Completing standard Delta Lake table creation and data manipulation commands"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Run the following cell to delete the tables and files associated with this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -523,13 +501,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}
