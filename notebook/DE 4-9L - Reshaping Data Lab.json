@@ -1,0 +1,343 @@
+{
+	"name": "DE 4-9L - Reshaping Data Lab",
+	"properties": {
+		"folder": {
+			"name": "04 - ETL with Spark SQL"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "50975d26-c26e-422b-8af7-c7ab2e1a4a90"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"7d67b345-b680-4f39-a384-31655b390a78\"/>\n",
+					"\n",
+					"\n",
+					"# Reshaping Data Lab\n",
+					"\n",
+					"In this lab, you will create a **`clickpaths`** table that aggregates the number of times each user took a particular action in **`events`** and then join this information with the flattened view of **`transactions`** created in the previous notebook.\n",
+					"\n",
+					"You'll also explore a new higher order function to flag items recorded in **`sales`** based on information extracted from item names.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"- Pivot and join tables to create clickpaths for each user\n",
+					"- Apply higher order functions to flag types of products purchased"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"db657989-4a07-41c5-acc8-18d6ceabbc85\"/>\n",
+					"\n",
+					"\n",
+					"## Run Setup\n",
+					"\n",
+					"The setup script will create the data and declare necessary values for the rest of this notebook to execute."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-04.9L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3b76127f-ef49-4024-a970-67ac52a1fa63\"/>\n",
+					"\n",
+					"\n",
+					"## Reshape Datasets to Create Click Paths\n",
+					"This operation will join data from your **`events`** and **`transactions`** tables in order to create a record of all actions a user took on the site and what their final order looked like.\n",
+					"\n",
+					"The **`clickpaths`** table should contain all the fields from your **`transactions`** table, as well as a count of every **`event_name`** in its own column. Each user that completed a purchase should have a single row in the final table. Let's start by pivoting the **`events`** table to get counts for each **`event_name`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"a4124fa1-e5cc-467f-8a7c-fb5978fefad1\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"### 1. Pivot **`events`** to count actions for each user\n",
+					"We want to aggregate the number of times each user performed a specific event, specified in the **`event_name`** column. To do this, group by **`user_id`** and pivot on **`event_name`** to provide a count of every event type in its own column, resulting in the schema below.\n",
+					"\n",
+					"| field | type | \n",
+					"| --- | --- | \n",
+					"| user_id | STRING |\n",
+					"| cart | BIGINT |\n",
+					"| pillows | BIGINT |\n",
+					"| login | BIGINT |\n",
+					"| main | BIGINT |\n",
+					"| careers | BIGINT |\n",
+					"| guest | BIGINT |\n",
+					"| faq | BIGINT |\n",
+					"| down | BIGINT |\n",
+					"| warranty | BIGINT |\n",
+					"| finalize | BIGINT |\n",
+					"| register | BIGINT |\n",
+					"| shipping_info | BIGINT |\n",
+					"| checkout | BIGINT |\n",
+					"| mattresses | BIGINT |\n",
+					"| add_item | BIGINT |\n",
+					"| press | BIGINT |\n",
+					"| email_coupon | BIGINT |\n",
+					"| cc_info | BIGINT |\n",
+					"| foam | BIGINT |\n",
+					"| reviews | BIGINT |\n",
+					"| original | BIGINT |\n",
+					"| delivery | BIGINT |\n",
+					"| premium | BIGINT |\n",
+					"\n",
+					"A list of the event names are provided below."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE OR REPLACE VIEW events_pivot\n",
+					"<FILL_IN>\n",
+					"(\"cart\", \"pillows\", \"login\", \"main\", \"careers\", \"guest\", \"faq\", \"down\", \"warranty\", \"finalize\", \n",
+					"\"register\", \"shipping_info\", \"checkout\", \"mattresses\", \"add_item\", \"press\", \"email_coupon\", \n",
+					"\"cc_info\", \"foam\", \"reviews\", \"original\", \"delivery\", \"premium\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"8646882a-e334-4293-ba4d-550e86a2ed79\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"**NOTE**: We'll use Python to run checks occasionally throughout the lab. The helper functions below will return an error with a message on what needs to change if you have not followed instructions. No output means that you have completed this step."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%pyspark\n",
+					"def check_table_results(table_name, column_names, num_rows):\n",
+					"    assert spark.table(table_name), f\"Table named **`{table_name}`** does not exist\"\n",
+					"    assert spark.table(table_name).columns == column_names, \"Please name the columns in the order provided above\"\n",
+					"    assert spark.table(table_name).count() == num_rows, f\"The table should have {num_rows} records\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"75fd31d6-3674-48c4-bc6b-c321a47ade9b\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"Run the cell below to confirm the view was created correctly."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%pyspark\n",
+					"event_columns = ['user', 'cart', 'pillows', 'login', 'main', 'careers', 'guest', 'faq', 'down', 'warranty', 'finalize', 'register', 'shipping_info', 'checkout', 'mattresses', 'add_item', 'press', 'email_coupon', 'cc_info', 'foam', 'reviews', 'original', 'delivery', 'premium']\n",
+					"check_table_results(\"events_pivot\", event_columns, 204586)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"bb41e6ea-aeae-4f4f-97c5-cad043d151cd\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"### 2. Join event counts and transactions for all users\n",
+					"\n",
+					"Next, join **`events_pivot`** with **`transactions`** to create the table **`clickpaths`**. This table should have the same event name columns from the **`events_pivot`** table created above, followed by columns from the **`transactions`** table, as shown below.\n",
+					"\n",
+					"| field | type | \n",
+					"| --- | --- | \n",
+					"| user | STRING |\n",
+					"| cart | BIGINT |\n",
+					"| ... | ... |\n",
+					"| user_id | STRING |\n",
+					"| order_id | BIGINT |\n",
+					"| transaction_timestamp | BIGINT |\n",
+					"| total_item_quantity | BIGINT |\n",
+					"| purchase_revenue_in_usd | DOUBLE |\n",
+					"| unique_items | BIGINT |\n",
+					"| P_FOAM_K | BIGINT |\n",
+					"| M_STAN_Q | BIGINT |\n",
+					"| P_FOAM_S | BIGINT |\n",
+					"| M_PREM_Q | BIGINT |\n",
+					"| M_STAN_F | BIGINT |\n",
+					"| M_STAN_T | BIGINT |\n",
+					"| M_PREM_K | BIGINT |\n",
+					"| M_PREM_F | BIGINT |\n",
+					"| M_STAN_K | BIGINT |\n",
+					"| M_PREM_T | BIGINT |\n",
+					"| P_DOWN_S | BIGINT |\n",
+					"| P_DOWN_K | BIGINT |"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE OR REPLACE VIEW clickpaths AS\n",
+					"<FILL_IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"db501e67-0444-4988-a850-e7f374b38f3e\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"Run the cell below to confirm the table was created correctly."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%pyspark\n",
+					"clickpath_columns = event_columns + ['user_id', 'order_id', 'transaction_timestamp', 'total_item_quantity', 'purchase_revenue_in_usd', 'unique_items', 'P_FOAM_K', 'M_STAN_Q', 'P_FOAM_S', 'M_PREM_Q', 'M_STAN_F', 'M_STAN_T', 'M_PREM_K', 'M_PREM_F', 'M_STAN_K', 'M_PREM_T', 'P_DOWN_S', 'P_DOWN_K']\n",
+					"check_table_results(\"clickpaths\", clickpath_columns, 9085)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"ed22d836-9233-469c-8aa1-4bea42f84517\"/>\n",
+					"\n",
+					"\n",
+					"## Flag Types of Products Purchased\n",
+					"Here, you'll use the higher order function **`EXISTS`** with data from the **`sales`** table to create boolean columns **`mattress`** and **`pillow`** that indicate whether the item purchased was a mattress or pillow product.\n",
+					"\n",
+					"For example, if **`item_name`** from the **`items`** column ends with the string **`\"Mattress\"`**, the column value for **`mattress`** should be **`true`** and the value for **`pillow`** should be **`false`**. Here are a few examples of items and the resulting values.\n",
+					"\n",
+					"|  items  | mattress | pillow |\n",
+					"| ------- | -------- | ------ |\n",
+					"| **`[{..., \"item_id\": \"M_PREM_K\", \"item_name\": \"Premium King Mattress\", ...}]`** | true | false |\n",
+					"| **`[{..., \"item_id\": \"P_FOAM_S\", \"item_name\": \"Standard Foam Pillow\", ...}]`** | false | true |\n",
+					"| **`[{..., \"item_id\": \"M_STAN_F\", \"item_name\": \"Standard Full Mattress\", ...}]`** | true | false |\n",
+					"\n",
+					"See documentation for the <a href=\"https://docs.databricks.com/sql/language-manual/functions/exists.html\" target=\"_blank\">exists</a> function.  \n",
+					"You can use the condition expression **`item_name LIKE \"%Mattress\"`** to check whether the string **`item_name`** ends with the word \"Mattress\"."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- TODO\n",
+					"CREATE OR REPLACE TABLE sales_product_flags AS\n",
+					"<FILL_IN>\n",
+					"EXISTS <FILL_IN>.item_name LIKE \"%Mattress\"\n",
+					"EXISTS <FILL_IN>.item_name LIKE \"%Pillow\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3d56b9b4-957d-4ea2-8c49-f4e92a4918c9\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"Run the cell below to confirm the table was created correctly."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%pyspark\n",
+					"check_table_results(\"sales_product_flags\", ['items', 'mattress', 'pillow'], 10539)\n",
+					"product_counts = spark.sql(\"SELECT sum(CAST(mattress AS INT)) num_mattress, sum(CAST(pillow AS INT)) num_pillow FROM sales_product_flags\").first().asDict()\n",
+					"assert product_counts == {'num_mattress': 10015, 'num_pillow': 1386}, \"There should be 10015 rows where mattress is true, and 1386 where pillow is true\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e78c6d7f-bd25-4af8-8d01-a6943f24b8d6\"/>\n",
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

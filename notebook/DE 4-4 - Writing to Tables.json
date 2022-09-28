@@ -1,0 +1,394 @@
+{
+	"name": "DE 4-4 - Writing to Tables",
+	"properties": {
+		"folder": {
+			"name": "04 - ETL with Spark SQL"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "ecea9144-d438-4464-9c32-3a9e2fbc28f2"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_sparksql",
+				"display_name": "sql"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3a66b3fc-6b92-436c-8b22-95b91bddeac3\"/>\n",
+					"\n",
+					" \n",
+					"# Writing to Delta Tables\n",
+					"Delta Lake tables provide ACID compliant updates to tables backed by data files in cloud object storage.\n",
+					"\n",
+					"In this notebook, we'll explore SQL syntax to process updates with Delta Lake. While many operations are standard SQL, slight variations exist to accommodate Spark and Delta Lake execution.\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lesson, you should be able to:\n",
+					"- Overwrite data tables using **`INSERT OVERWRITE`**\n",
+					"- Append to a table using **`INSERT INTO`**\n",
+					"- Append, update, and delete from a table using **`MERGE INTO`**\n",
+					"- Ingest data incrementally into tables using **`COPY INTO`**"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3fa1b6f1-9faa-453f-b033-c5f2cf011703\"/>\n",
+					"\n",
+					"\n",
+					"## Run Setup\n",
+					"\n",
+					"The setup script will create the data and declare necessary values for the rest of this notebook to execute."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-04.4"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3a8cba57-5d9e-4514-b589-d263a2f02f74\"/>\n",
+					"\n",
+					" \n",
+					"## Complete Overwrites\n",
+					"\n",
+					"We can use overwrites to atomically replace all of the data in a table. There are multiple benefits to overwriting tables instead of deleting and recreating tables:\n",
+					"- Overwriting a table is much faster because it doesn’t need to list the directory recursively or delete any files.\n",
+					"- The old version of the table still exists; can easily retrieve the old data using Time Travel.\n",
+					"- It’s an atomic operation. Concurrent queries can still read the table while you are deleting the table.\n",
+					"- Due to ACID transaction guarantees, if overwriting the table fails, the table will be in its previous state.\n",
+					"\n",
+					"Spark SQL provides two easy methods to accomplish complete overwrites.\n",
+					"\n",
+					"Some students may have noticed previous lesson on CTAS statements actually used CRAS statements (to avoid potential errors if a cell was run multiple times).\n",
+					"\n",
+					"**`CREATE OR REPLACE TABLE`** (CRAS) statements fully replace the contents of a table each time they execute."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REPLACE TABLE events AS\n",
+					"SELECT * FROM parquet.`${da.paths.datasets}/ecommerce/raw/events-historical`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"a4090f92-557e-4d23-a808-155356270d1b\"/>\n",
+					"\n",
+					"\n",
+					"Reviewing the table history shows a previous version of this table was replaced."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE HISTORY events"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"06628fba-431d-4cb7-bd52-449fdc203cb2\"/>\n",
+					"\n",
+					"\n",
+					"**`INSERT OVERWRITE`** provides a nearly identical outcome as above: data in the target table will be replaced by data from the query. \n",
+					"\n",
+					"**`INSERT OVERWRITE`**:\n",
+					"\n",
+					"- Can only overwrite an existing table, not create a new one like our CRAS statement\n",
+					"- Can overwrite only with new records that match the current table schema -- and thus can be a \"safer\" technique for overwriting an existing table without disrupting downstream consumers\n",
+					"- Can overwrite individual partitions"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"INSERT OVERWRITE sales\n",
+					"SELECT * FROM parquet.`${da.paths.datasets}/ecommerce/raw/sales-historical/`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"c668da22-a355-441f-aeab-a513997b8d71\"/>\n",
+					"\n",
+					"\n",
+					"Note that different metrics are displayed than a CRAS statement; the table history also records the operation differently."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DESCRIBE HISTORY sales"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4fa20011-e560-45d5-85c0-c82930974804\"/>\n",
+					"\n",
+					"\n",
+					"A primary difference here has to do with how Delta Lake enforces schema on write.\n",
+					"\n",
+					"Whereas a CRAS statement will allow us to completely redefine the contents of our target table, **`INSERT OVERWRITE`** will fail if we try to change our schema (unless we provide optional settings). \n",
+					"\n",
+					"Uncomment and run the cell below to generate an expected error message."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"-- INSERT OVERWRITE sales\n",
+					"-- SELECT *, current_timestamp() FROM parquet.`${da.paths.datasets}/ecommerce/raw/sales-historical`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"02c9c3f2-2996-42b5-9d56-60967a0031c0\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Append Rows\n",
+					"\n",
+					"We can use **`INSERT INTO`** to atomically append new rows to an existing Delta table. This allows for incremental updates to existing tables, which is much more efficient than overwriting each time.\n",
+					"\n",
+					"Append new sale records to the **`sales`** table using **`INSERT INTO`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"INSERT INTO sales\n",
+					"SELECT * FROM parquet.`${da.paths.datasets}/ecommerce/raw/sales-30m`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"3a0a94f8-43fa-4dc3-be0c-110b07f1db89\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"Note that **`INSERT INTO`** does not have any built-in guarantees to prevent inserting the same records multiple times. Re-executing the above cell would write the same records to the target table, resulting in duplicate records."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"cad7b32f-3e35-4962-a911-823d92f2f653\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Merge Updates\n",
+					"\n",
+					"You can upsert data from a source table, view, or DataFrame into a target Delta table using the **`MERGE`** SQL operation. Delta Lake supports inserts, updates and deletes in **`MERGE`**, and supports extended syntax beyond the SQL standards to facilitate advanced use cases.\n",
+					"\n",
+					"<strong><code>\n",
+					"MERGE INTO target a<br/>\n",
+					"USING source b<br/>\n",
+					"ON {merge_condition}<br/>\n",
+					"WHEN MATCHED THEN {matched_action}<br/>\n",
+					"WHEN NOT MATCHED THEN {not_matched_action}<br/>\n",
+					"</code></strong>\n",
+					"\n",
+					"We will use the **`MERGE`** operation to update historic users data with updated emails and new users."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"CREATE OR REPLACE TEMP VIEW users_update AS \n",
+					"SELECT *, current_timestamp() AS updated \n",
+					"FROM parquet.`${da.paths.datasets}/ecommerce/raw/users-30m`"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"edc2f42c-8cd2-47c6-a8e6-09b1541e1e00\"/>\n",
+					"\n",
+					" \n",
+					"The main benefits of **`MERGE`**:\n",
+					"* updates, inserts, and deletes are completed as a single transaction\n",
+					"* multiple conditionals can be added in addition to matching fields\n",
+					"* provides extensive options for implementing custom logic\n",
+					"\n",
+					"Below, we'll only update records if the current row has a **`NULL`** email and the new row does not. \n",
+					"\n",
+					"All unmatched records from the new batch will be inserted."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"MERGE INTO users a\n",
+					"USING users_update b\n",
+					"ON a.user_id = b.user_id\n",
+					"WHEN MATCHED AND a.email IS NULL AND b.email IS NOT NULL THEN\n",
+					"  UPDATE SET email = b.email, updated = b.updated\n",
+					"WHEN NOT MATCHED THEN INSERT *"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"90e330ce-5596-4fa8-a474-78442e48ae67\"/>\n",
+					"\n",
+					"\n",
+					"Note that we explicitly specify the behavior of this function for both the **`MATCHED`** and **`NOT MATCHED`** conditions; the example demonstrated here is just an example of logic that can be applied, rather than indicative of all **`MERGE`** behavior."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"493c7f22-4011-4b08-ad79-4b2a4ef2a12f\"/>\n",
+					"\n",
+					"\n",
+					"## Insert-Only Merge for Deduplication\n",
+					"\n",
+					"A common ETL use case is to collect logs or other every-appending datasets into a Delta table through a series of append operations. \n",
+					"\n",
+					"Many source systems can generate duplicate records. With merge, you can avoid inserting the duplicate records by performing an insert-only merge.\n",
+					"\n",
+					"This optimized command uses the same **`MERGE`** syntax but only provided a **`WHEN NOT MATCHED`** clause.\n",
+					"\n",
+					"Below, we use this to confirm that records with the same **`user_id`** and **`event_timestamp`** aren't already in the **`events`** table."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"MERGE INTO events a\n",
+					"USING events_update b\n",
+					"ON a.user_id = b.user_id AND a.event_timestamp = b.event_timestamp\n",
+					"WHEN NOT MATCHED AND b.traffic_source = 'email' THEN \n",
+					"  INSERT *"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"1162da2b-3c56-42ff-b6b8-2532276b03cd\"/>\n",
+					"\n",
+					" \n",
+					"## Load Incrementally\n",
+					"\n",
+					"**`COPY INTO`** provides SQL engineers an idempotent option to incrementally ingest data from external systems.\n",
+					"\n",
+					"Note that this operation does have some expectations:\n",
+					"- Data schema should be consistent\n",
+					"- Duplicate records should try to be excluded or handled downstream\n",
+					"\n",
+					"This operation is potentially much cheaper than full table scans for data that grows predictably.\n",
+					"\n",
+					"While here we'll show simple execution on a static directory, the real value is in multiple executions over time picking up new files in the source automatically."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"COPY INTO sales\n",
+					"FROM \"${da.paths.datasets}/ecommerce/raw/sales-30m\"\n",
+					"FILEFORMAT = PARQUET"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"567f82f1-956b-42c5-98d7-7914675b105e\"/>\n",
+					"\n",
+					" \n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\n",
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
