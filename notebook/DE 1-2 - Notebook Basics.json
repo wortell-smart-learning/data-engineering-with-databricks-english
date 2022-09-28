@@ -1,0 +1,736 @@
+{
+	"name": "DE 1-2 - Notebook Basics",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "d1e8ec2c-e9f0-4aaa-8569-da8b75caf7fc"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Notebook Basics\r\n",
+					"\r\n",
+					"Notebooks are the primary means of developing and executing code interactively on Databricks. This lesson provides a basic introduction to working with Databricks notebooks.\r\n",
+					"\r\n",
+					"If you've previously used Databricks notebooks but this is your first time executing a notebook in Databricks Repos, you'll notice that basic functionality is the same. In the next lesson, we'll review some of the functionality that Databricks Repos adds to notebooks.\r\n",
+					"\r\n",
+					"## Learning Objectives\r\n",
+					"By the end of this lesson, you should be able to:\r\n",
+					"* Attach a notebook to a cluster\r\n",
+					"* Execute a cell in a notebook\r\n",
+					"* Set the language for a notebook\r\n",
+					"* Describe and use magic commands\r\n",
+					"* Create and run a SQL cell\r\n",
+					"* Create and run a Python cell\r\n",
+					"* Create a markdown cell\r\n",
+					"* Export a Databricks notebook\r\n",
+					"* Export a collection of Databricks notebooks"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Attach to a Cluster\r\n",
+					"\r\n",
+					"In the previous lesson, you should have either deployed a cluster or identified a cluster that an admin has configured for you to use.\r\n",
+					"\r\n",
+					"Directly below the name of this notebook at the top of your screen, use the drop-down list to connect this notebook to your cluster.\r\n",
+					"\r\n",
+					"**NOTE**: Deploying a cluster can take several minutes. A green arrow will appear to the right of the cluster name once resources have been deployed. If your cluster has a solid gray circle to the left, you will need to follow instructions to <a href=\"https://docs.databricks.com/clusters/clusters-manage.html#start-a-cluster\" target=\"_blank\">start a cluster</a>.\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Notebooks Basics\r\n",
+					"\r\n",
+					"Notebooks provide cell-by-cell execution of code. Multiple languages can be mixed in a notebook. Users can add plots, images, and markdown text to enhance their code.\r\n",
+					"\r\n",
+					"Throughout this course, our notebooks are designed as learning instruments. Notebooks can be easily deployed as production code with Databricks, as well as providing a robust toolset for data exploration, reporting, and dashboarding.\r\n",
+					"\r\n",
+					"### Running a Cell\r\n",
+					"* Run the cell below using one of the following options:\r\n",
+					"  * **CTRL+ENTER** or **CTRL+RETURN**\r\n",
+					"  * **SHIFT+ENTER** or **SHIFT+RETURN** to run the cell and move to the next one\r\n",
+					"  * Using **Run Cell**, **Run All Above** or **Run All Below** as seen here\r\n",
+					"  \r\n",
+					"  ![Run all below](https://files.training.databricks.com/images/notebook-cell-run-cmd.png)"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"print(\"I'm running Python!\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**NOTE**: Cell-by-cell code execution means that cells can be executed multiple times or out of order. Unless explicitly instructed, you should always assume that the notebooks in this course are intended to be run one cell at a time from top to bottom. If you encounter an error, make sure you read the text before and after a cell to ensure that the error wasn't an intentional learning moment before you try to troubleshoot. Most errors can be resolved by either running earlier cells in a notebook that were missed or re-executing the entire notebook from the top.\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"### Setting the Default Notebook Language\r\n",
+					"\r\n",
+					"The cell above executes a Python command, because our current default language for the notebook is set to Python.\r\n",
+					"\r\n",
+					"Databricks notebooks support Python, SQL, Scala, and R. A language can be selected when a notebook is created, but this can be changed at any time.\r\n",
+					"\r\n",
+					"The default language appears directly to the right of the notebook title at the top of the page. Throughout this course, we'll use a blend of SQL and Python notebooks.\r\n",
+					"\r\n",
+					"We'll change the default language for this notebook to SQL.\r\n",
+					"\r\n",
+					"Steps:\r\n",
+					"* Click on the **Python** next to the notebook title at the top of the screen\r\n",
+					"* In the UI that pops up, select **SQL** from the drop down list \r\n",
+					"\r\n",
+					"**NOTE**: In the cell just before this one, you should see a new line appear with <strong><code>&#37;python</code></strong>. We'll discuss this in a moment.\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"### Create and Run a SQL Cell\r\n",
+					"\r\n",
+					"* Highlight this cell and press the **B** button on the keyboard to create a new cell below\r\n",
+					"* Copy the following code into the cell below and then run the cell\r\n",
+					"\r\n",
+					"**`%sql`**<br/>\r\n",
+					"**`SELECT \"I'm running SQL!\"`**\r\n",
+					"\r\n",
+					"**NOTE**: There are a number of different methods for adding, moving, and deleting cells including GUI options and keyboard shortcuts. Refer to the <a href=\"https://docs.databricks.com/notebooks/notebooks-use.html#develop-notebooks\" target=\"_blank\">docs</a> for details.\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Magic Commands\r\n",
+					"* Magic commands are specific to the Databricks notebooks\r\n",
+					"* They are very similar to magic commands found in comparable notebook products\r\n",
+					"* These are built-in commands that provide the same outcome regardless of the notebook's language\r\n",
+					"* A single percent (%) symbol at the start of a cell identifies a magic command\r\n",
+					"  * You can only have one magic command per cell\r\n",
+					"  * A magic command must be the first thing in a cell"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"### Language Magics\r\n",
+					"Language magic commands allow for the execution of code in languages other than the notebook's default. In this course, we'll see the following language magics:\r\n",
+					"* **`%%pyspark`** for Python (PySpark)\r\n",
+					"* **`%%sql`** foor SparkSQL\r\n",
+					"\r\n",
+					"Adding the language magic for the currently set notebook type is not necessary.\r\n",
+					"\r\n",
+					"When we changed the notebook language from Python to SQL above, existing cells written in Python had the <strong><code>&#37;python</code></strong> command added.\r\n",
+					"\r\n",
+					"**NOTE**: Rather than changing the default language of a notebook constantly, you should stick with a primary language as the default and only use language magics as necessary to execute code in another language.\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"print(\"Hello Python!\")\r\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\r\n",
+					"\r\n",
+					"select \"Hello SQL!\""
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"### Markdown\r\n",
+					"\r\n",
+					"Synapse doesn't have a \"magic command\" for Markdown, but has a split into two types of cells instead:\r\n",
+					"\r\n",
+					"* All \"Code\" cells always go to the Spark cluster\r\n",
+					"* All \"Markdown\" cells are interpreted as Markdown without the need of a cluster.\r\n",
+					"\r\n",
+					"* Double click this cell to begin editing it\r\n",
+					"* Then hit **`Esc`** to stop editing\r\n",
+					"\r\n",
+					"# Title One\r\n",
+					"## Title Two\r\n",
+					"### Title Three\r\n",
+					"\r\n",
+					"This is a test of the emergency broadcast system. This is only a test.\r\n",
+					"\r\n",
+					"This is text with a **bold** word in it.\r\n",
+					"\r\n",
+					"This is text with an *italicized* word in it.\r\n",
+					"\r\n",
+					"This is an ordered list\r\n",
+					"1. once\r\n",
+					"1. two\r\n",
+					"1. three\r\n",
+					"\r\n",
+					"This is an unordered list\r\n",
+					"* apples\r\n",
+					"* peaches\r\n",
+					"* bananas\r\n",
+					"\r\n",
+					"Links/Embedded HTML: <a href=\"https://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">Markdown - Wikipedia</a>\r\n",
+					"\r\n",
+					"Images:\r\n",
+					"![Spark Engines](https://files.training.databricks.com/images/Apache-Spark-Logo_TM_200px.png)\r\n",
+					"\r\n",
+					"And of course, tables:\r\n",
+					"\r\n",
+					"| name   | value |\r\n",
+					"|--------|-------|\r\n",
+					"| Yi     | 1     |\r\n",
+					"| Ali    | 2     |\r\n",
+					"| Selina | 3     |"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"### %run\r\n",
+					"* You can run a notebook from another notebook by using the magic command **%run**\r\n",
+					"* Notebooks to be run are specified with relative paths\r\n",
+					"* The referenced notebook executes as if it were part of the current notebook, so temporary views and other local declarations will be available from the calling notebook\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"Uncommenting and executing the following cell will generate the following error:<br/>\r\n",
+					"**`Error in SQL statement: AnalysisException: Table or view not found: demo_tmp_vw`**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\r\n",
+					"-- SELECT * FROM demo_tmp_vw"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"But we can declare it and a handful of other variables and functions buy running this cell:"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"%run ../Includes/Classroom-Setup-01.2"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"The **`../Includes/Classroom-Setup-01.2`** notebook we referenced includes logic to create and **`USE`** a database, as well as creating the temp view **`demo_temp_vw`**.\r\n",
+					"\r\n",
+					"We can see this temp view is now available in our current notebook session with the following query."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"%sql \r\n",
+					"SELECT * FROM demo_tmp_vw"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"We'll use this pattern of \"setup\" notebooks throughout the course to help configure the environment for lessons and labs.\r\n",
+					"\r\n",
+					"These \"provided\" variables, functions and other objects should be easily identifiable in that they are part of the **`DA`** object which is an instance of **`DBAcademyHelper`**.\r\n",
+					"\r\n",
+					"With that in mind, most lessons will use variables derived from your username to organize files and databases. \r\n",
+					"\r\n",
+					"This pattern allows us to avoid collision with other users in shared a workspace.\r\n",
+					"\r\n",
+					"The cell below uses Python to print some of those variables previously defined in this notebook's setup script"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"print(f\"DA:                   {DA}\")\r\n",
+					"print(f\"DA.username:          {DA.username}\")\r\n",
+					"print(f\"DA.paths.working_dir: {DA.paths.working_dir}\")\r\n",
+					"print(f\"DA.db_name:           {DA.db_name}\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"In addition to this, these same variables are \"injected\" into the SQL context so that we can use them in SQL statements.\r\n",
+					"\r\n",
+					"We will talk more about this later, but you can see a quick example in the following cell.\r\n",
+					"\r\n",
+					"<img src=\"https://files.training.databricks.com/images/icon_note_32.png\"> Note the subtle but important difference in the casing of the word **`da`** and **`DA`** in these two examples.\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"%sql\r\n",
+					"SELECT '${da.username}' AS current_username,\r\n",
+					"       '${da.paths.working_dir}' AS working_directory,\r\n",
+					"       '${da.db_name}' as database_name\r\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Databricks Utilities\r\n",
+					"Databricks notebooks provide a number of utility commands for configuring and interacting with the environment: <a href=\"https://docs.databricks.com/user-guide/dev-tools/dbutils.html\" target=\"_blank\">dbutils docs</a>\r\n",
+					"\r\n",
+					"Throughout this course, we'll occasionally use **`dbutils.fs.ls()`** to list out directories of files from Python cells."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"path = f\"{DA.paths.datasets}\"\r\n",
+					"dbutils.fs.ls(path)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## display()\r\n",
+					"\r\n",
+					"When running SQL queries from cells, results will always be displayed in a rendered tabular format.\r\n",
+					"\r\n",
+					"When we have tabular data returned by a Python cell, we can call **`display`** to get the same type of preview.\r\n",
+					"\r\n",
+					"Here, we'll wrap the previous list command on our file system with **`display`**."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"path = f\"{DA.paths.datasets}\"\r\n",
+					"files = dbutils.fs.ls(path)\r\n",
+					"display(files)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"The **`display()`** command has the following capabilities and limitations:\r\n",
+					"* Preview of results limited to 1000 records\r\n",
+					"* Provides button to download results data as CSV\r\n",
+					"* Allows rendering plots"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Downloading Notebooks\r\n",
+					"\r\n",
+					"There are a number of options for downloading either individual notebooks or collections of notebooks.\r\n",
+					"\r\n",
+					"Here, you'll go through the process to download this notebook as well as a collection of all the notebooks in this course.\r\n",
+					"\r\n",
+					"### Download a Notebook\r\n",
+					"\r\n",
+					"Steps:\r\n",
+					"* Click the **File** option to the right of the cluster selection at the top of the notebook\r\n",
+					"* From the menu that appears, hover over **Export** and then select **Source File**\r\n",
+					"\r\n",
+					"The notebook will download to your personal laptop. It will be named with the current notebook name and have the file extension for the default language. You can open this notebook with any file editor and see the raw contents of Databricks notebooks.\r\n",
+					"\r\n",
+					"These source files can be uploaded into any Databricks workspace.\r\n",
+					"\r\n",
+					"### Download a Collection of Notebooks\r\n",
+					"\r\n",
+					"**NOTE**: The following instructions assume you have imported these materials using **Repos**.\r\n",
+					"\r\n",
+					"Steps:\r\n",
+					"* Click the  ![](https://files.training.databricks.com/images/repos-icon.png) **Repos** on the left sidebar\r\n",
+					"  * This should give you a preview of the parent directories for this notebook\r\n",
+					"* On the left side of the directory preview around the middle of the screen, there should be a left arrow. Click this to move up in your file hierarchy.\r\n",
+					"* You should see a directory called **Data Engineering with Databricks**. Click the the down arrow/chevron to bring up a menu\r\n",
+					"* From the menu, hover over **Export** and select **DBC Archive**\r\n",
+					"\r\n",
+					"The DBC(Databricks Cloud) file that is downloaded contains a zipped collection of the directories and notebooks in this course. Users should not attempt to edit these DBC files locally, but they can be safely uploaded into any Databricks workspace to move or share notebook contents.\r\n",
+					"\r\n",
+					"**NOTE**: When downloading a collection of DBCs, result previews and plots will also be exported. When downloading source notebooks, only code will be saved.\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Learning More\r\n",
+					"\r\n",
+					"We like to encourage you to explore the documentation to learn more about the various features of the Databricks platform and notebooks.\r\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/index.html#user-guide\" target=\"_blank\">User Guide</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/getting-started.html\" target=\"_blank\">Getting Started with Databricks</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/notebooks/index.html\" target=\"_blank\">User Guide / Notebooks</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/notebooks/notebooks-manage.html#notebook-external-formats\" target=\"_blank\">Importing notebooks - Supported Formats</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/repos/index.html\" target=\"_blank\">Repos</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/administration-guide/index.html#administration-guide\" target=\"_blank\">Administration Guide</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/user-guide/clusters/index.html\" target=\"_blank\">Cluster Configuration</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/api/latest/index.html#rest-api-2-0\" target=\"_blank\">REST API</a>\r\n",
+					"* <a href=\"https://docs.databricks.com/release-notes/index.html#release-notes\" target=\"_blank\">Release Notes</a>"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## One more note! \r\n",
+					"\r\n",
+					"At the end of each lesson you will see the following command, **`DA.cleanup()`**.\r\n",
+					"\r\n",
+					"This method drops lesson-specific databases and working directories in an attempt to keep your workspace clean and maintain the immutability of each lesson.\r\n",
+					"\r\n",
+					"Run the following cell to delete the tables and files associated with this lesson."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
