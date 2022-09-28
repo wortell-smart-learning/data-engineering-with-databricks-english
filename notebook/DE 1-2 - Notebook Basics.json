@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "true",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "bad4f309-165b-477a-98f1-d56db9c019db"
+				"spark.autotune.trackingId": "12ba7a01-d718-499a-8dcc-83eaef3a1279"
 			}
 		},
 		"metadata": {
@@ -121,7 +121,6 @@
 					"  * **CTRL+ENTER** or **CTRL+RETURN**\r\n",
 					"  * **SHIFT+ENTER** or **SHIFT+RETURN** to run the cell and move to the next one\r\n",
 					"  * Using **Run Cell**, **Run All Above** or **Run All Below** as seen here\r\n",
-					"  \r\n",
 					"  ![Run all below](https://files.training.databricks.com/images/notebook-cell-run-cmd.png)"
 				]
 			},
@@ -160,17 +159,23 @@
 					"\r\n",
 					"The cell above executes a Python command, because our current default language for the notebook is set to Python.\r\n",
 					"\r\n",
-					"Databricks notebooks support Python, SQL, Scala, and R. A language can be selected when a notebook is created, but this can be changed at any time.\r\n",
+					"Synapse notebooks support the following languages:\r\n",
+					"\r\n",
+					"* PySpark (Python)\r\n",
+					"* Spark SQL (SQL)\r\n",
+					"* Spark (Scala)\r\n",
+					"* .Net Spark (C#)\r\n",
+					"\r\n",
+					"A language can be selected when a notebook is created, but this can be changed at any time.\r\n",
 					"\r\n",
 					"The default language appears directly to the right of the notebook title at the top of the page. Throughout this course, we'll use a blend of SQL and Python notebooks.\r\n",
 					"\r\n",
 					"We'll change the default language for this notebook to SQL.\r\n",
 					"\r\n",
 					"Steps:\r\n",
-					"* Click on the **Python** next to the notebook title at the top of the screen\r\n",
-					"* In the UI that pops up, select **SQL** from the drop down list \r\n",
+					"* Click on the **PySpark (Python)** next to the notebook title at the top of the screen\r\n",
+					"* In the dropdown that appears, select **Spark SQL**\r\n",
 					"\r\n",
-					"**NOTE**: In the cell just before this one, you should see a new line appear with <strong><code>&#37;python</code></strong>. We'll discuss this in a moment.\r\n",
 					""
 				]
 			},
@@ -189,10 +194,10 @@
 					"* Highlight this cell and press the **B** button on the keyboard to create a new cell below\r\n",
 					"* Copy the following code into the cell below and then run the cell\r\n",
 					"\r\n",
-					"**`%sql`**<br/>\r\n",
+					"**`%%sql`**  \r\n",
 					"**`SELECT \"I'm running SQL!\"`**\r\n",
 					"\r\n",
-					"**NOTE**: There are a number of different methods for adding, moving, and deleting cells including GUI options and keyboard shortcuts. Refer to the <a href=\"https://docs.databricks.com/notebooks/notebooks-use.html#develop-notebooks\" target=\"_blank\">docs</a> for details.\r\n",
+					"**NOTE**: There are a number of different methods for adding, moving, and deleting cells including GUI options and keyboard shortcuts. Refer to the <a href=\"https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-development-using-notebooks\" target=\"_blank\">docs</a> for details.\r\n",
 					""
 				]
 			},
@@ -210,7 +215,7 @@
 					"* Magic commands are specific to the Databricks notebooks\r\n",
 					"* They are very similar to magic commands found in comparable notebook products\r\n",
 					"* These are built-in commands that provide the same outcome regardless of the notebook's language\r\n",
-					"* A single percent (%) symbol at the start of a cell identifies a magic command\r\n",
+					"* A double percent (%%) symbol at the start of a cell identifies a magic command\r\n",
 					"  * You can only have one magic command per cell\r\n",
 					"  * A magic command must be the first thing in a cell"
 				]
@@ -228,11 +233,9 @@
 					"### Language Magics\r\n",
 					"Language magic commands allow for the execution of code in languages other than the notebook's default. In this course, we'll see the following language magics:\r\n",
 					"* **`%%pyspark`** for Python (PySpark)\r\n",
-					"* **`%%sql`** foor SparkSQL\r\n",
+					"* **`%%sql`** for SparkSQL\r\n",
 					"\r\n",
 					"Adding the language magic for the currently set notebook type is not necessary.\r\n",
-					"\r\n",
-					"When we changed the notebook language from Python to SQL above, existing cells written in Python had the <strong><code>&#37;python</code></strong> command added.\r\n",
 					"\r\n",
 					"**NOTE**: Rather than changing the default language of a notebook constantly, you should stick with a primary language as the default and only use language magics as necessary to execute code in another language.\r\n",
 					""
@@ -255,7 +258,7 @@
 					"print(\"Hello Python!\")\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -279,7 +282,7 @@
 					"\r\n",
 					"select \"Hello SQL!\""
 				],
-				"execution_count": 2
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -363,7 +366,7 @@
 				},
 				"source": [
 					"Uncommenting and executing the following cell will generate the following error:<br/>\r\n",
-					"**`Error in SQL statement: AnalysisException: Table or view not found: demo_tmp_vw`**"
+					"**`Error: Table or view not found: demo_tmp_vw (...)`**"
 				]
 			},
 			{
@@ -384,9 +387,9 @@
 				},
 				"source": [
 					"%%sql\r\n",
-					"-- SELECT * FROM demo_tmp_vw"
+					"SELECT * FROM demo_tmp_vw"
 				],
-				"execution_count": null
+				"execution_count": 4
 			},
 			{
 				"cell_type": "markdown",
@@ -415,9 +418,9 @@
 					}
 				},
 				"source": [
-					"%run ../Includes/Classroom-Setup-01.2"
+					"%run /Includes/Classroom-Setup-01-2"
 				],
-				"execution_count": 1
+				"execution_count": 8
 			},
 			{
 				"cell_type": "markdown",
