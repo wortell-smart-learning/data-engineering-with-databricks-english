@@ -1,0 +1,446 @@
+{
+	"name": "DE 7-2L - Propagating Incremental Updates with Structured Streaming and Delta Lake Lab",
+	"properties": {
+		"folder": {
+			"name": "07 - Multi-Hop Architecture"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "ebdc2755-9332-4849-9e46-c15284e69282"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"0e458ce0-d210-41e2-8d96-836d7355de16\"/>\n",
+					"\n",
+					"\n",
+					"# Propagating Incremental Updates with Structured Streaming and Delta Lake\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"* Apply your knowledge of structured streaming and Auto Loader to implement a simple multi-hop architecture"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"8cf2e657-3b59-4f53-a86e-6acabcd8aa16\"/>\n",
+					"\n",
+					"\n",
+					"## Setup\n",
+					"Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-07.2L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4d9563b5-a6dc-4106-a5bf-168d374a968e\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Ingest data\n",
+					"\n",
+					"This lab uses a collection of customer-related CSV data from the **retail-org/customers** dataset.\n",
+					"\n",
+					"Read this data using Auto Loader using its schema inference (use **`customers_checkpoint_path`** to store the schema info). Stream the raw data to a Delta table called **`bronze`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"customers_checkpoint_path = f\"{DA.paths.checkpoints}/customers\"\n",
+					"dataset_source = f\"{DA.paths.datasets}/retail-org/customers/\"\n",
+					"\n",
+					"query = (spark\n",
+					"  .readStream\n",
+					"  <FILL-IN>\n",
+					"  .load(dataset_source)\n",
+					"  .writeStream\n",
+					"  <FILL-IN>\n",
+					"  .table(\"bronze\")\n",
+					")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.block_until_stream_is_ready(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"8b05f1fa-9046-4eba-8698-004b6c10fb79\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert spark.table(\"bronze\"), \"Table named `bronze` does not exist\"\n",
+					"assert spark.sql(f\"SHOW TABLES\").filter(f\"tableName == 'bronze'\").first()[\"isTemporary\"] == False, \"Table is temporary\"\n",
+					"assert spark.table(\"bronze\").dtypes ==  [('customer_id', 'string'), ('tax_id', 'string'), ('tax_code', 'string'), ('customer_name', 'string'), ('state', 'string'), ('city', 'string'), ('postcode', 'string'), ('street', 'string'), ('number', 'string'), ('unit', 'string'), ('region', 'string'), ('district', 'string'), ('lon', 'string'), ('lat', 'string'), ('ship_to_address', 'string'), ('valid_from', 'string'), ('valid_to', 'string'), ('units_purchased', 'string'), ('loyalty_segment', 'string'), ('_rescued_data', 'string')], \"Incorrect Schema\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"f999d572-86c1-4c0a-afbe-dad08cc7eb5a\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"Let's create a streaming temporary view into the bronze table, so that we can perform transforms using SQL."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"(spark\n",
+					"  .readStream\n",
+					"  .table(\"bronze\")\n",
+					"  .createOrReplaceTempView(\"bronze_temp\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"14a123fc-6cae-4780-b2fb-08ffa1da4989\"/>\n",
+					"\n",
+					"\n",
+					"## Clean and enhance data\n",
+					"\n",
+					"Using CTAS syntax, define a new streaming view called **`bronze_enhanced_temp`** that does the following:\n",
+					"* Skips records with a null **`postcode`** (set to zero)\n",
+					"* Inserts a column called **`receipt_time`** containing a current timestamp\n",
+					"* Inserts a column called **`source_file`** containing the input filename"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"-- TODO\n",
+					"CREATE OR REPLACE TEMPORARY VIEW bronze_enhanced_temp AS\n",
+					"SELECT\n",
+					"  <FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4369381f-b2e0-4d88-9ccd-bcd6ff100f98\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert spark.table(\"bronze_enhanced_temp\"), \"Table named `bronze_enhanced_temp` does not exist\"\n",
+					"assert spark.sql(f\"SHOW TABLES\").filter(f\"tableName == 'bronze_enhanced_temp'\").first()[\"isTemporary\"] == True, \"Table is not temporary\"\n",
+					"assert spark.table(\"bronze_enhanced_temp\").dtypes ==  [('customer_id', 'string'), ('tax_id', 'string'), ('tax_code', 'string'), ('customer_name', 'string'), ('state', 'string'), ('city', 'string'), ('postcode', 'string'), ('street', 'string'), ('number', 'string'), ('unit', 'string'), ('region', 'string'), ('district', 'string'), ('lon', 'string'), ('lat', 'string'), ('ship_to_address', 'string'), ('valid_from', 'string'), ('valid_to', 'string'), ('units_purchased', 'string'), ('loyalty_segment', 'string'), ('_rescued_data', 'string'), ('receipt_time', 'timestamp'), ('source_file', 'string')], \"Incorrect Schema\"\n",
+					"assert spark.table(\"bronze_enhanced_temp\").isStreaming, \"Not a streaming table\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"ff38de01-61d2-4ffc-a5ca-aac815d8fb1e\"/>\n",
+					"\n",
+					"\n",
+					"## Silver table\n",
+					"\n",
+					"Stream the data from **`bronze_enhanced_temp`** to a table called **`silver`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"silver_checkpoint_path = f\"{DA.paths.checkpoints}/silver\"\n",
+					"\n",
+					"query = (spark.table(\"bronze_enhanced_temp\")\n",
+					"  <FILL-IN>\n",
+					"  .table(\"silver\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.block_until_stream_is_ready(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"41b4d01f-c855-40da-86a9-6d36de39d48a\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert spark.table(\"silver\"), \"Table named `silver` does not exist\"\n",
+					"assert spark.sql(f\"SHOW TABLES\").filter(f\"tableName == 'silver'\").first()[\"isTemporary\"] == False, \"Table is temporary\"\n",
+					"assert spark.table(\"silver\").dtypes ==  [('customer_id', 'string'), ('tax_id', 'string'), ('tax_code', 'string'), ('customer_name', 'string'), ('state', 'string'), ('city', 'string'), ('postcode', 'string'), ('street', 'string'), ('number', 'string'), ('unit', 'string'), ('region', 'string'), ('district', 'string'), ('lon', 'string'), ('lat', 'string'), ('ship_to_address', 'string'), ('valid_from', 'string'), ('valid_to', 'string'), ('units_purchased', 'string'), ('loyalty_segment', 'string'), ('_rescued_data', 'string'), ('receipt_time', 'timestamp'), ('source_file', 'string')], \"Incorrect Schema\"\n",
+					"assert spark.table(\"silver\").filter(\"postcode <= 0\").count() == 0, \"Null postcodes present\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e8fef108-ec3e-4404-9307-84cc3b593f99\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"Let's create a streaming temporary view into the silver table, so that we can perform business-level aggregation using SQL."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"(spark\n",
+					"  .readStream\n",
+					"  .table(\"silver\")\n",
+					"  .createOrReplaceTempView(\"silver_temp\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e37aaafc-d774-4635-9ca4-163446d98ac7\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Gold tables\n",
+					"\n",
+					"Using CTAS syntax, define a new streaming view called **`customer_count_temp`** that counts customers per state in a column named **`customer_count`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"-- TODO\n",
+					"CREATE OR REPLACE TEMPORARY VIEW customer_count_temp AS\n",
+					"SELECT \n",
+					"<FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"7b1502ab-f64b-4491-8104-fa46521c4dc0\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert spark.table(\"customer_count_temp\"), \"Table named `customer_count_temp` does not exist\"\n",
+					"assert spark.sql(f\"SHOW TABLES\").filter(f\"tableName == 'customer_count_temp'\").first()[\"isTemporary\"] == True, \"Table is not temporary\"\n",
+					"assert spark.table(\"customer_count_temp\").dtypes ==  [('state', 'string'), ('customer_count', 'bigint')], \"Incorrect Schema\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"413fe655-e9c0-42ca-8bd9-e7f45c98d2ad\"/>\n",
+					"\n",
+					"\n",
+					"Finally, stream the data from the **`customer_count_temp`** view to a Delta table called **`gold_customer_count_by_state`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"customers_count_checkpoint_path = f\"{DA.paths.checkpoints}/customers_counts\"\n",
+					"\n",
+					"query = (spark\n",
+					"  .table(\"customer_count_temp\")\n",
+					"  .writeStream\n",
+					"  <FILL-IN>\n",
+					"  .table(\"gold_customer_count_by_state\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.block_until_stream_is_ready(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"a4073245-d0e0-41a2-b107-16357064b596\"/>\n",
+					"\n",
+					"Run the cell below to check your work."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert spark.table(\"gold_customer_count_by_state\"), \"Table named `gold_customer_count_by_state` does not exist\"\n",
+					"assert spark.sql(f\"show tables\").filter(f\"tableName == 'gold_customer_count_by_state'\").first()[\"isTemporary\"] == False, \"Table is temporary\"\n",
+					"assert spark.table(\"gold_customer_count_by_state\").dtypes ==  [('state', 'string'), ('customer_count', 'bigint')], \"Incorrect Schema\"\n",
+					"assert spark.table(\"gold_customer_count_by_state\").count() == 51, \"Incorrect number of rows\" "
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"28b96faa-5b44-4e66-bc49-58ad9fa80f2e\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Query the results\n",
+					"\n",
+					"Query the **`gold_customer_count_by_state`** table (this will not be a streaming query). Plot the results as a bar graph and also using the map plot."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"SELECT * FROM gold_customer_count_by_state"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"c6bbef1b-0139-41c5-889b-f1cf1a56f907\"/>\n",
+					"\n",
+					"\n",
+					"## Wrapping Up\n",
+					"\n",
+					"Run the following cell to remove the database and all data associated with this lab."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"971fb9e2-1315-47d1-bb18-ae0835b5bcde\"/>\n",
+					"\n",
+					"\n",
+					"By completing this lab, you should now feel comfortable:\n",
+					"* Using PySpark to configure Auto Loader for incremental data ingestion\n",
+					"* Using Spark SQL to aggregate streaming data\n",
+					"* Streaming data to a Delta table"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

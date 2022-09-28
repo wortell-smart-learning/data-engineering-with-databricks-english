@@ -1,0 +1,286 @@
+{
+	"name": "DE 6-3L - Using Auto Loader and Structured Streaming with Spark SQL Lab",
+	"properties": {
+		"folder": {
+			"name": "06 - Incremental Data Processing"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "4adc6ef5-4a3c-4563-828d-1cd6688b40fe"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"\n",
+					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
+					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
+					"</div>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e6dedae8-1335-494e-acdf-4a1906f8c826\"/>\n",
+					"\n",
+					"\n",
+					"# Using Auto Loader and Structured Streaming with Spark SQL\n",
+					"\n",
+					"## Learning Objectives\n",
+					"By the end of this lab, you should be able to:\n",
+					"* Ingest data using Auto Loader\n",
+					"* Aggregate streaming data\n",
+					"* Stream data to a Delta table"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"ab5018b7-17b9-4f66-a32d-9c86860f6f30\"/>\n",
+					"\n",
+					"\n",
+					"## Setup\n",
+					"Run the following script to setup necessary variables and clear out past runs of this notebook. Note that re-executing this cell will allow you to start the lab over."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%run ../Includes/Classroom-Setup-06.3L"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"03347519-151b-4304-8cda-1cbd91af0737\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Configure Streaming Read\n",
+					"\n",
+					"This lab uses a collection of customer-related CSV data from the **retail-org/customers** dataset.\n",
+					"\n",
+					"Read this data using <a href=\"https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html\" target=\"_blank\">Auto Loader</a> using its schema inference (use **`customers_checkpoint_path`** to store the schema info). Create a streaming temporary view called **`customers_raw_temp`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"dataset_source = f\"{DA.paths.datasets}/retail-org/customers/\"\n",
+					"customers_checkpoint_path = f\"{DA.paths.checkpoints}/customers\"\n",
+					"\n",
+					"(spark\n",
+					"  .readStream\n",
+					"  <FILL-IN>\n",
+					"  .load(dataset_source)\n",
+					"  .createOrReplaceTempView(\"customers_raw_temp\"))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"from pyspark.sql import Row\n",
+					"assert Row(tableName=\"customers_raw_temp\", isTemporary=True) in spark.sql(\"show tables\").select(\"tableName\", \"isTemporary\").collect(), \"Table not present or not temporary\"\n",
+					"assert spark.table(\"customers_raw_temp\").dtypes ==  [('customer_id', 'string'),\n",
+					" ('tax_id', 'string'),\n",
+					" ('tax_code', 'string'),\n",
+					" ('customer_name', 'string'),\n",
+					" ('state', 'string'),\n",
+					" ('city', 'string'),\n",
+					" ('postcode', 'string'),\n",
+					" ('street', 'string'),\n",
+					" ('number', 'string'),\n",
+					" ('unit', 'string'),\n",
+					" ('region', 'string'),\n",
+					" ('district', 'string'),\n",
+					" ('lon', 'string'),\n",
+					" ('lat', 'string'),\n",
+					" ('ship_to_address', 'string'),\n",
+					" ('valid_from', 'string'),\n",
+					" ('valid_to', 'string'),\n",
+					" ('units_purchased', 'string'),\n",
+					" ('loyalty_segment', 'string'),\n",
+					" ('_rescued_data', 'string')], \"Incorrect Schema\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"4582665f-8192-4751-83f8-8ae1a4d55f22\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Define a streaming aggregation\n",
+					"\n",
+					"Using CTAS syntax, define a new streaming view called **`customer_count_by_state_temp`** that counts the number of customers per **`state`**, in a field called **`customer_count`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"-- TODO\n",
+					"\n",
+					"CREATE OR REPLACE TEMPORARY VIEW customer_count_by_state_temp AS\n",
+					"SELECT\n",
+					"  <FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert Row(tableName=\"customer_count_by_state_temp\", isTemporary=True) in spark.sql(\"show tables\").select(\"tableName\", \"isTemporary\").collect(), \"Table not present or not temporary\"\n",
+					"assert spark.table(\"customer_count_by_state_temp\").dtypes == [('state', 'string'), ('customer_count', 'bigint')], \"Incorrect Schema\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"bef919d7-d681-4233-8da5-39ca94c49a8b\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Write aggregated data to a Delta table\n",
+					"\n",
+					"Stream data from the **`customer_count_by_state_temp`** view to a Delta table called **`customer_count_by_state`**."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"# TODO\n",
+					"customers_count_checkpoint_path = f\"{DA.paths.checkpoints}/customers_count\"\n",
+					"\n",
+					"query = (spark\n",
+					"  <FILL-IN>"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.block_until_stream_is_ready(query)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"assert Row(tableName=\"customer_count_by_state\", isTemporary=False) in spark.sql(\"show tables\").select(\"tableName\", \"isTemporary\").collect(), \"Table not present or not temporary\"\n",
+					"assert spark.table(\"customer_count_by_state\").dtypes == [('state', 'string'), ('customer_count', 'bigint')], \"Incorrect Schema\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"f74f262f-10c4-4f2f-84d6-f69e56c54ac6\"/>\n",
+					"\n",
+					"\n",
+					"\n",
+					"## Query the results\n",
+					"\n",
+					"Query the **`customer_count_by_state`** table (this will not be a streaming query). Plot the results as a bar graph and also using the map plot."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"-- TODO"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"e2cf644d-96f9-47f7-ad81-780125d3ad4b\"/>\n",
+					"\n",
+					"\n",
+					"## Wrapping Up\n",
+					"\n",
+					"Run the following cell to remove the database and all data associated with this lab."
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"DA.cleanup()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md <i18n value=\"8f3c4c52-b5d9-4f8a-974c-ce5db6430c43\"/>\n",
+					"\n",
+					"\n",
+					"By completing this lab, you should now feel comfortable:\n",
+					"* Using PySpark to configure Auto Loader for incremental data ingestion\n",
+					"* Using Spark SQL to aggregate streaming data\n",
+					"* Streaming data to a Delta table"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%md-sandbox\n",
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
+					"<br/>\n",
+					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
