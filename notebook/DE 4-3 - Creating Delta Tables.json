@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "523ea47d-20c3-4d1b-85bc-4ad8edc4f8ac"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "4c7f82af-f1d6-409d-8965-cc59eb648ed5"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,36 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"# Creating Delta Tables\n",
@@ -63,20 +80,17 @@
 					"- Enrich loaded data with additional metadata\n",
 					"- Declare table schema with generated columns and descriptive comments\n",
 					"- Set advanced options to control data location, quality enforcement, and partitioning"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Run Setup\n",
 					"\n",
 					"The setup script will create the data and declare necessary values for the rest of this notebook to execute."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -87,16 +101,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"## Create Table as Select (CTAS)\n",
 					"\n",
 					"**`CREATE TABLE AS SELECT`** statements create and populate Delta tables using data retrieved from an input query."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -110,8 +122,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"CTAS statements automatically infer schema information from query results and do **not** support manual schema declaration. \n",
@@ -121,8 +132,7 @@
 					"CTAS statements also do not support specifying additional file options.\n",
 					"\n",
 					"We can see how this would present significant limitations when trying to ingest data from CSV files."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -136,15 +146,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"To correctly ingest this data to a Delta Lake table, we'll need to use a reference to the files that allows us to specify options.\n",
 					"\n",
 					"In the previous lesson, we showed doing this by registering an external table. Here, we'll slightly evolve this syntax to specify the options to a temporary view, and then use this temp view as the source for a CTAS statement to successfully register the Delta table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -167,8 +175,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"## Filtering and Renaming Columns from Existing Tables\n",
@@ -178,8 +185,7 @@
 					"The following statement creates a new table containing a subset of columns from the **`sales`** table. \n",
 					"\n",
 					"Here, we'll presume that we're intentionally leaving out information that potentially identifies the user or that provides itemized purchase details. We'll also rename our fields with the assumption that a downstream system has different naming conventions than our source data."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -194,13 +200,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Note that we could have accomplished this same goal with a view, as shown below."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -215,8 +219,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"## Declare Schema with Generated Columns\n",
@@ -229,8 +232,7 @@
 					"1. Specifying column names and types\n",
 					"1. Adding a <a href=\"https://docs.databricks.com/delta/delta-batch.html#deltausegeneratedcolumns\" target=\"_blank\">generated column</a> to calculate the date\n",
 					"1. Providing a descriptive column comment for the generated column"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -247,16 +249,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"\n",
 					"Because **`date`** is a generated column, if we write to **`purchase_dates`** without providing values for the **`date`** column, Delta Lake automatically computes them.\n",
 					"\n",
 					"**NOTE**: The cell below configures a setting to allow for generating columns when using a Delta Lake **`MERGE`** statement. We'll see more on this syntax later in the course."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -273,15 +273,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"We can see below that all dates were computed correctly as data was inserted, although neither our source data or insert query specified the values in this field.\n",
 					"\n",
 					"As with any Delta Lake source, the query automatically reads the most recent snapshot of the table for any query; you never need to run **`REFRESH TABLE`**."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -292,16 +290,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"It's important to note that if a field that would otherwise be generated is included in an insert to a table, this insert will fail if the value provided does not exactly match the value that would be derived by the logic used to define the generated column.\n",
 					"\n",
 					"We can see this error by uncommenting and running the cell below:"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -313,8 +309,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Add a Table Constraint\n",
@@ -330,8 +325,7 @@
 					"In both cases, you must ensure that no data violating the constraint is already in the table prior to defining the constraint. Once a constraint has been added to a table, data violating the constraint will result in write failure.\n",
 					"\n",
 					"Below, we'll add a **`CHECK`** constraint to the **`date`** column of our table. Note that **`CHECK`** constraints look like standard **`WHERE`** clauses you might use to filter a dataset."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -342,13 +336,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Table constraints are shown in the **`TBLPROPERTIES`** field."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -359,8 +351,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Enrich Tables with Additional Options and Metadata\n",
@@ -383,8 +374,7 @@
 					"**NOTE**: Partitioning is shown here primarily to demonstrate syntax and impact. Most Delta Lake tables (especially small-to-medium sized data) will not benefit from partitioning. Because partitioning physically separates data files, this approach can result in a small files problem and prevent file compaction and efficient data skipping. The benefits observed in Hive or HDFS do not translate to Delta Lake, and you should consult with an experienced Delta Lake architect before partitioning tables.\n",
 					"\n",
 					"**As a best practice, you should default to non-partitioned tables for most use cases when working with Delta Lake.**"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -406,8 +396,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"The metadata fields added to the table provide useful information to understand when records were inserted and from where. This can be especially helpful if troubleshooting problems in the source data becomes necessary.\n",
@@ -415,8 +404,7 @@
 					"All of the comments and properties for a given table can be reviewed using **`DESCRIBE TABLE EXTENDED`**.\n",
 					"\n",
 					"**NOTE**: Delta Lake automatically adds several table properties on table creation."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -427,13 +415,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Listing the location used for the table reveals that the unique values in the partition column **`first_touch_date`** are used to create data directories."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -451,16 +437,14 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Cloning Delta Lake Tables\n",
 					"Delta Lake has two options for efficiently copying Delta Lake tables.\n",
 					"\n",
 					"**`DEEP CLONE`** fully copies data and metadata from a source table to a target. This copy occurs incrementally, so executing this command again can sync changes from the source to the target location."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -472,15 +456,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Because all the data files must be copied over, this can take quite a while for large datasets.\n",
 					"\n",
 					"If you wish to create a copy of a table quickly to test out applying changes without the risk of modifying the current table, **`SHALLOW CLONE`** can be a good option. Shallow clones just copy the Delta transaction logs, meaning that the data doesn't move."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -492,35 +474,29 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"In either case, data modifications applied to the cloned version of the table will be tracked and stored separately from the source. Cloning is a great way to set up tables for testing SQL code while still in development."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Summary\n",
 					"\n",
 					"In this notebook, we focused primarily on DDL and syntax for creating Delta Lake tables. In the next notebook, we'll explore options for writing updates to tables."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -537,13 +513,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}

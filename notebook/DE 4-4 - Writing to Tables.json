@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "ecea9144-d438-4464-9c32-3a9e2fbc28f2"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "0342991a-9480-47bb-88db-5b1a5157cb0d"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,36 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"# Writing to Delta Tables\n",
@@ -59,20 +76,17 @@
 					"- Append to a table using **`INSERT INTO`**\n",
 					"- Append, update, and delete from a table using **`MERGE INTO`**\n",
 					"- Ingest data incrementally into tables using **`COPY INTO`**"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Run Setup\n",
 					"\n",
 					"The setup script will create the data and declare necessary values for the rest of this notebook to execute."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -83,8 +97,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"## Complete Overwrites\n",
@@ -100,8 +113,7 @@
 					"Some students may have noticed previous lesson on CTAS statements actually used CRAS statements (to avoid potential errors if a cell was run multiple times).\n",
 					"\n",
 					"**`CREATE OR REPLACE TABLE`** (CRAS) statements fully replace the contents of a table each time they execute."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -113,13 +125,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Reviewing the table history shows a previous version of this table was replaced."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -130,8 +140,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"**`INSERT OVERWRITE`** provides a nearly identical outcome as above: data in the target table will be replaced by data from the query. \n",
@@ -141,8 +150,7 @@
 					"- Can only overwrite an existing table, not create a new one like our CRAS statement\n",
 					"- Can overwrite only with new records that match the current table schema -- and thus can be a \"safer\" technique for overwriting an existing table without disrupting downstream consumers\n",
 					"- Can overwrite individual partitions"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -154,13 +162,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Note that different metrics are displayed than a CRAS statement; the table history also records the operation differently."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -171,8 +177,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"A primary difference here has to do with how Delta Lake enforces schema on write.\n",
@@ -180,8 +185,7 @@
 					"Whereas a CRAS statement will allow us to completely redefine the contents of our target table, **`INSERT OVERWRITE`** will fail if we try to change our schema (unless we provide optional settings). \n",
 					"\n",
 					"Uncomment and run the cell below to generate an expected error message."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -193,8 +197,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -203,8 +206,7 @@
 					"We can use **`INSERT INTO`** to atomically append new rows to an existing Delta table. This allows for incremental updates to existing tables, which is much more efficient than overwriting each time.\n",
 					"\n",
 					"Append new sale records to the **`sales`** table using **`INSERT INTO`**."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -216,19 +218,16 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
 					"Note that **`INSERT INTO`** does not have any built-in guarantees to prevent inserting the same records multiple times. Re-executing the above cell would write the same records to the target table, resulting in duplicate records."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"\n",
@@ -245,8 +244,7 @@
 					"</code></strong>\n",
 					"\n",
 					"We will use the **`MERGE`** operation to update historic users data with updated emails and new users."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -259,8 +257,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"The main benefits of **`MERGE`**:\n",
@@ -271,8 +268,7 @@
 					"Below, we'll only update records if the current row has a **`NULL`** email and the new row does not. \n",
 					"\n",
 					"All unmatched records from the new batch will be inserted."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -288,18 +284,15 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"Note that we explicitly specify the behavior of this function for both the **`MATCHED`** and **`NOT MATCHED`** conditions; the example demonstrated here is just an example of logic that can be applied, rather than indicative of all **`MERGE`** behavior."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					"\n",
 					"## Insert-Only Merge for Deduplication\n",
@@ -311,8 +304,7 @@
 					"This optimized command uses the same **`MERGE`** syntax but only provided a **`WHEN NOT MATCHED`** clause.\n",
 					"\n",
 					"Below, we use this to confirm that records with the same **`user_id`** and **`event_timestamp`** aren't already in the **`events`** table."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -327,8 +319,7 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"## Load Incrementally\n",
@@ -342,8 +333,7 @@
 					"This operation is potentially much cheaper than full table scans for data that grows predictably.\n",
 					"\n",
 					"While here we'll show simple execution on a static directory, the real value is in multiple executions over time picking up new files in the source automatically."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -356,13 +346,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 
+				"source": [
 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -379,13 +367,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}

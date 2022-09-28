@@ -6,17 +6,21 @@
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "LakehouseTest",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "6d6b1d08-f313-48e4-8e07-1cf210f52df2"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "a6dc63e4-4658-4c94-a60a-8a050917db45"
 			}
 		},
 		"metadata": {
@@ -29,23 +33,37 @@
 			"language_info": {
 				"name": "sql"
 			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/8aa90780-bc26-461d-9db6-6df705873871/resourceGroups/domo-demo/providers/Microsoft.Synapse/workspaces/domodemo/bigDataPools/LakehouseTest",
+				"name": "LakehouseTest",
+				"type": "Spark",
+				"endpoint": "https://domodemo.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/LakehouseTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.2",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": true
+			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"# Extracting Data Directly from Files\n",
 					"\n",
@@ -57,19 +75,17 @@
 					"By the end of this lesson, you should be able to:\n",
 					"- Use Spark SQL to directly query data files\n",
 					"- Leverage **`text`** and **`binaryFile`** methods to review raw file contents"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Run Setup\n",
 					"\n",
 					"The setup script will create the data and declare necessary values for the rest of this notebook to execute."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -80,8 +96,8 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Data Overview\n",
 					"\n",
@@ -97,17 +113,15 @@
 					"| partition | INTEGER | Our current Kafka implementation uses only 2 partitions (0 and 1) |\n",
 					"| offset | LONG | This is a unique value, monotonically increasing for each partition |\n",
 					"| timestamp | LONG | This timestamp is recorded as milliseconds since epoch, and represents the time at which the producer appends a record to a partition |"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Note that our source directory contains many JSON files."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -127,8 +141,8 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Here, we'll be using relative file paths to data that's been written to the DBFS root. \n",
 					"\n",
@@ -137,13 +151,12 @@
 					"In most companies, a workspace administrator will be responsible for configuring access to these storage locations.\n",
 					"\n",
 					"Instructions for configuring and accessing these locations can be found in the cloud-vendor specific self-paced courses titled \"Cloud Architecture & Systems Integrations\"."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Query a Single File\n",
 					"\n",
@@ -152,8 +165,7 @@
 					"<strong><code>SELECT * FROM file_format.&#x60;/path/to/file&#x60;</code></strong>\n",
 					"\n",
 					"Make special note of the use of back-ticks (not single quotes) around the path."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -164,23 +176,21 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"Note that our preview displays all 321 rows of our source file."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Query a Directory of Files\n",
 					"\n",
 					"Assuming all of the files in a directory have the same format and schema, all files can be queried simultaneously by specifying the directory path rather than an individual file."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -191,24 +201,22 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"By default, this query will only show the first 1000 rows."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Create References to Files\n",
 					"This ability to directly query files and directories means that additional Spark logic can be chained to queries against files.\n",
 					"\n",
 					"When we create a view from a query against a path, we can reference this view in later queries. Here, we'll create a temporary view, but you can also create a permanent reference with regular view."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -222,14 +230,13 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Extract Text Files as Raw Strings\n",
 					"\n",
 					"When working with text-based files (which include JSON, CSV, TSV, and TXT formats), you can use the **`text`** format to load each line of the file as a row with one string column named **`value`**. This can be useful when data sources are prone to corruption and custom text parsing functions will be used to extract value from text fields."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -240,16 +247,15 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					"\n",
 					"## Extract the Raw Bytes and Metadata of a File\n",
 					"\n",
 					"Some workflows may require working with entire files, such as when dealing with images or unstructured data. Using **`binaryFile`** to query a directory will provide file metadata alongside the binary representation of the file contents.\n",
 					"\n",
 					"Specifically, the fields created will indicate the **`path`**, **`modificationTime`**, **`length`**, and **`content`**."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -260,12 +266,11 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"\n",
+				"source": [
+					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "code",
@@ -282,13 +287,12 @@
 			},
 			{
 				"cell_type": "markdown",
-"source": [
- 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"source": [
+					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
-				],
-				"execution_count": null
+				]
 			}
 		]
 	}
