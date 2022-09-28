@@ -1,6 +1,9 @@
 {
 	"name": "DE 1-2 - Notebook Basics",
 	"properties": {
+		"folder": {
+			"name": "01 - Synapse Workspace and Services"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
@@ -17,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "true",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "4",
-				"spark.autotune.trackingId": "d1e8ec2c-e9f0-4aaa-8569-da8b75caf7fc"
+				"spark.autotune.trackingId": "d35a83d7-b7fd-4fe8-9b2c-6d0768574cb8"
 			}
 		},
 		"metadata": {
@@ -414,7 +417,7 @@
 				"source": [
 					"%run ../Includes/Classroom-Setup-01.2"
 				],
-				"execution_count": 4
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",

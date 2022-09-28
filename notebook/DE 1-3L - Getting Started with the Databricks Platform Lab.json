@@ -1,6 +1,9 @@
 {
 	"name": "DE 1-3L - Getting Started with the Databricks Platform Lab",
 	"properties": {
+		"folder": {
+			"name": "01 - Synapse Workspace and Services"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"sessionProperties": {
@@ -13,7 +16,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "ea85dd43-fb8f-4714-94ce-76ef5295b65c"
+				"spark.autotune.trackingId": "4a0758e7-1c7e-4c30-8b8d-4d67a6f572e8"
 			}
 		},
 		"metadata": {
