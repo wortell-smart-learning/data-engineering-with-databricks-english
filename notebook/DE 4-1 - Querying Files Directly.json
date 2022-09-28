@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,10 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ba5cb184-9677-4b79-b000-f42c5fff9044\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"# Extracting Data Directly from Files\n",
 					"\n",
@@ -63,10 +61,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e9800a3a-c96c-4ce2-a835-b5f058e26ead\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Run Setup\n",
 					"\n",
@@ -82,10 +79,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"fedca70d-2bf7-415b-8ab9-1691c2366b24\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Data Overview\n",
 					"\n",
@@ -105,10 +101,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"00f263ec-293b-4adf-bf4b-b81f04de6e31\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Note that our source directory contains many JSON files."
 				],
@@ -131,10 +126,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"f4cbde61-2f10-4758-82ca-786e16606d60\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Here, we'll be using relative file paths to data that's been written to the DBFS root. \n",
 					"\n",
@@ -147,10 +141,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"8e04a0d2-4d79-4547-b2b2-765eefaf6285\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Query a Single File\n",
 					"\n",
@@ -170,20 +163,18 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"02c296c6-80be-4bd8-99cc-29f2e44e1d2d\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Note that our preview displays all 321 rows of our source file."
 				],
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"01cd5a22-a236-4ef6-bf65-7c40379d7ef9\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Query a Directory of Files\n",
 					"\n",
@@ -199,20 +190,18 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"f36c3a77-4b84-41a0-95ae-a8f999a0f60e\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"By default, this query will only show the first 1000 rows."
 				],
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"46590bb8-cf4b-4c3d-a9c6-e431bad4a5e9\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Create References to Files\n",
 					"This ability to directly query files and directories means that additional Spark logic can be chained to queries against files.\n",
@@ -232,10 +221,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"0a627f4b-ec2c-4002-bf9b-07a788956f03\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Extract Text Files as Raw Strings\n",
 					"\n",
@@ -251,10 +239,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ffae0f7a-b956-431d-b1cb-6d2be33b4f6c\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Extract the Raw Bytes and Metadata of a File\n",
 					"\n",
@@ -272,10 +259,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"fa8fcc72-31c0-4825-ae6f-bf194d715f14\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
 				],
@@ -295,10 +281,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

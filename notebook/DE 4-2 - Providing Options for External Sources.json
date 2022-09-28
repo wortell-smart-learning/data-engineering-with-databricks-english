@@ -33,10 +33,9 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
 					"</div>"
@@ -44,10 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"469222b4-7728-4980-a105-a850e5234a3c\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"# Providing Options for External Sources\n",
 					"While directly querying files works well for self-describing formats, many data sources require additional configurations or schema declaration to properly ingest records.\n",
@@ -63,10 +61,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"b0456896-d5ed-416c-bfab-7d4f54a24288\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Run Setup\n",
 					"\n",
@@ -82,10 +79,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7ba475f1-5a89-46ee-b400-b8846699d5b5\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## When Direct Queries Don't Work \n",
 					"\n",
@@ -103,10 +99,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7ae3fe20-46e7-42be-95d6-4f933b758ef7\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"We can see from the above that:\n",
 					"1. The header row is being extracted as a table row\n",
@@ -117,10 +112,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"f371955b-5e96-41d3-b413-ed5bb51820fc\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Registering Tables on External Data with Read Options\n",
 					"\n",
@@ -142,10 +136,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"ea38261e-12c1-4bba-9670-9c4144c19494\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"The cell below demonstrates using Spark SQL DDL to create a table against an external CSV source, specifying:\n",
 					"1. The column names and types\n",
@@ -171,10 +164,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"a9b747d0-1811-4bbe-b6d6-c89671289286\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Note that no data has moved during table declaration. \n",
 					"\n",
@@ -199,10 +191,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"d0ad4268-b339-40cc-88be-1b07e9759d5e\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"All the metadata and options passed during table declaration will be persisted to the metastore, ensuring that data in the location will always be read with these options.\n",
 					"\n",
@@ -220,10 +211,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"39ee6311-f095-4f86-8fe5-c5be569b6a10\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Limits of Tables with External Data Sources\n",
 					"\n",
@@ -255,10 +245,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"cad47cd2-c64d-4658-9b95-400ea7303f7f\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"If we look at the current count of records in our table, the number we see will not reflect these newly inserted rows."
 				],
@@ -272,10 +261,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e9bb05a1-81db-4360-a131-bd14453af87e\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"At the time we previously queried this data source, Spark automatically cached the underlying data in local storage. This ensures that on subsequent queries, Spark will provide the optimal performance by just querying this local cache.\n",
 					"\n",
@@ -293,10 +281,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"b7005568-3b03-4c4a-9ed0-122f14de6f7b\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Note that refreshing our table will invalidate our cache, meaning that we'll need to rescan our original data source and pull all data back into memory. \n",
 					"\n",
@@ -312,10 +299,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"524835ab-53b7-435e-8c3a-9abcc81bab2e\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Extracting Data from SQL Databases\n",
 					"SQL databases are an extremely common data source, and Databricks has a standard JDBC driver for connecting with many flavors of SQL.\n",
@@ -356,10 +342,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1f4c4ac6-dd8f-4198-a552-e2a65ce140d0\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Now we can query this table as if it were defined locally."
 				],
@@ -373,10 +358,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"4d1ac331-1a39-4cca-b834-e4f848dd3e64\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Looking at the table metadata reveals that we have captured the schema information from the external system.\n",
 					"\n",
@@ -392,10 +376,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"2b8ce5b8-d76a-4be9-a2d3-9284ab701db7\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"While the table is listed as **`MANAGED`**, listing the contents of the specified location confirms that no data is being persisted locally."
 				],
@@ -421,10 +404,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"2a090fa9-b419-43cb-8249-0b0bc8f92918\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Note that some SQL systems such as data warehouses will have custom drivers. Spark will interact with various external databases differently, but the two basic approaches can be summarized as either:\n",
 					"1. Moving the entire source table(s) to Databricks and then executing logic on the currently active cluster\n",
@@ -437,10 +419,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7084cc69-4fea-45b7-9ab3-27ad8cd3e84c\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
 				],
@@ -460,10 +441,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ 					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"

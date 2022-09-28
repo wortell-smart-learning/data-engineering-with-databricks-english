@@ -33,9 +33,8 @@
 		},
 		"cells": [
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
+				"cell_type": "markdown",
+"source": [
 					"\n",
 					"<div style=\"text-align: center; line-height: 0; padding-top: 9px;\">\n",
 					"  <img src=\"https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png\" alt=\"Databricks Learning\" style=\"width: 600px\">\n",
@@ -44,10 +43,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"047624c1-1764-4d00-8f75-2640a0b9ad8e\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"# Databases, Tables, and Views Lab\n",
 					"\n",
@@ -68,10 +66,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"702fc20d-b0bf-4138-9045-49571c496cc0\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"### Getting Started\n",
 					"\n",
@@ -87,10 +84,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"306e4a60-45cf-40af-850f-4339700000b8\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Overview of the Data\n",
 					"\n",
@@ -120,10 +116,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"9b640cc4-561c-4f2e-8db4-806496e0300f\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Create a Database\n",
 					"\n",
@@ -141,10 +136,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"eb27d1be-83d9-44d6-a3c5-a330d58f4d1b\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -163,10 +157,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"4007b86a-f1c2-4431-9605-278256a18502\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Change to Your New Database\n",
 					"\n",
@@ -184,10 +177,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"a1799160-4921-48a9-84fd-d6b30eda2294\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -206,10 +198,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"29616225-cd27-4d1f-abf3-70257760ba80\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Create a Managed Table\n",
 					"Use a CTAS statement to create a managed table named **`weather_managed`**."
@@ -228,10 +219,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"77e8b20b-0627-49a9-9d59-cf7e02225a64\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -251,10 +241,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"155e14f1-65cf-40be-9d01-68b3775c2381\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Create an External Table\n",
 					"\n",
@@ -275,10 +264,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"b7853935-465f-406f-8742-46a2a00ad3b5\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -298,10 +286,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"3992398d-0f77-4fc2-8b9e-2f4064f10480\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Examine Table Details\n",
 					"Use the SQL command **`DESCRIBE EXTENDED table_name`** to examine the two weather tables."
@@ -323,10 +310,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"6996903c-737b-4b88-8d51-3e0a01b347be\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Run the following helper code to extract and compare the table locations."
 				],
@@ -369,10 +355,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"63b73ebc-ccd0-460b-87ae-e09addada714\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"List the contents of these directories to confirm that data exists in both locations."
 				],
@@ -407,10 +392,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"09f43b5b-e050-4e58-9769-e2e01829ddbc\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"### Check Directory Contents after Dropping Database and All Tables\n",
 					"The **`CASCADE`** keyword will accomplish this."
@@ -427,10 +411,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"e7babacd-bed8-47d7-ad52-7cc644e4f06a\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -449,10 +432,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7d7053b8-e1b9-421a-9687-b205feadbf68\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"With the database dropped, the files will have been deleted as well.\n",
 					"\n",
@@ -503,10 +485,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5b66fbc5-c641-40e1-90a9-d69271bc0e8b\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"**This highlights the main differences between managed and external tables.** By default, the files associated with managed tables will be stored to this location on the root DBFS storage linked to the workspace, and will be deleted when a table is dropped.\n",
 					"\n",
@@ -515,10 +496,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1928eede-5218-47df-affe-b6a7654524ab\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Create a Database with a Specified Path\n",
 					"\n",
@@ -535,10 +515,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5b5dbf00-f9ee-4bc5-964e-22376e09be79\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Recreate your **`weather_managed`** table in this new database and print out the location of this table."
 				],
@@ -567,10 +546,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"91684fed-3851-4979-be1d-ba8af8cfe314\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -590,20 +568,18 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"7ddc86a3-fbc4-4373-aacb-2f510c1eb708\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"While here we're using the **`working_dir`** directory created on the DBFS root, _any_ object store can be used as the database directory. **Defining database directories for groups of users can greatly reduce the chances of accidental data exfiltration**."
 				],
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"07f87efe-13e4-48c3-84a7-576828359464\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Views and their Scoping\n",
 					"\n",
@@ -629,10 +605,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"14937501-7f2a-469d-b47f-db0c656d8da3\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -652,10 +627,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1465024c-c6c9-4043-9bfa-54a5e9ad8b04\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Now create a temporary view."
 				],
@@ -674,10 +648,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"5593edb6-0a98-4b8f-af24-4c9caa65dac2\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -697,10 +670,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"a89de892-1615-4f60-a8d2-0da7aebfda14\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Now register a global temp view."
 				],
@@ -719,10 +691,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"4cb8cfe6-f058-48df-8807-1338907261f7\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"Run the cell below to check your work."
 				],
 				"execution_count": null
@@ -741,10 +712,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"dde3cbe9-3ed4-497a-b778-ca6268b57973\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Views will be displayed alongside tables when listing from the catalog."
 				],
@@ -758,10 +728,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"6cf76f7b-8577-4cfe-b3a1-dc08a9ac24de\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"Note the following:\n",
 					"- The view is associated with the current database. This view will be available to any user that can access this database and will persist between sessions.\n",
@@ -778,20 +747,18 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"eda8a0b1-94f8-4c61-bf07-c86a016746ba\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"While no job was triggered when defining these views, a job is triggered _each time_ a query is executed against the view."
 				],
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"1723a769-272c-47ca-93e8-7b3a9b0674dd\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Clean Up\n",
 					"Drop the database and all tables to clean up your workspace."
@@ -806,10 +773,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"03511454-16d6-40e6-a62a-cd8bdb7de57d\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					"\n",
 					"## Synopsis\n",
 					"\n",
@@ -821,10 +787,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md <i18n value=\"de458d67-efe9-4d5e-87d7-240093072332\"/>\n",
-					"\n",
+				"cell_type": "markdown",
+"source": [
+ 					"\n",
 					" \n",
 					"Run the following cell to delete the tables and files associated with this lesson."
 				],
@@ -844,10 +809,9 @@
 				"execution_count": null
 			},
 			{
-				"cell_type": "code",
-				"source": [
-					"%md-sandbox\n",
-					"&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
+				"cell_type": "markdown",
+"source": [
+ "&copy; 2022 Databricks, Inc. All rights reserved.<br/>\n",
 					"Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href=\"https://www.apache.org/\">Apache Software Foundation</a>.<br/>\n",
 					"<br/>\n",
 					"<a href=\"https://databricks.com/privacy-policy\">Privacy Policy</a> | <a href=\"https://databricks.com/terms-of-use\">Terms of Use</a> | <a href=\"https://help.databricks.com/\">Support</a>"
