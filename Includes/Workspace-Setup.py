@@ -7,7 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="1fb32f72-2ccc-4206-98d9-907287fc3262"/>
+# MAGIC %md
 # MAGIC 
 # MAGIC # Workspace Setup
 # MAGIC This notebook should be run by instructors to prepare the workspace for a class.
@@ -32,7 +32,7 @@ setup_start = dbgems.clock_start()
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="86c0a995-1251-473e-976c-ba8288c0b2d3"/>
+# MAGIC %md
 # MAGIC # Get Class Config
 # MAGIC The three variables defined by these widgets are used to configure our environment as a means of controlling class cost.
 
@@ -55,7 +55,7 @@ dbutils.widgets.text(WorkspaceHelper.PARAM_SPARK_VERSION, "11.3.x-cpu-ml-scala2.
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="b1d39e1d-aa44-4c05-b378-837a1b432128"/>
+# MAGIC %md
 # MAGIC 
 # MAGIC # Init Script & Install Datasets
 # MAGIC The main affect of this call is to pre-install the datasets.
@@ -89,7 +89,7 @@ print(f"workspace_description: {workspace_description}")
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="485ff12c-7286-4d14-a90e-3c29d87f8920"/>
+# MAGIC %md
 # MAGIC 
 # MAGIC ## Create Class Instance Pools
 # MAGIC The following cell configures the instance pool used for this class
@@ -104,7 +104,7 @@ instance_pool_id = DA.workspace.clusters.create_instance_pool(preloaded_spark_ve
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="04ae9a73-8b48-4823-8738-31e337864cf4"/>
+# MAGIC %md
 # MAGIC 
 # MAGIC ## Create The Three Class-Specific Cluster Policies
 # MAGIC The following cells create the various cluster policies used by the class
@@ -132,7 +132,7 @@ ClustersHelper.create_dlt_policy(client=DA.client,
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="2f010a4b-af3c-4b3f-96a0-d8b3556ec728"/>
+# MAGIC %md
 # MAGIC 
 # MAGIC ## Create Class-Shared Databricks SQL Warehouse/Endpoint
 # MAGIC Creates a single wharehouse to be used by all students.
@@ -147,7 +147,7 @@ DA.workspace.warehouses.create_shared_sql_warehouse(name=WarehousesHelper.WAREHO
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="a382c82f-6e5a-453c-b612-946e184d576c"/>
+# MAGIC %md
 # MAGIC 
 # MAGIC ## Configure User Entitlements
 # MAGIC 
@@ -160,7 +160,7 @@ WorkspaceHelper.add_entitlement_databricks_sql_access(client=DA.client)
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="74b76ae9-3bbb-4bd4-b1c6-6d76d85a5baa"/>
+# MAGIC %md
 # MAGIC 
 # MAGIC ## Update Grants
 # MAGIC This operation executes **`GRANT CREATE ON CATALOG TO users`** to ensure that students can create databases as required by this course when they are not admins.
@@ -178,6 +178,15 @@ job_id = DatabasesHelper.configure_permissions(DA.client, "Configure-Permissions
 # COMMAND ----------
 
 DA.client.jobs().delete_by_id(job_id)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Executing the operation below ensures that students can create catalogs as required by Unity Catalog content in this course when they are not admins.
+
+# COMMAND ----------
+
+spark.sql("GRANT CREATE CATALOG ON METASTORE TO `account users`;")
 
 # COMMAND ----------
 

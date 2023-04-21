@@ -7,13 +7,12 @@
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="78c97c5e-68ec-4a38-86ce-6af6466b8bd1"/>
-# MAGIC 
+# MAGIC %md
 # MAGIC # Project Information
 # MAGIC 
 # MAGIC * Name: **Data Engineering with Databricks**
-# MAGIC * Version:  **2.3.14**
-# MAGIC * Built On: **Feb 28, 2023 at 01:37:46 UTC**
+# MAGIC * Version:  **3.1.2**
+# MAGIC * Built On: **Mar 2, 2023 at 03:56:53 UTC**
 
 # COMMAND ----------
 
@@ -98,8 +97,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md <i18n value="bd2e5e62-c077-477c-a1ff-93642a5a4db7"/>
-# MAGIC ## Copyrights
+# MAGIC %md ## Copyrights
 # MAGIC This section documents the various copyrights as they relate to the datasets used in this course.
 # MAGIC 
 # MAGIC Run the following cell for additional information on this course's datasets, and their copyrights.

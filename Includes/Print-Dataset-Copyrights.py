@@ -3,9 +3,19 @@
 
 # COMMAND ----------
 
-lesson_config.create_schema = False
+lesson_config = LessonConfig(name = None,
+                             create_schema = False,
+                             create_catalog = False,
+                             requires_uc = False,
+                             installing_datasets = True,
+                             enable_streaming_support = False,
+                             enable_ml_support = False)
 
-DA = DBAcademyHelper(course_config, lesson_config)
+DA = DBAcademyHelper(course_config=course_config,
+                     lesson_config=lesson_config)
 DA.init()
+
+# COMMAND ----------
+
 DA.print_copyrights()
 
